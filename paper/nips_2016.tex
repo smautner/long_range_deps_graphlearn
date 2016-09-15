@@ -20,8 +20,10 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
+\usepackage{graphicx}       %PICTSCHAS
+\usepackage{amsmath}        %METH
 
-\title{Formatting instructions for NIPS 2016}
+\title{i am changing ze titl3, }
 
 % The \author macro works with any number of authors. There are two
 % commands used to separate the names and addresses of multiple
@@ -141,7 +143,172 @@ The formatting instructions contained in these style files are
 summarized in Sections \ref{gen_inst}, \ref{headings}, and
 \ref{others} below.
 
-\section{General formatting instructions}
+
+
+\section{ich fang einfach mal hier an }
+
+\newpage
+\section{Method}
+
+Previously Costa introduced a method %\cite{costa14} citations are not working oO
+to learn how to construct novel graphs.
+Graphs would be vectorized via a \emph{decomposition kernel}
+to train a machine learning model (e.g. an SVM).
+Also fragments of the Graphs would be collected in 
+a \emph{grammar} (resembling a string grammar) to alter the 
+set of Graphs incrementally. Changes to a graph are evaluated with the model. 
+We present a method to increase the flexibility of the graph grammar.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CONTINUE THE WRITING HERE! 
+\textbf{Modification to the grammar.}
+We work with different CIPs that consider a contracted version
+of the original graphs. We obtain a contracted graph $G'$ by contracting edges in $G$.
+After a contraction, the set of contracted vertices of the created vertex is accessible with the $contracted$ function.
+We extract $C_{R}^v(G')$ and $I_{R,T}^v(G')$ as usual, but from $G'$. 
+The core graph $C_{R}^v(G',G)$ is induced by the nodes $\bigcup\limits_{u \in C_R^v(G')} contracted(u)$.
+The new interface graph $I_{R,B}^v(G',G)$ is then obtained by the nodes 
+$\{ w | d(w,v) \leq B \wedge v\in C_R^v(G',G) \wedge w \in G \wedge w \notin C_R^v(G',G) \}$.
+$B$ is the thickness of the base graph. 
+At this point we can construct a CIP from $C_R^v(G',G)$ and $I_{R,B}^v(G',G)$. 
+To find a congruent CIP, we previously only compared the hashed $I_{R,T}^v(G)$ graphs.
+By hashing the hashes of $I_{R,T}^v(G')$ and $I_{R,B}^v(G,G')$ we increase the specificity 
+of this comparison. The vertices in $I_{R,B}^v(G,G')$ might have been relabeled to represent a 
+concept of its $contracted$ set. In our test, we will contract according to the secondary RNA structure
+and label the resulting vertex accordingly e.g.'Hairpin loop'. This way we encode 
+far reaching and abstract in our CIP interface matching.
+
+
+
+
+
+
+
+% graph contration, interface trick
+
+
+% change to congruency
+\textbf{An improvement to the notion of congruency.}
+For CIPs to be congruent, isomorphism is required. 
+To cover some corner cases we expand this requirement to incorporate
+the distance to nodes in the core graph when determining if graphs are isomorphic.
+$\forall u \in I_{R,T}^v(G) : 
+\underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
+\underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $ i.e. the distance to the closest core node is equal for every
+$u$ and $\phi(u)$.
+
+\textbf{Extending what we can contract.}
+Looking at edge contraction is only one way to obtain a contraction graph. 
+One might also contract nodes that are not connected by an edge.
+\textbf{??? what did i do exactly for the t-rna ???}
+ 
+
+
+
+
+
+
+
+ 
+
+
+\newpage
+
+\subsection{Definitions}
+The vertices and edges of a graph $G=(V,E)$ are labeled.The function $label$
+selects these labels. The isomorphism function for graphs is $\phi$.
+
+
+
+\subsection{The grammar}
+We build a grammar for graphs whose productions are similar to
+productions of context sensitive string grammars.
+We refer to Graph fragments as CIPs, \emph{core} and \emph{interface} pairs.
+If the \emph{interfaces} of two fragments are \emph{congruent}, 
+the \emph{core} can be replaced. Graph grammars are described in *somethin*.
+
+
+\begin{figure}[h]
+  
+  \centering
+  
+  %\fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}  }
+  \includegraphics[width=0.3\textwidth]{images/cip}
+  \includegraphics[width=0.6\textwidth]{images/isomorphsiam}
+  \caption{1. A CIP being replaced in a graph core (red) are replaced iff interfaces	 
+      (yellow) are isomorph \label{cip} 2.isomorphic but not congruent interfaces}
+	
+\end{figure}
+
+In a Graph %-> defs $G=(V,E)$%
+ we define a \emph{core} rooted in a node $v \in V$
+as $C_R^v(G)$. It is the subgraph induced from $G$ with the nodes in $\{u|d(u,v)< R\}$.
+We call R the radius. The Interface of the same CIP is defined by 
+$I^v_{R,T}(G)$. It is the subgraph induced by the 
+nodes in $ \{v \in C^v_{R+T} | v \notin C^v_{R}\} $.
+The interface around a node $v$ consists of the nodes in radius $R+T$ minus the core
+region.$T$ is the thickness around the core graph.
+
+In Fig.\ref{cip} we can see how a production will be applied in the graph generation 
+phase. Once a root node is selected, the CIP that is to be replaced determined quickly.
+
+
+Finding a replacement CIP requires the interface of that CIP to be at least 
+isomorphic. Hashing the interface makes it easy to find congruent CIPs.
+We call this hash $L^g(G)$. It will later be 
+hashed by a (Merkle-Damg{\aa}rd \cite{damgard} type) hash function $H$.
+To compute $L^g(G)$, we first assign 
+a new label $nl(v)$ to each node $v$. 
+We do this by sorting the set $ \{ (d(v,u),label(u)) | u \in G \} $
+lexicographically. For each edge $(u,v)$ in $G$ we can now 
+list the triplets $<label((u,v),nl(u),nl(v))>$ and sort them lexicographically.
+%The $label$ function just selects the label assigned to the element.
+%-> moved to definitionsEvery vertex and edge in Graphs are required to be labeled.
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+%CIPs are extracted from every node in every graph in the input.
+
+
+
+
+
+
+\subsection{Improved grammar}
+
+
+\section{Evaluation}
+
+
+
+\section{Discussion??}
+ 
+ 
+
+
+ 
+ 
+  
+
+
+
+\section{soemthing something}
 \label{gen_inst}
 
 The text must be confined within a rectangle 5.5~inches (33~picas)
@@ -402,5 +569,5 @@ T.K.\ Leen (eds.), {\it Advances in Neural Information Processing
 learning and recall at excitatory recurrent synapses and cholinergic
 modulation in rat hippocampal region CA3. {\it Journal of
   Neuroscience} {\bf 15}(7):5249-5262.
-
+\bibliography{Bibliography}
 \end{document}
