@@ -78,13 +78,6 @@ Nulla pulvinar ante rutrum efficitur pellentesque. Donec augue tortor, dapibus v
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tempus nunc tempus, pretium leo sed, blandit ante. Nulla sit amet consectetur nunc. Curabitur dictum, risus in eleifend tincidunt, ipsum libero dapibus magna, eu lacinia purus ligula ut lorem. Sed vel eleifend massa, eget tincidunt erat. Nulla vel semper ipsum, quis tincidunt dolor. Duis convallis diam at auctor laoreet. Maecenas at lorem egestas, mollis felis sit amet, sagittis est. Sed eget lorem ut sapien porttitor malesuada. Fusce vehicula, nunc sit amet auctor ultrices, odio ligula gravida enim, sed bibendum risus quam sit amet justo. Donec eget mauris at tortor iaculis finibus. Suspendisse sollicitudin tellus quam, eget aliquam ipsum mollis vitae. Morbi et hendrerit eros, ut consequat justo. Ut blandit lobortis sem. Donec sem felis, scelerisque tincidunt nibh sit amet, eleifend consectetur magna. Nunc ultricies gravida commodo. Morbi vestibulum tellus nec turpis imperdiet tempor.
 
-Nulla pulvinar ante rutrum efficitur pellentesque. Donec augue tortor, dapibus vitae quam at, ultricies bibendum mauris. Etiam est nisi, ultricies vitae est euismod, rutrum eleifend ligula. Donec dictum orci ullamcorper ipsum vulputate gravida. Phasellus dignissim commodo feugiat. Proin bibendum interdum malesuada. Phasellus nibh dolor, pulvinar vel hendrerit vitae, egestas eu mi. Aenean ornare mauris purus, porta euismod turpis tristique eget. Maecenas magna velit, tempus aliquet nunc quis, vulputate faucibus dui. Cras egestas viverra libero faucibus vehicula. Donec molestie lectus in mattis convallis.
-
-Integer facilisis dolor purus, eu rutrum enim maximus eget. Curabitur ut ex sit amet massa laoreet lacinia. Pellentesque at tellus et nulla accumsan consectetur. Cras nisi nisi, imperdiet ut viverra sed, rhoncus non urna. Mauris condimentum eu nibh at finibus. Praesent maximus in augue vel posuere. Mauris a risus vitae justo viverra tempus in eu sapien. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Curabitur pretium pellentesque feugiat.
-
-Pellentesque in diam massa. Praesent et efficitur purus, vitae luctus dolor. Mauris a velit augue. Pellentesque tempor, massa quis accumsan finibus, lectus diam convallis sapien, efficitur lacinia ex leo id nulla. Proin eget laoreet ex. Curabitur a ipsum lobortis, euismod ligula eget, fringilla nulla. Duis venenatis convallis nibh vitae viverra. Maecenas eget justo at eros scelerisque porta fringilla a dolor. Quisque condimentum velit eu dui vehicula blandit. Donec pulvinar nisl eget odio ultrices luctus. Quisque consequat, diam eget convallis condimentum, risus dolor tristique nisl, eget pellentesque nibh dui at enim. Phasellus at sapien vel mi mattis interdum et et lorem.
-
-Pellentesque pretium elit ornare aliquet sodales. Vestibulum hendrerit, tortor ac lacinia iaculis, leo dolor pharetra ligula, a volutpat ipsum nisi sed risus. Aenean fringilla sit amet augue in sagittis. Phasellus at risus semper, congue massa a, pulvinar mi. Donec in dignissim lacus, sed euismod ex. Phasellus aliquam eget enim quis lacinia. Aenean at lectus neque. Phasellus tortor justo, iaculis gravida molestie at, maximus ut nulla. Nam augue orci, mollis eget lorem in, pretium molestie odio. Proin tincidunt sed odio non sollicitudin. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam in orci tortor.
 
 \section{Method}
 
@@ -139,29 +132,49 @@ $u$ and $\phi(u)$.
 Looking at edge contraction is only one way to obtain a contraction graph. 
 One might also contract nodes that are not connected by an edge.
 \textbf{??? what did i do exactly for the t-rna ???}
+\textbf{how did i do the directedness stuff??}
+
+
+
 
 \section{Evaluation}
-% ich kann meinen kram domainspeciffic evaluaten
-% dazu nehme ich infernal, infernal tut dies... 
+% ok so infernal is relativ kuehl
 RNA and their structure is subject to change in the course of evolution.
 RNAs are grouped into functional families whose classification
-is a problem in biology. \emph{Infernal} can classify and 
+is a problem of biology. \emph{Infernal} can classify and 
 create members of these families using covariance models.
-We will use Infernal to evaluate the (RNA) graphs we are creating.
+Infernal gives us a domain specific way to evaluate
+our Method for the generation of new graphs. 
 
-There exists prior work on 
-tools to classify sequences incorperating structure information. 
-This gives us a domain specific way to evaluate our Method for the 
-generation of new graphs. 
-We will test our generated graphs against infernal, 
-which is state of the art in \textbf{something }
+% experiments
+We set up two experiments to evaluate the success of our method. 
+First we compare our generated sequences to the Infernal model.
+The Infernal model is human optimized and should be highly relyable.
+In a second experiment we observe the influence of adding GraphLearn 
+generated graphs to a learning curve.
 
+% ok das machen wir mit den graphz
 We evaluated our results on secondary RNA structure graphs, where each 
 nucleotide is a vertex. The contracted graphs are obtained by 
-contracting vertices 
-that belong to the same structural element.
-e.g. adjacend stem vertices are contracted into a single vertex etc.
+contracting vertices that belong to the same structural element.
+E.g. adjacend stem vertices are contracted into a single vertex etc.
 Secondary structures are obtained via \textbf{rna folding thing}.
+For RNA sequences, the direction in which a sequence is read is important.
+Working with directed graphs in the grammar will enable us to extract the
+sequence along the backbone easily as well as adapt the model
+to the directed biological reality.
+
+% choose data this way
+We chose our RNA sequences from the seed sequences of each family
+that infernal is using. Sequences were chosem from RNA families with
+a) many members, because some families only contain 10
+instances which is very few for a classification task. b) interesting 
+structure, many sequences fold into structures that exhibit a large number of 
+unpaired bases which would result in a very simple contracted graph
+c) similar length, because classification should no be completely obvious.
+
+
+
 
 
 \section{Discussion} 
