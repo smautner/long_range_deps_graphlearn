@@ -21,7 +21,32 @@
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 \usepackage{graphicx}       %PICTSCHA
-\usepackage{amsmath}        %METH
+\usepackage{amsmath}        %METH, ok appears to be included in the amsfontz
+
+
+
+
+
+%%%%%%%%%%
+% citation stuff
+%%%%%%%%
+
+\usepackage{natbib} 
+%bibstyle muss einer da sein, 
+% setimmt wie der kram an \cite aussieht.
+% https://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_bibliographystyle
+%https://de.sharelatex.com/learn/Bibtex_bibliography_styles
+%\bibliographystyle{abbrvnat} 
+\bibliographystyle{unsrt} 
+%\bibliographystyle{plainnat}
+
+
+
+
+
+
+
+
 
 \title{Superawesome Graph Generation}
 
@@ -70,13 +95,23 @@
 \maketitle
 
 \begin{abstract}
-Nulla pulvinar ante rutrum efficitur pellentesque. Donec augue tortor, dapibus vitae quam at, ultricies bibendum mauris. Etiam est nisi, ultricies vitae est euismod, rutrum eleifend ligula. Donec dictum orci ullamcorper ipsum vulputate gravida. Phasellus dignissim commodo feugiat. Proin bibendum interdum malesuada. Phasellus nibh dolor, pulvinar vel hendrerit vitae, egestas eu mi. Aenean ornare mauris purus, porta euismod turpis tristique eget. Maecenas magna velit, tempus aliquet nunc quis, vulputate faucibus dui. Cras egestas viverra libero faucibus vehicula. Donec molestie lectus in mattis convallis.
+    \cite{rfam}Nulla pulvinar ante rutrum efficitur pellentesque. Donec augue tortor, dapibus vitae quam at, ultricies bibendum mauris. Etiam est nisi, ultricies vitae est euismod, rutrum eleifend ligula. Donec dictum orci ullamcorper ipsum vulputate gravida. Phasellus dignissim commodo feugiat. Proin bibendum interdum malesuada. Phasellus nibh dolor, pulvinar vel hendrerit vitae, egestas eu mi. Aenean ornare mauris purus, porta euismod turpis tristique eget. Maecenas magna velit, tempus aliquet nunc quis, vulputate faucibus dui. Cras egestas viverra libero faucibus vehicula. Donec molestie lectus in mattis convallis.
 \end{abstract}
 \section{Introduction}
+
+
+% 
+\begin{figure}[ht]
+      \centering
+        \includegraphics[width=0.2\linewidth]{images/cip.png}
+      \caption{Sample figure caption.}
+      \label{nazis}
+\end{figure}
+
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tempus nunc tempus, pretium leo sed, blandit ante. Nulla sit amet consectetur nunc. Curabitur dictum, risus in eleifend tincidunt, ipsum libero dapibus magna, eu lacinia purus ligula ut lorem. Sed vel eleifend massa, eget tincidunt erat. Nulla vel semper ipsum, quis tincidunt dolor. Duis convallis diam at auctor laoreet. Maecenas at lorem egestas, mollis felis sit amet, sagittis est. Sed eget lorem ut sapien porttitor malesuada. Fusce vehicula, nunc sit amet auctor ultrices, odio ligula gravida enim, sed bibendum risus quam sit amet justo. Donec eget mauris at tortor iaculis finibus. Suspendisse sollicitudin tellus quam, eget aliquam ipsum mollis vitae. Morbi et hendrerit eros, ut consequat justo. Ut blandit lobortis sem. Donec sem felis, scelerisque tincidunt nibh sit amet, eleifend consectetur magna. Nunc ultricies gravida commodo. Morbi vestibulum tellus nec turpis imperdiet tempor
 
 \section{Method}
-Previously Costa introduced a method %\cite{costa14} citations are not working 
+Previously Costa \cite{costa14} introduced a method
 on the construction of novel graphs according to a distribution given by
 example graphs. Graphs were vectorized via a \emph{decomposition kernel}
 to train a machine learning model, e.g. an SVM.
@@ -114,9 +149,9 @@ information about the surrounding vertices in our CIP interface matching.
 % change to congruency
 \textbf{An improvement to the notion of congruency.}
 For CIPs to be congruent, isomorphism is required. 
-To cover some corner cases we expand this requirement to incorporate
+We expand this requirement to incorporate
 the distance to nodes in the core graph when determining if graphs are 
-isomorphic.
+congruent.
 $\forall u \in I_{R,T}^v(G) : 
 \underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
 \underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $ i.e. the distance 
@@ -143,14 +178,14 @@ They have a 5' and a 3' end, meaning that the direction matters.
 Nucleotides in the sequences bind to other nucleotides so
 the sequence forms a \emph{structure}.
 RNAs are grouped into functional families whose classification
-is a problem of biology. \emph{Infernal} can classify and 
+is a problem of biology. \emph{Infernal}\cite{infernal} can classify and 
 create members of these families using covariance models.
 Infernal gives us a domain specific way to evaluate
 our Method for the generation of new graphs. 
 
 % choose data this way
 We chose our RNA sequences from the seed sequences of each family
-that Infernal is using. Sequences were chosen from RNA families with
+that Infernal is using\cite{rfam}. Sequences were chosen from RNA families with
 a) many members, because some families contain 10
 instances which is very few for a classification task. b) interesting 
 structure, many sequences fold into structures that exhibit a large number of 
@@ -162,23 +197,23 @@ We evaluated our results on secondary RNA structure graphs, where each
 nucleotide is a vertex. The contracted graphs are obtained by 
 contracting vertices that belong to the same structural element,
 e.g. adjacend stem vertices are contracted into a single vertex.
-Secondary structures are obtained by \emph{muscle}-aligning with 
-the four closest neighbors by sequence and folding with \emph{RNAalifold}.
-For RNA sequences, the direction in which a sequence is read is important.
-Working with directed graphs in the grammar will enable us to extract the
-sequence along the backbone easily as well as adapt the model
-to the directed biological reality.
+Secondary structures are obtained by \emph{muscle}-aligning \cite{muscle} with 
+the four closest neighbors by sequence and folding with \emph{RNAalifold}
+\cite{rnaalifold}.  For RNA sequences, the direction in which a sequence
+is read is important.  Working with directed graphs in the grammar
+will enable us to extract the sequence along the backbone easily as well
+as adapt the model to the directed biological reality.
 
 % eval against Infernal
 We evaluate our generated sequences against the Infernal model.
 The Infernal model is human optimized and thus highly reliable.
- \textbf{SOMETGRAPHIC} shows the average bit-score of generated graphs
+ \textbf{INFERNALEVAL} shows the average bit-score of generated graphs
 and the size of the training set. Each family has its own quality theshold.
 Sequences above that threshold (marked in black) can reliably be considered
 part of the family. We observe that \textbf{y out of x} generated graphs.
 
 % eval learning curve+ edit dist
-Costa defines \emph{the constructive learning problem for finite samples} 
+Costa \cite{costa14} defines \emph{the constructive learning problem for finite samples} 
 as mimicking the distribution of given graphs while producing new instances.
 We can estimate this distribution with a machine learning
 model and compare two distributions by evaluating a set of test instances
@@ -211,7 +246,7 @@ use the learning curves to show that original and sample are
 similar, then use average edit distance to shot that i accieved that 
 with different instances :) 
 
-
+\bibliography{mybib}
 
 
 \end{document}
