@@ -1,3 +1,8 @@
+
+# draw stuff
+import matplotlib as mpl
+mpl.use('Agg')
+
 import eden
 import matplotlib.pyplot as plt
 from eden.util import configure_logging
@@ -93,7 +98,7 @@ def plot(dataset, percentages, original_sample_repetitions, original_repetitions
     plt.legend(loc='lower right',fontsize=18)
     plt.ylabel('ROC AUC',fontsize=18)
     plt.xlabel('Training set size per family',fontsize=18)
-    plt.savefig('%s_plot_predictive_performance_of_samples.pdf' % dataset)
+    plt.savefig('%s_plot_predictive_performance_of_samples.png' % dataset)
 
 #load("DATAS")
 #plot("RF00162 vs RF00005 learning curve", [30,70], [[.30,.30],[.20,.20]] , [[.40,.40],[.30,.30]],[[.70,.35],[.25,.25]])
@@ -242,6 +247,7 @@ def test(a,b,ta,tb):
     
     
 
+global arguments
 import sys
 arguments=[]
 argz = make_argsarray()
@@ -250,12 +256,11 @@ print len(argz)
 print sys.argv
 
 
-for e in range(int(sys.argv[1]),int(sys.argv[2])):
-    print e
-    global arguments
-    arguments=argz[e]
-    r=get_results()
-    plot(str(e), sizes, *r)
+job = int(sys.argv[1]))
+print job
+arguments=argz[e]
+r=get_results()
+plot(str(e), sizes, *r)
 
 
 
