@@ -256,7 +256,7 @@ print len(argz)
 print sys.argv
 
 
-job = int(sys.argv[1]))
+job = int(sys.argv[1])
 print job
 arguments=argz[e]
 r=get_results()
