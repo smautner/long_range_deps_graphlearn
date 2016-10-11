@@ -190,8 +190,8 @@ dataset_a='RF00005.fa'
 #dataset_a='RF01725.fa' 5 vs 162 was in the original paper 
 dataset_b='RF00162.fa'
 sizes=[7,8,9,10,11,12,13,14,15]
-sizes=[7,8]
-repeats=1
+#sizes=[7,8]
+repeats=5
 
 # calc everything
 def get_results():
