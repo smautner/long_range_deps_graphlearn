@@ -35,13 +35,19 @@ def simsum(a,b,del_diag=False):
 
 import math
 def calcsimset(a,b):
-    print a,b
     a = [aa for x,aa in a]
     b = [bb for x,bb in b]
     ab=simsum(a,b,False)
-    #aa=simsum(a,a,False) 
-    #bb=simsum(b,b,False)
-    return  ab/(len(a)*len(b))
+    aa=simsum(a,a,True) 
+    bb=simsum(b,b,True)
+    
+    
+
+    avgab =  ab/(len(a)*len(b))
+    avgbb =  bb/(len(b)*len(b)-len(b))
+    avgaa =  aa/(len(a)*len(a)-len(a))
+    arg=avgab/math.sqrt(avgaa*avgbb)
+    return arg/10.0
     '''
     cc=aa*bb
     if cc==0:
