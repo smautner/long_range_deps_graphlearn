@@ -8,5 +8,5 @@ codepath=$PWD
 PYTHONPATH="$codepath/deps/GraphLearn:$PYTHONPATH"
 PYTHONPATH="$codepath/deps/EDeN:$PYTHONPATH"
 echo $PYTHONPATH
-cd notebooks; python curve.py $1
+cd notebooks; python curve.py $SGE_TASK_ID
 
