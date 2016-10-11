@@ -25,6 +25,7 @@ GET RNA DATA
 '''
 from eden.converter.fasta import fasta_to_sequence
 import itertools
+from graphlearn import sumsim
 
 def rfam_uri(family_id):
     return 'http://rfam.xfam.org/family/%s/alignment?acc=%s&format=fastau&download=0'%(family_id,family_id)
@@ -91,6 +92,10 @@ def plot(dataset, percentages, original_sample_repetitions, original_repetitions
     plt.boxplot(sample_repetitions, positions=percentages, widths=ws, capprops=bc, medianprops=bc, boxprops=bc, whiskerprops=bc, flierprops=bc)
     plt.plot(percentages,s, color='b', marker='o', markeredgewidth=1, markersize=7, markeredgecolor='b', markerfacecolor='w', label='sample+orig')
 
+
+    global similarity_scores
+    plt.plot(percentages,similarity_scores, 'ro')
+    print similarity_scores 
     plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     plt.xlim(5,20)
     plt.ylim(0.0,1.005)
@@ -200,13 +205,17 @@ def get_datapoint(size):
     ra=[]
     rb=[]
     rab=[]
+    similarities=[]
+    global similarity_scores
     for rep in range(repeats):
         train_a,test_a = get_seq_tups(dataset_a,size,size_test)
         train_b,test_b = get_seq_tups(dataset_b,size,size_test)
-        a,b,ab = evaluate_point(train_a,train_b,test_a,test_b)
+        a,b,ab,similarity = evaluate_point(train_a,train_b,test_a,test_b)
         ra.append(a)
         rab.append(ab)
         rb.append(b)
+        similarities.append(similarity)
+    similarity_scores.append( (sum(similarities)/float(len(similarities))))
     return ra,rb,rab
 
 
@@ -215,8 +224,12 @@ def evaluate_point(train_a,train_b,test_a,test_b):
     res.append(  test(deepcopy(train_a),deepcopy(train_b),deepcopy(test_a),deepcopy(test_b)) )
     train_aa = fit_sample(train_a)
     train_bb = fit_sample(train_b)
+    eins=sumsim.calcsimset(deepcopy(train_aa),deepcopy(train_a))   
+    zwei=sumsim.calcsimset(deepcopy(train_bb),deepcopy(train_b)) 
+    drei = (eins+zwei)/2.0
     res.append(  test(deepcopy(train_aa),deepcopy(train_bb),deepcopy(test_a),deepcopy(test_b)) )
     res.append(  test(deepcopy(train_a)+deepcopy(train_aa),deepcopy(train_b)+train_bb,deepcopy(test_a),deepcopy(test_b)) )
+    res.append(drei)
     return res
 
 
@@ -245,7 +258,8 @@ def test(a,b,ta,tb):
     correct=eva(est,ta,tb)
     return correct/float(size_test*2) # fraction correct
     
-    
+global similarity_scores
+similarity_scores=[]
 
 global arguments
 import sys
