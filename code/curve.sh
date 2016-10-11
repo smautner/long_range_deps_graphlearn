@@ -5,7 +5,7 @@
 #echo "#  CHECK PATHS IN THIS FILE       "
 #echo "##################################"
 
-codepath=$PWD
+codepath="$PWD/scratch/nips2016/code"
 PYTHONPATH="$codepath/deps/GraphLearn:$PYTHONPATH"
 PYTHONPATH="$codepath/deps/EDeN:$PYTHONPATH"
 #echo $PYTHONPATH
