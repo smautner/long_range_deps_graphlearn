@@ -8,6 +8,6 @@
 codepath="$PWD/scratch/nips2016/code"
 PYTHONPATH="$codepath/deps/GraphLearn:$PYTHONPATH"
 PYTHONPATH="$codepath/deps/EDeN:$PYTHONPATH"
-#echo $PYTHONPATH
+echo $codepath
 cd notebooks; python curve.py $SGE_TASK_ID
 
