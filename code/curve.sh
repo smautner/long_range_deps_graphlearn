@@ -10,5 +10,6 @@ PYTHONPATH="$codepath/deps/GraphLearn:$PYTHONPATH"
 PYTHONPATH="$codepath/deps/EDeN:$PYTHONPATH"
 MPLCONFIGDIR="/home/mautner/mylittlepony/matplotlib$SGE_TASK_ID/crap"
 echo $codepath
+echo $PYTHONPATH
 cd "$codepath/notebooks"; python curve.py $SGE_TASK_ID
 
