@@ -1,6 +1,5 @@
 #!/bin/bash
 #$ -l h_vmem=6G
-#$ -l cpu=4 
 #echo "##################################"
 #echo "#  CHECK PATHS IN THIS FILE       "
 #echo "##################################"
