@@ -9,4 +9,4 @@ export PYTHONPATH
 export CODEPATH
 export MPLCONFIGDIR
 
-qsub -V -t 1-72 -l cpu=6 scratch/nips2016/code/curve.sh
+qsub -V -t 1-72 -l ppn=6 scratch/nips2016/code/curve.sh
