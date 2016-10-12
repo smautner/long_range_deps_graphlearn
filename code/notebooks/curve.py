@@ -144,7 +144,7 @@ def fit_sample(graphs, random_state=random.random()):
     '''
     global arguments
     graphs = list(graphs)
-    estimator=estimatorwrapper( nu=.5, cv=2, n_jobs=6)
+    estimator=estimatorwrapper( nu=.5, cv=2, n_jobs=1)
     sampler=rna.AbstractSampler(radius_list=[0,1],
                                 thickness_list=[2], 
                                 min_cip_count=1, 
@@ -155,13 +155,13 @@ def fit_sample(graphs, random_state=random.random()):
                                 estimator=estimator
                                 #feasibility_checker=feasibility
                                )
-    sampler.fit(graphs,grammar_n_jobs=6,grammar_batch_size=1)
+    sampler.fit(graphs,grammar_n_jobs=1,grammar_batch_size=1)
     graphs = [ b for a ,b in graphs  ]
     graphs = sampler.sample(graphs,
                             n_samples=3,
                             batch_size=1,
                             n_steps=50,
-                            n_jobs=6,
+                            n_jobs=1,
                             quick_skip_orig_cip=True,
                             probabilistic_core_choice=True,
                             burnin=10,
