@@ -95,7 +95,17 @@
 \maketitle
 
 \begin{abstract}
-    \cite{rfam}Nulla pulvinar ante rutrum efficitur pellentesque. Donec augue tortor, dapibus vitae quam at, ultricies bibendum mauris. Etiam est nisi, ultricies vitae est euismod, rutrum eleifend ligula. Donec dictum orci ullamcorper ipsum vulputate gravida. Phasellus dignissim commodo feugiat. Proin bibendum interdum malesuada. Phasellus nibh dolor, pulvinar vel hendrerit vitae, egestas eu mi. Aenean ornare mauris purus, porta euismod turpis tristique eget. Maecenas magna velit, tempus aliquet nunc quis, vulputate faucibus dui. Cras egestas viverra libero faucibus vehicula. Donec molestie lectus in mattis convallis.
+Scripts describing the generation of generic graphs based on examples
+are not abundand. An existing method is based on recombination of
+graphs based on a graph grammar, not unlike a string grammar. 
+We present an extension to these grammars which takes into account
+a modified version of graphs. However, the modification needs to be
+automaticaly generateable. We explore the application of this idea
+on RNA secondary structure graphs. 
+
+
+
+
 \end{abstract}
 \section{Introduction}
 
@@ -112,29 +122,30 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tempus nunc temp
 
 \section{Method}
 Previously Costa \cite{costa14} introduced a method
-on the construction of novel graphs according to a distribution given by
-example graphs. Graphs were vectorized via a \emph{decomposition kernel}
+to construct novel graphs according to a distribution, which is given by
+examples. Graphs are vectorized with a \emph{decomposition kernel}
 to train a machine learning model, e.g. an SVM.
-Fragments of the graphs would be collected in 
-a \emph{grammar} (resembling a string grammar) to alter the 
-set of graphs incrementally. Changes to a graph are evaluated with the model. 
+Fragments of the graphs are collected in 
+a \emph{grammar} (analogous to a string grammar) to alter the initial
+set of graphs incrementally. Such changes to a graph are evaluated with the model. 
 We present a method to increase the flexibility of the graph grammar.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CONTINUE THE WRITING HERE! 
 \textbf{Modification to the grammar.}
-We work with different CIPs that consider a contracted version
+Inplace of simple CIPs as used previously,
+We use modify CIPs that consider contracted versions
 of the original graphs. We obtain a contracted graph $G'$ by contracting edges
 in $G$. After a contraction, the set of contracted vertices of the 
 created vertex is accessible with the $contracted$ function.
-We extract $C_{R}^v(G')$ and $I_{R,T}^v(G')$ as usual, but from $G'$. 
+We extract $C_{R}^v(G')$ and $I_{R,T}^v(G')$ as usual, except that we use $G'$. 
 The core graph $C_{R}^v(G',G)$ is induced by the nodes 
 $\bigcup\limits_{u \in C_R^v(G')} contracted(u)$.
 The new interface graph $I_{R,B}^v(G',G)$ is then obtained by the nodes 
 $\{ w | d(w,v) \leq B \wedge v\in C_R^v(G',G) \wedge w \in G \wedge w 
 \notin C_R^v(G',G) \}$.  $B$ is the thickness of the base graph. 
 At this point we can construct a CIP from $C_R^v(G',G)$ and $I_{R,B}^v(G',G)$. 
-To find a congruent CIP, we previously only compared the hashed $I_{R,T}^v(G)$ 
+To find a congruent CIP, we previously compared the hashed $I_{R,T}^v(G)$ 
 graphs. By hashing the hashes of $I_{R,T}^v(G')$ and $I_{R,B}^v(G,G')$ we 
 increase the specificity of this comparison. The vertices in $I_{R,B}^v(G,G')$ 
 might have been relabeled to represent a concept of its $contracted$ set. In 
@@ -148,26 +159,40 @@ information about the surrounding vertices in our CIP interface matching.
 % graph contration, interface trick
 % change to congruency
 \textbf{An improvement to the notion of congruency.}
-For CIPs to be congruent, isomorphism is required. 
+CIPs require isomorphism to be considered congruent.
 We expand this requirement to incorporate
-the distance to nodes in the core graph when determining if graphs are 
-congruent.
+the distance to the closest nodes in the core graph when 
+determining if graphs are congruent.
 $\forall u \in I_{R,T}^v(G) : 
 \underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
 \underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $ i.e. the distance 
 to the closest core node is equal for every
 $u$ and $\phi(u)$.
+It is easy to see the benefit of this extension.
+imagine two vertices labeled 'a' and 'b' connected by an edge. Let this graph
+be the sole interface graph. With the new model we can distinguish 
+between 'a' being closer to the core and 'b' being closer. 
 
 \textbf{Extending what we can contract.}
 Edge contraction is one way to obtain a contraction graph. 
 One might also contract nodes that are not connected by an edge.
 We did so with multi-loop nodes except stem nucleotides.
+This contraction model however will raise the problem 
+of two adjacend stems connected to a multiloop being
+indistinguishable from one stem being connected.
+this may be resolved by adding an additional 'fake' vertex 
+between the stems. another proglem with 
+this case is, that the order of the stems would normaly get lost.
+Since the graph representing the molecule, is directed via 
+the backbone one is able to specify an order on the
+parts of loops that connect stems.
+
 Although the underlaying EDeN kernel does not support directed graphs,
 the grammar may contain directed graphs. This is implemented by extracting
 CIPs as if undirected and creating the grammar as usual.
 % need to be able to recalculate abstractions
 A constraint to the contraction is that we need to be able to 
-generate is algorithmicaly. In the sampling phase we recalculate 
+generate it algorithmicaly. In the sampling phase we recalculate 
 the contraction after changes to the underlaying graph.
 
 
@@ -180,7 +205,8 @@ the sequence forms a \emph{structure}.
 RNAs are grouped into functional families whose classification
 is a problem of biology. \emph{Infernal}\cite{infernal} can classify and 
 create members of these families using covariance models.
-Infernal gives us a domain specific way to evaluate
+Infernal gives us a domain specific way to evaluat
+okok next?e
 our Method for the generation of new graphs. 
 
 % choose data this way
@@ -250,6 +276,7 @@ draw learning curve!
 
 do this edit distance kernrel thing
 
+okok next?
 
 \bibliography{mybib}
 
