@@ -35,36 +35,65 @@ def simsum(a,b,del_diag=False):
 
 import math
 def calcsimset(a,b):
-    a = [aa for x,aa in a]
-    b = [bb for x,bb in b]
+    #a = [aa for x,aa in a]
+    #b = [bb for x,bb in b]
     ab=simsum(a,b,False)
     aa=simsum(a,a,True) 
     bb=simsum(b,b,True)
-    
-    
 
     avgab =  ab/(len(a)*len(b))
-    avgbb =  bb/(len(b)*len(b)-len(b))
+    avgbb =  bb/(len(b)*len(b)-len(b)) 
     avgaa =  aa/(len(a)*len(a)-len(a))
     arg=avgab/math.sqrt(avgaa*avgbb)
-    return arg/10.0
-    '''
-    cc=aa*bb
-    if cc==0:
-        return ab
-
-    if debug:
-        print cc,ab,aa,bb
-        print ab/math.sqrt(cc)
-    return ab/math.sqrt(cc)
-    '''
+    return arg
 
 if debug:
-    s1=['asdasd','asdasd','abc']
-    s2=['zxczxc','asdasd','abc']
+    s1=['asdasd','asdasd','abc','sdf','xcv']
+    s2=['asdasf','asdasd','abc','sdf','xcv']
     print 'testing simsum eq',simsum(s1,s1,True)
     print 'testing simsum neq',simsum(s2,s1)
     print 'testing sim eq', sim(s1[0],s1[0])
     print 'testing sim dif', sim(s2[0],s1[0])
-    calcsimset(s1,s2)
+    print calcsimset(s1,s2)
+
+
+
+####
+# USE EDEN FOR COMPARIZON
+###
+import eden.path as ep
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+import math 
+def vectorize(a,b,v):
+    a = v.transform(a)
+    b = v.transform(b)
+    return a,b
+
+def simmean(a,b,keepdiag=True):
+    simmatrix = cosine_similarity(a,b)
+    if not keepdiag:
+        np.fill_diagonal(simmatrix,0)
+    return np.mean(simmatrix)
+
+def simset(a,b):
+    v=ep.Vectorizer()
+    a,b=vectorize(a,b,v)
+    return simmean(a,b)/math.sqrt(simmean(a,a,False)*simmean(b,b,False))
+
+s1=['asdasd','asdasd','abc','sdf','xcv','asd','adcxzx']
+s2=['asdasd','asdasd','abc','sdf','xcv']
+s3=['asdasd','cvxcvxc','werwttwe','wertwet','weryuii']
+print simset(s1,s2)
+print simset(s1,s3)
+
+
+
+
+
+
+
+
+
+
 
