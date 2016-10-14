@@ -1,8 +1,10 @@
 #!/bin/bash
 #$ -l h_vmem=6G
+#$ -M mautner@cs.uni-freiburg.de
 #echo "##################################"
 #echo "#  CHECK PATHS IN THIS FILE       "
 #echo "##################################"
+#
 CODEPATH="$PWD/scratch/nips2016/code"
 PYTHONPATH="$CODEPATH/deps/GraphLearn:$PYTHONPATH"
 PYTHONPATH="$CODEPATH/deps/EDeN:$PYTHONPATH"
