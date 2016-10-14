@@ -111,7 +111,8 @@ class Wrapper:
         
         if 'transformed_vector' in  graphmanager.__dict__:
             transformed_graph=graphmanager.transformed_vector
-        transformed_graph = self.vectorizer.transform_single(self.unwrap(graphmanager))
+        else:
+            transformed_graph = self.vectorizer.transform_single(self.unwrap(graphmanager))
         # slow so dont do it..
         # graph.score_nonlog = self.estimator.base_estimator.decision_function(transformed_graph)[0]
         if keep_vector:
