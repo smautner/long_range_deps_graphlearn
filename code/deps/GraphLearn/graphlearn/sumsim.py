@@ -70,22 +70,25 @@ def vectorize(a,b,v):
     b = v.transform(b)
     return a,b
 
-def simmean(a,b,keepdiag=True):
+def similarity_mean(a,b,keepdiag=True):
     simmatrix = cosine_similarity(a,b)
     if not keepdiag:
-        np.fill_diagonal(simmatrix,0)
+        pass
+        #np.fill_diagonal(simmatrix,0)
+    #print 'cosine sim %f \n' % np.mean(simmatrix),simmatrix
     return np.mean(simmatrix)
 
 def simset(a,b):
     v=ep.Vectorizer()
     a,b=vectorize(a,b,v)
-    return simmean(a,b)/math.sqrt(simmean(a,a,False)*simmean(b,b,False))
+    return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,False)*similarity_mean(b,b,False))
 
 s1=['asdasd','asdasd','abc','sdf','xcv','asd','adcxzx']
 s2=['asdasd','asdasd','abc','sdf','xcv']
-s3=['asdasd','cvxcvxc','werwttwe','wertwet','weryuii']
+s3=['asfasd','cvxcvxc','werwttwe','wertwet','weryuii']
 print simset(s1,s2)
 print simset(s1,s3)
+print simset(s3,s3)
 
 
 

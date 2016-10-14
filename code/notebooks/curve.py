@@ -224,8 +224,8 @@ def evaluate_point(train_a,train_b,test_a,test_b):
     res.append(  test(deepcopy(train_a),deepcopy(train_b),deepcopy(test_a),deepcopy(test_b)) )
     train_aa = fit_sample(train_a)
     train_bb = fit_sample(train_b)
-    eins=sumsim.calcsimset(deepcopy(train_aa),deepcopy(train_a))   
-    zwei=sumsim.calcsimset(deepcopy(train_bb),deepcopy(train_b)) 
+    eins=sumsim.simset(deepcopy(train_aa),deepcopy(train_a))   
+    zwei=sumsim.simset(deepcopy(train_bb),deepcopy(train_b)) 
     drei = (eins+zwei)/2.0
     res.append(  test(deepcopy(train_aa),deepcopy(train_bb),deepcopy(test_a),deepcopy(test_b)) )
     res.append(  test(deepcopy(train_a)+deepcopy(train_aa),deepcopy(train_b)+train_bb,deepcopy(test_a),deepcopy(test_b)) )
