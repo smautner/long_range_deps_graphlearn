@@ -82,14 +82,14 @@ def simset(a,b):
     v=ep.Vectorizer()
     a,b=vectorize(a,b,v)
     return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,False)*similarity_mean(b,b,False))
-
+'''
 s1=['asdasd','asdasd','abc','sdf','xcv','asd','adcxzx']
 s2=['asdasd','asdasd','abc','sdf','xcv']
 s3=['asfasd','cvxcvxc','werwttwe','wertwet','weryuii']
 print simset(s1,s2)
 print simset(s1,s3)
 print simset(s3,s3)
-
+'''
 
 
 

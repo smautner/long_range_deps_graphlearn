@@ -190,7 +190,7 @@ dataset_a='RF00005.fa'
 #dataset_a='RF01725.fa' 5 vs 162 was in the original paper 
 dataset_b='RF00162.fa'
 sizes=[7,8,9,10,11,12,13,14,15]
-sizes=[7,8]
+sizes=[10,11]
 repeats=3
 
 # calc everything
