@@ -2,9 +2,14 @@
 echo "##################################"
 echo "#  CHECK PATHS IN THIS FILE       "
 echo "##################################"
-PYTHONPATH="/home/ikea/nips2016/code/deps/GraphLearn:$PYTHONPATH"
-PYTHONPATH="/home/ikea/nips2016/code/deps/EDeN:$PYTHONPATH"
-PYTHONPATH="/home/ikea/nips2016/code/deps:$PYTHONPATH"
+
+CODEPATH="$PWD/scratch/nips2016/code"
+CODEPATH="$PWD"
+PYTHONPATH="$CODEPATH/deps/GraphLearn:$PYTHONPATH"
+PYTHONPATH="$CODEPATH/deps/EDeN:$PYTHONPATH"
+PYTHONPATH="$CODEPATH/deps:$PYTHONPATH"
+#MPLCONFIGDIR="/home/mautner/mylittlepony/matplotlib$SGE_TASK_ID/crap"
+
 echo $PYTHONPATH
 jupyter notebook  --no-browser
 
