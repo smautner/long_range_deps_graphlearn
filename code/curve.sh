@@ -6,6 +6,7 @@
 #echo "##################################"
 #
 CODEPATH="$PWD/scratch/nips2016/code"
+CODEPATH="$PWD"
 PYTHONPATH="$CODEPATH/deps/GraphLearn:$PYTHONPATH"
 PYTHONPATH="$CODEPATH/deps/EDeN:$PYTHONPATH"
 MPLCONFIGDIR="/home/mautner/mylittlepony/matplotlib$SGE_TASK_ID/crap"
@@ -14,5 +15,5 @@ MPLCONFIGDIR="/home/mautner/mylittlepony/matplotlib$SGE_TASK_ID/crap"
 export PYTHONPATH
 export CODEPATH
 echo "i hope the cpu option works :) "
-cd "$CODEPATH/notebooks"; python -m cProfile -o MYPROFILE curve.py 1
+cd "$CODEPATH/notebooks"; python curve.py 1
 

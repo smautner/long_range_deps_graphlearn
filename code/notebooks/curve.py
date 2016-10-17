@@ -202,6 +202,7 @@ def get_results():
 
 # calc for one "size", go over repeats
 def get_datapoint(size):
+    size=10                                      ########## remove this line for serious thing
     ra=[]
     rb=[]
     rab=[]
