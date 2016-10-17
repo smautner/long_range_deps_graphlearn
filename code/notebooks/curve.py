@@ -110,10 +110,10 @@ def plot(dataset, percentages, original_sample_repetitions, original_repetitions
 import random
 
 import graphlearn.abstract_graphs.RNA as rna
-from  graphlearn.feasibility import FeasibilityChecker as Checker
 from graphlearn.estimator import Wrapper as estimatorwrapper
-import graphlearn.utils.draw as draw
 from graphlearn.graphlearn import Sampler as GLS
+from  graphlearn.feasibility import FeasibilityChecker as Checker
+import graphlearn.utils.draw as draw
 import itertools
 
 
@@ -202,7 +202,6 @@ def get_results():
 
 # calc for one "size", go over repeats
 def get_datapoint(size):
-    size=10                                      ########## remove this line for serious thing
     ra=[]
     rb=[]
     rab=[]
@@ -259,24 +258,27 @@ def test(a,b,ta,tb):
     correct=eva(est,ta,tb)
     return correct/float(size_test*2) # fraction correct
     
-global similarity_scores
-similarity_scores=[]
+    
+    
+if __name__ == "__main__":
+    global similarity_scores
+    similarity_scores=[]
 
-global arguments
-import sys
-arguments=[]
-argz = make_argsarray()
-#print argz
-print len(argz)
-print sys.argv
+    global arguments
+    import sys
+    arguments=[]
+    argz = make_argsarray()
+    #print argz
+    print len(argz)
+    print sys.argv
 
 
-# subtract one because sge is shit
-job = int(sys.argv[1])-1 
-print job
-arguments=argz[job]
-r=get_results()
-plot(str(job), sizes, *r)
+    # subtract one because sge is shit
+    job = int(sys.argv[1])-1 
+    print job
+    arguments=argz[job]
+    r=get_results()
+    plot(str(job), sizes, *r)
 
 
 

@@ -36,10 +36,13 @@ def simsum(a,b,del_diag=False):
             res+=sim(ea,eb)
     return res
 
+def unpack(a,b):
+    a = [aa for x,aa in a]
+    b = [bb for x,bb in b]
+    return a,b
 import math
 def calcsimset(a,b):
-    #a = [aa for x,aa in a]
-    #b = [bb for x,bb in b]
+
     ab=simsum(a,b,False)
     aa=simsum(a,a,True) 
     bb=simsum(b,b,True)
@@ -236,7 +239,7 @@ def compdistr(a,b):
         score2=e2.predict(vec)
         scorediff = abs(score1-score2)
         scoresum+=scorediff
-        print score1,score2
+        #print score1,score2
     scoreaverage= scoresum / np.shape(data)[0]
     return scoreaverage
   
@@ -244,7 +247,10 @@ def compdistr(a,b):
 
 def score(alist,blist):
     a,b=vectorize(alist,blist)
-    return compdistr(a,b)-simset(a,b)
+    distri=compdistr(a,b)
+    similarity=simset(a,b)
+    print distri, similarity
+    return 4*distri - similarity
 
 
 
