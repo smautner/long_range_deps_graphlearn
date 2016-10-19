@@ -284,6 +284,7 @@ def fit_estimator(estimator,
                   n_jobs=-1,
                   n_iter_search=40,
                   random_state=1):
+    '''  OKOK  there is a bug in sklearn it ignores the n_jobs parameter .. so i just ignore optimization:)
     # hyperparameter optimization
     param_dist = {"n_iter": randint(5, 100),
                   "power_t": uniform(0.1),
@@ -301,11 +302,13 @@ def fit_estimator(estimator,
                                        n_jobs=n_jobs,
                                        random_state=random_state,
                                        refit=True)
+    '''
     X, y = make_data_matrix(positive_data_matrix=positive_data_matrix,
                             negative_data_matrix=negative_data_matrix,
                             target=target)
-    random_search.fit(X, y)
 
+    estimator.fit(X, y)
+    '''
     logger.debug('\nClassifier:')
     logger.debug('%s' % random_search.best_estimator_)
     logger.debug('\nPredictive performance:')
@@ -318,7 +321,8 @@ def fit_estimator(estimator,
                      (scoring, np.mean(scores), np.std(scores)))
 
     return random_search.best_estimator_
-
+    '''
+    return estimator
 
 def fit(iterable_pos, iterable_neg=None,
         vectorizer=None,

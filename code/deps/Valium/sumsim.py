@@ -123,8 +123,7 @@ class OneClassEstimator:
     there might be a bug connected to nx.digraph..
     '''
 
-    def __init__(self, nu=.5, cv=2,
-	n_jobs=-1,
+    def __init__(self, nu=.5, cv=2, n_jobs=-1,
         classifier=SGDClassifier(loss='log')):
         '''
         Parameters
@@ -166,6 +165,8 @@ class OneClassEstimator:
         '''
         # make negative set 
         data_matrix_neg = data_matrix.multiply(-1)
+
+
         return eden_fit_estimator(self.classifier, positive_data_matrix=data_matrix,
                                   negative_data_matrix=data_matrix_neg,
                                   cv=cv,
