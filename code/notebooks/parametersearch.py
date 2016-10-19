@@ -64,11 +64,15 @@ def get_data():
     return curve.get_seq_tups(fname='RF00005.fa',size=10,sizeb=50)
 
 def run_and_score(argz):
-    a,b= get_data()
-    b=fit_sample(a,arguments=argz)
-    a,b=ss.unpack(a,b)
-    print "generated_seqs %d" % len(b)
-    score = ss.score(a,b)
+    try:
+        a,b= get_data()
+        b=fit_sample(a,arguments=argz)
+        a,b=ss.unpack(a,b)
+        print "generated_seqs %d" % len(b)
+        score = ss.score(a,b)
+    except:
+        print '.'
+        return run_and_score(argz)
     return score
     
 
@@ -83,7 +87,7 @@ def zeloop():
     currenthigh=0
     while True:
         argz=rs.get_random_params()
-        res=meaning(argz,num=1)
+        res=meaning(argz,num=9)
         print res
         if currenthigh < res:
             currenthigh=res
