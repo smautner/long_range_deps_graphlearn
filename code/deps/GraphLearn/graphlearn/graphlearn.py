@@ -296,9 +296,14 @@ class Sampler(object):
         self.improving_threshold = improving_threshold
         if improving_threshold > 0:
             self.improving_threshold = int(self.improving_threshold * self.n_steps)
+
         self.improving_linear_start = improving_linear_start
         if improving_linear_start > 0:
             self.improving_linear_start = int(improving_linear_start * n_steps)
+        if self.improving_linear_start == self.improving_threshold:
+            self.improving_threshold+=1
+
+
         self.improving_penalty_per_step = (1 - accept_static_penalty) / float(self.improving_threshold - self.improving_linear_start)
 
         self.accept_static_penalty = accept_static_penalty
@@ -580,6 +585,7 @@ class Sampler(object):
             if self.improving_threshold > 0 and self.step > self.improving_linear_start:
                 penalty = ((self.step - self.improving_linear_start) * float(self.improving_penalty_per_step))
                 score_ratio = score_ratio - penalty
+
 
             elif self.improving_threshold == 0:
                 return False

@@ -7,6 +7,9 @@
 #
 CODEPATH="$PWD/scratch/nips2016/code"
 CODEPATH="$PWD"
+
+
+PYTHONPATH="/home/ikea/miniconda2/lib/python2.7/site-packages:$PYTHONPATH"
 PYTHONPATH="$CODEPATH/deps/GraphLearn:$PYTHONPATH"
 PYTHONPATH="$CODEPATH/deps/EDeN:$PYTHONPATH"
 PYTHONPATH="$CODEPATH/deps:$PYTHONPATH"
@@ -17,5 +20,5 @@ PYTHONPATH="$CODEPATH/deps:$PYTHONPATH"
 export PYTHONPATH
 export CODEPATH
 echo "i hope the cpu option works :) "
-cd "$CODEPATH/notebooks"; python curve.py 1
-
+#cd "$CODEPATH/notebooks"; python curve.py 1
+python

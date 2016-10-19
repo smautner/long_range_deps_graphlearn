@@ -1,15 +1,10 @@
 #!/bin/bash
-echo "##################################"
-echo "#  CHECK PATHS IN THIS FILE       "
-echo "##################################"
+source ./setenv.sh
 
-CODEPATH="$PWD/scratch/nips2016/code"
-CODEPATH="$PWD"
-PYTHONPATH="$CODEPATH/deps/GraphLearn:$PYTHONPATH"
-PYTHONPATH="$CODEPATH/deps/EDeN:$PYTHONPATH"
-PYTHONPATH="$CODEPATH/deps:$PYTHONPATH"
-#MPLCONFIGDIR="/home/mautner/mylittlepony/matplotlib$SGE_TASK_ID/crap"
-
-echo $PYTHONPATH
-jupyter notebook  --no-browser
+if [ ! $# -eq 1 ] 
+then
+       echo " USAGE ./start_nb.sh portnumber" 
+       exit 
+fi
+jupyter notebook  --no-browser --port $1
 

@@ -249,7 +249,7 @@ def score(alist,blist):
     a,b=vectorize(alist,blist)
     distri=compdistr(a,b)
     similarity=simset(a,b)
-    print distri, similarity
+    #print distri, similarity
     return 4*distri - similarity
 
 
@@ -258,9 +258,3 @@ def score(alist,blist):
 #v=ep.Vectorizer()
 #a,b = vectorize(s1,s3,v)
 #print compdistr(a,b)
-
-
-########3
-## todo here.. put the 2 things together, also look at the lambda
-## to have a pretty function 
-##### 
