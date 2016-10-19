@@ -57,7 +57,7 @@ def fit_sample(graphs, random_state=random.random(),arguments=defaultarg):
     return result
     
     
- import Valium.randset as rs
+import Valium.randset as rs
 import curve
 # das hier chillt in der curve rum
 def get_data():
