@@ -227,9 +227,9 @@ def compdistr(a,b):
     """
 
     
-    e1= OneClassEstimator()
+    e1= OneClassEstimator(n_jobs=1)
     e1.fit(a)
-    e2 =OneClassEstimator()
+    e2 =OneClassEstimator(n_jobs=1)
     e2.fit(b)
 
     data=vstack((a,b))

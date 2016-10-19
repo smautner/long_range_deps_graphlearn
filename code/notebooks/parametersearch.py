@@ -83,7 +83,7 @@ def zeloop():
     currenthigh=0
     while True:
         argz=rs.get_random_params()
-        res=meaning(argz,num=9)
+        res=meaning(argz,num=3)
         print res
         if currenthigh < res:
             currenthigh=res
