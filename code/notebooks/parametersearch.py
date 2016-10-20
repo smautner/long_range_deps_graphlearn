@@ -63,17 +63,18 @@ def get_data():
     return curve.get_seq_tups(fname='RF00005.fa',size=10,sizeb=50)
 
 def run_and_score(argz):
-        try:
-            a,b= get_data()
-            b=fit_sample(a,arguments=argz)
-            a,b=ss.unpack(a,b)
-            print "generated_seqs %d" % len(b)
-            score = ss.score(a,b)
-        except:
-            print '.'
-            return run_and_score(argz)
-        return score
-    
+    print  "STARTED A RUN" # THIS IS THE NU DEBUG
+    try:
+        a,b= get_data()
+        b=fit_sample(a,arguments=argz)
+        a,b=ss.unpack(a,b)
+        print "generated_seqs %d" % len(b)
+        score = ss.score(a,b)
+    except:
+        print '.'
+        return run_and_score(argz)
+    return score
+
 
 def meaning(argz,num=9):
     scores=[run_and_score(argz) for i in range(num)]
