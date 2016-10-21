@@ -59,8 +59,8 @@ def fit_sample(graphs, random_state=random.random(),arguments=defaultarg):
 import Valium.randset as rs
 import curve
 # das hier chillt in der curve rum
-def get_data():
-    return curve.get_seq_tups(fname='RF00005.fa',size=10,sizeb=50)
+def get_data(size=10):
+    return curve.get_seq_tups(fname='RF00005.fa',size=size,sizeb=50)
 
 def run_and_score(argz):
     #print  "STARTED A RUN" # THIS IS THE NU DEBUG
