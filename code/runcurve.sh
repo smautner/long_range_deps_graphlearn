@@ -1,13 +1,5 @@
 
-CODEPATH="$PWD/scratch/nips2016/code"
-PYTHONPATH="$CODEPATH/deps/GraphLearn:$PYTHONPATH"
-PYTHONPATH="$CODEPATH/deps/EDeN:$PYTHONPATH"
-MPLCONFIGDIR="/home/mautner/mylittlepony/matplotlib$SGE_TASK_ID/crap"
 
-# we need to do this becuase the cluster sucks with env vars :(
-export PYTHONPATH
-export CODEPATH
-export MPLCONFIGDIR
-
+source ./setenv.sh
 #qsub -V -t 1-72 -pe smp 6  scratch/nips2016/code/curve.sh
 qsub -V -t 1-72 scratch/nips2016/code/curve.sh

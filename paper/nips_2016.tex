@@ -96,11 +96,12 @@
 
 \begin{abstract}
 Scripts describing the generation of generic graphs based on examples
-are not abundand. An existing method is based on recombination of
-graphs based on a graph grammar, not unlike a string grammar. 
+are scarce. An existing method is based on recombination of
+graphs based on a emph{graph grammar}, not unlike a string grammar. 
 We present an extension to these grammars which takes into account
-a modified version of graphs. However, the modification needs to be
-automaticaly generateable. We explore the application of this idea
+a modified version of graphs (e.g. graph minors). However, the 
+modification is required to be automaticaly generateable. 
+We explore the application of this idea
 on RNA secondary structure graphs. 
 
 
@@ -239,7 +240,8 @@ Sequences above that threshold (marked in black) can reliably be considered
 part of the family. We observe that \textbf{y out of x} generated graphs.
 
 % eval learning curve+ edit dist
-Costa \cite{costa14} defines \emph{the constructive learning problem for finite samples} 
+Costa \cite{costa14} defines \emph{the constructive learning problem for 
+finite samples} 
 as mimicking the distribution of given graphs while producing new instances.
 We can estimate this distribution with a machine learning
 model and compare two distributions by evaluating a set of test instances

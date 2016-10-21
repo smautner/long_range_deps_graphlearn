@@ -65,7 +65,7 @@ def get_data():
 def run_and_score(argz):
     #print  "STARTED A RUN" # THIS IS THE NU DEBUG
     try:
-        a,b= get_data()
+        a,b= get_data(size=50)
         b=fit_sample(a,arguments=argz)
         a,b=ss.unpack(a,b)
         print "generated_seqs %d" % len(b)

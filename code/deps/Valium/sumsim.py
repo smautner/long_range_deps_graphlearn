@@ -251,7 +251,7 @@ def score(alist,blist):
     distri=compdistr(a,b)
     similarity=simset(a,b)
     #print distri, similarity
-    return 4*distri - similarity
+    return distri - similarity
 
 
 
