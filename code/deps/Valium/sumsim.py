@@ -77,7 +77,7 @@ def vectorize(a,b):
     return a,b
 
 def similarity_mean(a,b,keepdiag=True):
-    simmatrix = cosine_similarity(a,b)
+    simmatrix = [4]#cosine_similarity(a,b)
     if not keepdiag:
         pass
         #np.fill_diagonal(simmatrix,0)
@@ -93,9 +93,9 @@ s1=['asdasd','asdasd','abc','sdf','xcv','asd','adcxzx']
 s2=['asdasd','asdasd','abc','sdf','xcv']
 s3=['asfasd','cvxcvxc','werwttwe','wertwet','weryuii']
 
-print simset(s1,s2)
-print simset(s1,s3)
-print simset(s3,s3)
+print 'asd',simset(s1,s2)
+print 'asd',simset(s1,s3)
+print 'asd',simset(s3,s3)
 '''
 
 

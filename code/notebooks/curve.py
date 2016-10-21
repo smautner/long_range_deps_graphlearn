@@ -25,7 +25,7 @@ GET RNA DATA
 '''
 from eden.converter.fasta import fasta_to_sequence
 import itertools
-from graphlearn import sumsim
+from Valium import sumsim
 
 def rfam_uri(family_id):
     return 'http://rfam.xfam.org/family/%s/alignment?acc=%s&format=fastau&download=0'%(family_id,family_id)

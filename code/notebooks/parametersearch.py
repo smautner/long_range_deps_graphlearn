@@ -84,7 +84,7 @@ def meaning(argz,num=9):
     
     
 def zeloop():
-    currenthigh=0
+    currenthigh=-2
     while True:
         argz=rs.get_random_params()
         res=meaning(argz,num=9)
