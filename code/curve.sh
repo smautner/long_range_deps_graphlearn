@@ -1,24 +1,13 @@
 #!/bin/bash
+#$ -cwd
+#$ -pe smp 2
 #$ -l h_vmem=6G
 #$ -M mautner@cs.uni-freiburg.de
+
+#$ -o $HOME/JOBZ/$JOB_NAME.$JOB_ID/out/$TASK_ID.o
+#$ -e $HOME/JOBZ/$JOB_NAME.$JOB_ID/err/$TASK_ID.e
+
 #echo "##################################"
 #echo "#  CHECK PATHS IN THIS FILE       "
 #echo "##################################"
-#
-CODEPATH="$PWD/scratch/nips2016/code"
-CODEPATH="$PWD"
-
-
-PYTHONPATH="/home/ikea/miniconda2/lib/python2.7/site-packages:$PYTHONPATH"
-PYTHONPATH="$CODEPATH/deps/GraphLearn:$PYTHONPATH"
-PYTHONPATH="$CODEPATH/deps/EDeN:$PYTHONPATH"
-PYTHONPATH="$CODEPATH/deps:$PYTHONPATH"
-#MPLCONFIGDIR="/home/mautner/mylittlepony/matplotlib$SGE_TASK_ID/crap"
-
-# curve.py got its size=10 parameter fixed so remove that for serious stuff
-# we need to do this becuase the cluster sucks with env vars :(
-export PYTHONPATH
-export CODEPATH
-echo "i hope the cpu option works :) "
-#cd "$CODEPATH/notebooks"; python curve.py 1
-python
+cd "$CODEPATH/notebooks"; python curve.py $TASK_ID

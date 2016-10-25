@@ -120,8 +120,18 @@ import itertools
 
 
 def make_argsarray():
-    args=[]
-    
+    args=[
+   {'mininterfacecount': 2, 'burnin': 13, 'acc_min_sim': 0.24449402485485644, 'imp_lin_start': 0.19892265815047983, 'maxsizediff': 17, 'imp_thresh': 0.32120431812249317, 'mincipcount': 2, 'core_choice': False, 'n_samples': 6, 'n_steps': 70, 'quick_skip': True, 'SCORE':-0.703362611732},
+   {'mininterfacecount': 1, 'burnin': 11, 'acc_min_sim': 0.35723373060996666, 'imp_lin_start': 0.11639352115717616, 'maxsizediff': 12, 'imp_thresh': 0.34966775094400682, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 25, 'quick_skip': True, 'SCORE':-0.699739011906},
+   {'mininterfacecount': 2, 'burnin': 2, 'acc_min_sim': 0.22989399280978964, 'imp_lin_start': 0.0077498579055246264, 'maxsizediff': 12, 'imp_thresh': 0.97485773117432351, 'mincipcount': 2, 'core_choice': True, 'n_samples': 3, 'n_steps': 86, 'quick_skip': True, 'SCORE':-0.698742678067},
+   {'mininterfacecount': 2, 'burnin': 10, 'acc_min_sim': 0.33286327128488141, 'imp_lin_start': 0.24708994438513876, 'maxsizediff': 6, 'imp_thresh': 0.79082744383037717, 'mincipcount': 2, 'core_choice': True, 'n_samples': 3, 'n_steps': 97, 'quick_skip': False, 'SCORE':-0.696588858544},
+   {'mininterfacecount': 1, 'burnin': 3, 'acc_min_sim': 0.57797674073374372, 'imp_lin_start': 0.086316471690329077, 'maxsizediff': 14, 'imp_thresh': 0.54820600763755556, 'mincipcount': 2, 'core_choice': False, 'n_samples': 3, 'n_steps': 33, 'quick_skip': False, 'SCORE':-0.696254759283},
+   {'mininterfacecount': 1, 'burnin': 8, 'acc_min_sim': 0.33507959375875951, 'imp_lin_start': 0.3316248479960533, 'maxsizediff': 10, 'imp_thresh': 0.65922778063175635, 'mincipcount': 2, 'core_choice': False, 'n_samples': 7, 'n_steps': 99, 'quick_skip': False, 'SCORE':-0.695379434783},
+   {'mininterfacecount': 2, 'burnin': 1, 'acc_min_sim': 0.73917049113151512, 'imp_lin_start': 0.09306413705722727, 'maxsizediff': 14, 'imp_thresh': 0.62998549481543387, 'mincipcount': 1, 'core_choice': False, 'n_samples': 2, 'n_steps': 73, 'quick_skip': True, 'SCORE':-0.693406445222},
+   {'mininterfacecount': 2, 'burnin': 5, 'acc_min_sim': 0.4486388144723355, 'imp_lin_start': 0.09374179056766796, 'maxsizediff': 19, 'imp_thresh': 0.24993359270552518, 'mincipcount': 2, 'core_choice': True, 'n_samples': 7, 'n_steps': 99, 'quick_skip': False, 'SCORE':-0.690620968873},
+   {'mininterfacecount': 2, 'burnin': 11, 'acc_min_sim': 0.59318328541230492, 'imp_lin_start': 0.1842925803111628, 'maxsizediff': 18, 'imp_thresh': 0.79905439891716812, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 49, 'quick_skip': False, 'SCORE':-0.68998713873},
+   {'mininterfacecount': 1, 'burnin': 8, 'acc_min_sim': 0.62734080199879139, 'imp_lin_start': 0.10469662908481758, 'maxsizediff': 7, 'imp_thresh': 0.11177296372179102, 'mincipcount': 2, 'core_choice': False, 'n_samples': 5, 'n_steps': 91, 'quick_skip': True, 'SCORE':-0.688879734274}] 
+    '''
     for improving_threshold in [ .3,.4,.5,.6]:
         for imp_lin_start in [.1,.2]:
             for max_size_diff in [10,15,20]:
@@ -134,6 +144,7 @@ def make_argsarray():
                         argz['maxsizediff']=max_size_diff
                         argz['acc_min_sim']=acc_min_sim
                         args.append(argz)
+                        '''
     return args
     
 
