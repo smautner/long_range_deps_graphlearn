@@ -4,8 +4,8 @@
 #$ -l h_vmem=6G
 #$ -M mautner@cs.uni-freiburg.de
 
-#$ -o $HOME/JOBZ/$JOB_NAME.$JOB_ID/out/$TASK_ID.o
-#$ -e $HOME/JOBZ/$JOB_NAME.$JOB_ID/err/$TASK_ID.e
+#$ -o /home/mautner/JOBZ/$JOB_NAME.$JOB_ID/out/$TASK_ID.o
+#$ -e /home/mautner/JOBZ/$JOB_NAME.$JOB_ID/err/$TASK_ID.e
 
 mkdir $HOME/JOBZ/$JOB_NAME.$JOB_ID/out
 mkdir $HOME/JOBZ/$JOB_NAME.$JOB_ID/err
