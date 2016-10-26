@@ -95,8 +95,10 @@
 \maketitle
 
 \begin{abstract}
-Scripts describing the generation of generic graphs based on examples
-are scarce. An existing method is based on recombination of
+%Scripts describing the generation of generic graphs based on examples
+%are scarce.
+On the learned generation of generic graphs based on examples.
+An existing method is recombining
 graphs based on a emph{graph grammar}, not unlike a string grammar. 
 We present an extension to these grammars which takes into account
 a modified version of graphs (e.g. graph minors). However, the 
@@ -124,22 +126,25 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tempus nunc temp
 \section{Method}
 Previously Costa \cite{costa14} introduced a method
 to construct novel graphs according to a distribution, which is given by
-examples. Graphs are vectorized with a \emph{decomposition kernel}
+examples. Graphs are vectorized by a \emph{decomposition kernel}
 to train a machine learning model, e.g. an SVM.
 Fragments of the graphs are collected in 
 a \emph{grammar} (analogous to a string grammar) to alter the initial
-set of graphs incrementally. Such changes to a graph are evaluated with the model. 
+set of graphs incrementally. Such changes to a graph are evaluated with the
+model. 
 We present a method to increase the flexibility of the graph grammar.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CONTINUE THE WRITING HERE! 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \textbf{Modification to the grammar.}
 Inplace of simple CIPs as used previously,
-We use modify CIPs that consider contracted versions
+We use modified CIPs that consider contracted versions
 of the original graphs. We obtain a contracted graph $G'$ by contracting edges
-in $G$. After a contraction, the set of contracted vertices of the 
+in $G$. The set of contracted vertices of a
 created vertex is accessible with the $contracted$ function.
-We extract $C_{R}^v(G')$ and $I_{R,T}^v(G')$ as usual, except that we use $G'$. 
+The functions for extracting core and interface graphs, 
+$C_{R}^v(G')$ and $I_{R,T}^v(G')$, are unaltered except that we apply them
+on $G'$ instead of $G$. 
 The core graph $C_{R}^v(G',G)$ is induced by the nodes 
 $\bigcup\limits_{u \in C_R^v(G')} contracted(u)$.
 The new interface graph $I_{R,B}^v(G',G)$ is then obtained by the nodes 
@@ -265,20 +270,6 @@ evaluation. Its drawback is the reliance on the ability to
 generate a contraction. In some domains this contraction is 
 obvious as in chemical compounds cycles or chargemaps are good candidates.
 For the general case the contraction can be learned.
-
-\section{todo}
-ok so there is nthis new experiment idea which plays nice with 
-the formula that fabrizio wrote for the problem definition:
-same distribution but different instances- should be learned. 
-use the learning curves to show that original and sample are 
-similar, then use average edit distance to shot that i accieved that 
-with different instances :) 
-
-draw learning curve!
-
-do this edit distance kernrel thing
-
-okok next?
 
 \bibliography{mybib}
 
