@@ -280,13 +280,13 @@ if __name__ == "__main__":
     arguments=[]
     argz = make_argsarray()
     #print argz
-    print len(argz)
+    print 'len argz',len(argz)
     print sys.argv
 
 
     # subtract one because sge is shit
     job = int(sys.argv[1])-1 
-    print job
+    print 'jobid:',job
     arguments=argz[job]
     r=get_results()
     plot(str(job), sizes, *r)

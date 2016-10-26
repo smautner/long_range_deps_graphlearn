@@ -3,8 +3,8 @@
 #$ -pe smp 2
 #$ -l h_vmem=6G
 #$ -M mautner@cs.uni-freiburg.de
-#$ -o /home/mautner/JOBZ/$JOB_NAME.$JOB_ID_o_$TASK_ID.o
-#$ -e /home/mautner/JOBZ/$JOB_NAME.$JOB_ID_e_$TASK_ID.e
+#$ -o /home/mautner/JOBZ/curve_o/$JOB_NAME.$JOB_ID_o_$TASK_ID
+#$ -e /home/mautner/JOBZ/curve_e/$JOB_NAME.$JOB_ID_e_$TASK_ID
 
 
 #echo "##################################"
