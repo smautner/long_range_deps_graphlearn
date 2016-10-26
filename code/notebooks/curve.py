@@ -154,28 +154,30 @@ def fit_sample(graphs, random_state=random.random()):
     arguments are generated above Oo
     '''
     global arguments
+
+
     graphs = list(graphs)
-    estimator=estimatorwrapper( nu=.5, cv=2, n_jobs=1)
+    estimator=estimatorwrapper( nu=.5, cv=2, n_jobs=NJOBS)
     sampler=rna.AbstractSampler(radius_list=[0,1],
-                                thickness_list=[2], 
-                                min_cip_count=1, 
-                                min_interface_count=2, 
+                                thickness_list=[2],
+                                min_cip_count=arguments['mincipcount'],
+                                min_interface_count=arguments['mininterfacecount'],
                                 preprocessor=rna.PreProcessor(base_thickness_list=[1],
-                                    ignore_inserts=True), 
+                                    ignore_inserts=True),
                                 postprocessor=rna.PostProcessor(),
                                 estimator=estimator
                                 #feasibility_checker=feasibility
                                )
-    sampler.fit(graphs,grammar_n_jobs=1,grammar_batch_size=1)
+    sampler.fit(graphs,grammar_n_jobs=NJOBS,grammar_batch_size=1)
     graphs = [ b for a ,b in graphs  ]
     graphs = sampler.sample(graphs,
-                            n_samples=3,
+                            n_samples=arguments['n_samples'],
                             batch_size=1,
-                            n_steps=50,
-                            n_jobs=1,
-                            quick_skip_orig_cip=True,
-                            probabilistic_core_choice=True,
-                            burnin=10,
+                            n_steps=arguments['n_steps'],
+                            n_jobs=NJOBS,
+                            quick_skip_orig_cip=arguments['quick_skip'],
+                            probabilistic_core_choice=arguments['core_choice'],
+                            burnin=arguments['burnin'],
                             improving_threshold=arguments['imp_thresh'],
                             improving_linear_start=arguments['imp_lin_start'],
                             max_size_diff=arguments['maxsizediff'],
@@ -190,6 +192,9 @@ def fit_sample(graphs, random_state=random.random()):
         result+=graphlist
     # note that this is a list [('',sequ),..]
     return result
+
+
+
 
 
 
