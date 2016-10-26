@@ -99,10 +99,10 @@
 %are scarce.
 On the learned generation of generic graphs based on examples.
 An existing method is recombining
-graphs based on a emph{graph grammar}, not unlike a string grammar. 
+graphs based on a \emph{graph grammar}, not unlike a string grammar. 
 We present an extension to these grammars which takes into account
 a modified version of graphs (e.g. graph minors). However, the 
-modification is required to be automaticaly generateable. 
+modification is required to be automatically generate. 
 We explore the application of this idea
 on RNA secondary structure graphs. 
 
@@ -121,8 +121,6 @@ on RNA secondary structure graphs.
       \label{nazis}
 \end{figure}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tempus nunc tempus, pretium leo sed, blandit ante. Nulla sit amet consectetur nunc. Curabitur dictum, risus in eleifend tincidunt, ipsum libero dapibus magna, eu lacinia purus ligula ut lorem. Sed vel eleifend massa, eget tincidunt erat. Nulla vel semper ipsum, quis tincidunt dolor. Duis convallis diam at auctor laoreet. Maecenas at lorem egestas, mollis felis sit amet, sagittis est. Sed eget lorem ut sapien porttitor malesuada. Fusce vehicula, nunc sit amet auctor ultrices, odio ligula gravida enim, sed bibendum risus quam sit amet justo. Donec eget mauris at tortor iaculis finibus. Suspendisse sollicitudin tellus quam, eget aliquam ipsum mollis vitae. Morbi et hendrerit eros, ut consequat justo. Ut blandit lobortis sem. Donec sem felis, scelerisque tincidunt nibh sit amet, eleifend consectetur magna. Nunc ultricies gravida commodo. Morbi vestibulum tellus nec turpis imperdiet tempor
-
 \section{Method}
 Previously Costa \cite{costa14} introduced a method
 to construct novel graphs according to a distribution, which is given by
@@ -137,7 +135,7 @@ We present a method to increase the flexibility of the graph grammar.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \textbf{Modification to the grammar.}
-Inplace of simple CIPs as used previously,
+In place of simple CIPs as used previously,
 We use modified CIPs that consider contracted versions
 of the original graphs. We obtain a contracted graph $G'$ by contracting edges
 in $G$. The set of contracted vertices of a
@@ -184,11 +182,11 @@ Edge contraction is one way to obtain a contraction graph.
 One might also contract nodes that are not connected by an edge.
 We did so with multi-loop nodes except stem nucleotides.
 This contraction model however will raise the problem 
-of two adjacend stems connected to a multiloop being
+of two adjacent stems connected to a multi-loop being
 indistinguishable from one stem being connected.
 this may be resolved by adding an additional 'fake' vertex 
-between the stems. another proglem with 
-this case is, that the order of the stems would normaly get lost.
+between the stems. another problem with 
+this case is, that the order of the stems would normally get lost.
 Since the graph representing the molecule, is directed via 
 the backbone one is able to specify an order on the
 parts of loops that connect stems.
@@ -198,7 +196,7 @@ the grammar may contain directed graphs. This is implemented by extracting
 CIPs as if undirected and creating the grammar as usual.
 % need to be able to recalculate abstractions
 A constraint to the contraction is that we need to be able to 
-generate it algorithmicaly. In the sampling phase we recalculate 
+generate it algorithmically. In the sampling phase we recalculate 
 the contraction after changes to the underlaying graph.
 
 
@@ -211,8 +209,7 @@ the sequence forms a \emph{structure}.
 RNAs are grouped into functional families whose classification
 is a problem of biology. \emph{Infernal}\cite{infernal} can classify and 
 create members of these families using covariance models.
-Infernal gives us a domain specific way to evaluat
-okok next?e
+Infernal gives us a domain specific way to evaluate
 our Method for the generation of new graphs. 
 
 % choose data this way
@@ -228,7 +225,7 @@ c) similar length, because classification should no be trivial.
 We evaluated our results on secondary RNA structure graphs, where each 
 nucleotide is a vertex. The contracted graphs are obtained by 
 contracting vertices that belong to the same structural element,
-e.g. adjacend stem vertices are contracted into a single vertex.
+e.g. adjacent stem vertices are contracted into a single vertex.
 Secondary structures are obtained by \emph{muscle}-aligning \cite{muscle} with 
 the four closest neighbors by sequence and folding with \emph{RNAalifold}
 \cite{rnaalifold}.  For RNA sequences, the direction in which a sequence
@@ -240,7 +237,7 @@ as adapt the model to the directed biological reality.
 We evaluate our generated sequences against the Infernal model.
 The Infernal model is human optimized and thus highly reliable.
  \textbf{INFERNALEVAL} shows the average bit-score of generated graphs
-and the size of the training set. Each family has its own quality theshold.
+and the size of the training set. Each family has its own quality threshold.
 Sequences above that threshold (marked in black) can reliably be considered
 part of the family. We observe that \textbf{y out of x} generated graphs.
 
@@ -250,7 +247,7 @@ finite samples}
 as mimicking the distribution of given graphs while producing new instances.
 We can estimate this distribution with a machine learning
 model and compare two distributions by evaluating a set of test instances
-on the models. We can also meassure how different generated sequences
+on the models. We can also measure how different generated sequences
 are by comparing the edit distance.
 \textbf{SOMEGRAPHZ} shows the learning curves for the original set
 of graphs and the generated set. Notice, that they are very similar.
@@ -265,10 +262,10 @@ graphs.
 
 \section{Discussion} 
 We have compared the algorithm to its predecessor and shown
-that its result hold up in a state of the art, domain speciffic
+that its result hold up in a state of the art, domain specific
 evaluation. Its drawback is the reliance on the ability to 
 generate a contraction. In some domains this contraction is 
-obvious as in chemical compounds cycles or chargemaps are good candidates.
+obvious as in chemical compounds cycles or charge maps are good candidates.
 For the general case the contraction can be learned.
 
 \bibliography{mybib}
