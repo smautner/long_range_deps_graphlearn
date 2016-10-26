@@ -10,4 +10,4 @@
 #echo "##################################"
 #echo "#  CHECK PATHS IN THIS FILE       "
 #echo "##################################"
-cd "notebooks"; python curve.py $SGE_TASK_ID
+cd "notebooks"; python -u curve.py $SGE_TASK_ID

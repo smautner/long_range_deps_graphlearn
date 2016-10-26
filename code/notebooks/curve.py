@@ -206,8 +206,9 @@ dataset_a='RF00005.fa'
 #dataset_a='RF01725.fa' 5 vs 162 was in the original paper 
 dataset_b='RF00162.fa'
 sizes=[7,8,9,10,11,12,13,14,15]
-sizes=[10,11]
-repeats=3
+sizes=range(20,55,5)
+#sizes=[10,11]
+repeats=5
 
 # calc everything
 def get_results():
@@ -224,8 +225,10 @@ def get_datapoint(size):
     similarities=[]
     global similarity_scores
     for rep in range(repeats):
+
         train_a,test_a = get_seq_tups(dataset_a,size,size_test)
         train_b,test_b = get_seq_tups(dataset_b,size,size_test)
+
         a,b,ab,similarity = evaluate_point(train_a,train_b,test_a,test_b)
         ra.append(a)
         rab.append(ab)
@@ -235,11 +238,22 @@ def get_datapoint(size):
     return ra,rb,rab
 
 
+def get_trainthings(train_set):
+    try:
+        res=fit_sample(train_set)
+        if len(res)<3:
+            raise ValueError('wtf')
+    except:
+        print '.',
+        res=get_trainthings(train_set)
+    print 'k',
+    return res
+
 def evaluate_point(train_a,train_b,test_a,test_b):
     res=[]
     res.append(  test(deepcopy(train_a),deepcopy(train_b),deepcopy(test_a),deepcopy(test_b)) )
-    train_aa = fit_sample(train_a)
-    train_bb = fit_sample(train_b)
+    train_aa = get_trainthings(train_a)
+    train_bb = get_trainthings(train_b)
     eins=sumsim.simset(deepcopy(train_aa),deepcopy(train_a))   
     zwei=sumsim.simset(deepcopy(train_bb),deepcopy(train_b)) 
     drei = (eins+zwei)/2.0
