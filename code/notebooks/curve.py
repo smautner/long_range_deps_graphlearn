@@ -226,10 +226,8 @@ def get_datapoint(size):
     global similarity_scores
     for rep in range(repeats):
 
-        train_a,test_a = get_seq_tups(dataset_a,size,size_test)
-        train_b,test_b = get_seq_tups(dataset_b,size,size_test)
 
-        a,b,ab,similarity = evaluate_point(train_a,train_b,test_a,test_b)
+        a,b,ab,similarity = evaluate_point(size)
         ra.append(a)
         rab.append(ab)
         rb.append(b)
@@ -238,23 +236,30 @@ def get_datapoint(size):
     return ra,rb,rab
 
 
-def get_trainthings(train_set):
+def get_trainthings(size,dataset):
     try:
-        res=fit_sample(train_set)
+
+        train,test = get_seq_tups(dataset,size,size_test)
+        res=fit_sample(deepcopy(train))
         if len(res)<3:
             raise ValueError('wtf')
     except:
         print '.',
-        res=get_trainthings(train_set)
+        return get_trainthings(size,dataset)
     print 'k',
-    return res
+    return (res,train,test)
 
-def evaluate_point(train_a,train_b,test_a,test_b):
+def evaluate_point(size):
     res=[]
+
+
+
+    train_aa,train_a,test_a = get_trainthings(size,dataset_a)
+    train_bb,train_b,test_b = get_trainthings(size,dataset_b)
+
+
     res.append(  test(deepcopy(train_a),deepcopy(train_b),deepcopy(test_a),deepcopy(test_b)) )
-    train_aa = get_trainthings(train_a)
-    train_bb = get_trainthings(train_b)
-    eins=sumsim.simset(deepcopy(train_aa),deepcopy(train_a))   
+    eins=sumsim.simset(deepcopy(train_aa),deepcopy(train_a))
     zwei=sumsim.simset(deepcopy(train_bb),deepcopy(train_b)) 
     drei = (eins+zwei)/2.0
     res.append(  test(deepcopy(train_aa),deepcopy(train_bb),deepcopy(test_a),deepcopy(test_b)) )
