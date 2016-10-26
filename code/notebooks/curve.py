@@ -154,7 +154,7 @@ def fit_sample(graphs, random_state=random.random()):
     arguments are generated above Oo
     '''
     global arguments
-
+    NJOBS=1
 
     graphs = list(graphs)
     estimator=estimatorwrapper( nu=.5, cv=2, n_jobs=NJOBS)
