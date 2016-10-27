@@ -12,6 +12,10 @@
 % to compile a camera-ready version, add the [final] option, e.g.:
 % \usepackage[final]{nips_2016}
 
+
+\usepackage[english, status=draft]{fixme} % these 2 make fixme comments :) 
+\fxusetheme{color}                        %
+
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
 \usepackage{hyperref}       % hyperlinks
@@ -97,14 +101,23 @@
 \begin{abstract}
 %Scripts describing the generation of generic graphs based on examples
 %are scarce.
-On the learned generation of generic graphs based on examples.
-An existing method is recombining
-graphs based on a \emph{graph grammar}, not unlike a string grammar. 
-We present an extension to these grammars which takes into account
-a modified version of graphs (e.g. graph minors). However, the 
-modification is required to be automatically generate. 
+ 
+Graphs are flexible data structures whose generation 
+is a mostly unexplored problem. As discriminative systems for graphs
+exist, it is feasible to direct a generative process.
+An existing method is implementing Markov Chain Monte Carlo 
+sampling which is altering graphs incrementally.
+Alteration is done with a \emph{graph grammar}, a collection
+of sub graphs, grouped by exchangeability.
+
+\fxwarning{so the abstract was rewritten, i made sure to explain the contraction}
+By contracting edges in a graph i.e. merging adjacent vertices,
+we obtain a more abstract view on a graph. 
+We use this abstraction to overcome the shortcomings of the original 
+grammar.
+However, the modification is required to be automatically generate. 
 We explore the application of this idea
-on RNA secondary structure graphs. 
+on graphs representing RNA secondary structure. 
 
 
 
@@ -132,11 +145,22 @@ set of graphs incrementally. Such changes to a graph are evaluated with the
 model. 
 We present a method to increase the flexibility of the graph grammar.
 
+\subsection{Previous grammar and definitions}
 
+The grammar consists of sets of interchangeable graph fragments.
+We call these fragments core interface pairs(CIPs) because 
+they consist of a core part and an interface part.
+In terms of a string grammar core and interface are imaginable 
+as a production: $iiiCCCiii <-> iiiCCCCiii$. 
+
+If two interfaces are isomorphic, we can exchange the core parts
+
+
+\subsection{Contribution}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \textbf{Modification to the grammar.}
 In place of simple CIPs as used previously,
-We use modified CIPs that consider contracted versions
+we use modified CIPs that consider contracted versions
 of the original graphs. We obtain a contracted graph $G'$ by contracting edges
 in $G$. The set of contracted vertices of a
 created vertex is accessible with the $contracted$ function.
@@ -148,16 +172,18 @@ $\bigcup\limits_{u \in C_R^v(G')} contracted(u)$.
 The new interface graph $I_{R,B}^v(G',G)$ is then obtained by the nodes 
 $\{ w | d(w,v) \leq B \wedge v\in C_R^v(G',G) \wedge w \in G \wedge w 
 \notin C_R^v(G',G) \}$.  $B$ is the thickness of the base graph. 
+\fxwarning{say these formulas first in words}
 At this point we can construct a CIP from $C_R^v(G',G)$ and $I_{R,B}^v(G',G)$. 
 To find a congruent CIP, we previously compared the hashed $I_{R,T}^v(G)$ 
 graphs. By hashing the hashes of $I_{R,T}^v(G')$ and $I_{R,B}^v(G,G')$ we 
 increase the specificity of this comparison. The vertices in $I_{R,B}^v(G,G')$ 
 might have been relabeled to represent a concept of its $contracted$ set. In 
-our test, we will contract according to the 
+\fxwarning{usage of CONCEPT  >:(}
+our application case, we will contract according to the 
 secondary RNA structure and label the resulting vertex accordingly e.g.
 'Hairpin loop'. This way we encode far reaching and abstract 
+\fxwarning{explain more the ENCODE part}
 information about the surrounding vertices in our CIP interface matching.
-
 
 
 % graph contration, interface trick
@@ -173,11 +199,14 @@ $\forall u \in I_{R,T}^v(G) :
 to the closest core node is equal for every
 $u$ and $\phi(u)$.
 It is easy to see the benefit of this extension.
+\fxwarning{ a and b example sounds to casual i think}
 imagine two vertices labeled 'a' and 'b' connected by an edge. Let this graph
 be the sole interface graph. With the new model we can distinguish 
 between 'a' being closer to the core and 'b' being closer. 
 
 \textbf{Extending what we can contract.}
+\fxwarning{all of this is questionable. describe problem with unconnected 
+nodes, mv rest to eval }
 Edge contraction is one way to obtain a contraction graph. 
 One might also contract nodes that are not connected by an edge.
 We did so with multi-loop nodes except stem nucleotides.
@@ -191,17 +220,20 @@ Since the graph representing the molecule, is directed via
 the backbone one is able to specify an order on the
 parts of loops that connect stems.
 
-Although the underlaying EDeN kernel does not support directed graphs,
+\fxwarning{remove this eden part.. what about the directedness? look up what 
+i did! and then explain it}
+Although the underlying EDeN kernel does not support directed graphs,
 the grammar may contain directed graphs. This is implemented by extracting
 CIPs as if undirected and creating the grammar as usual.
 % need to be able to recalculate abstractions
 A constraint to the contraction is that we need to be able to 
 generate it algorithmically. In the sampling phase we recalculate 
-the contraction after changes to the underlaying graph.
+the contraction after changes to the underlying graph.
 
 
 \section{Evaluation}
 % Infernal is the way to go
+\fxwarning{explain the secondary structure}
 RNA sequences are sequences over the four nucleotides A,G,U and C.
 They have a 5' and a 3' end, meaning that the direction matters.
 Nucleotides in the sequences bind to other nucleotides so
@@ -221,12 +253,13 @@ structure, many sequences fold into structures that exhibit a large number of
 unpaired bases which would result in a very simple contracted graph
 c) similar length, because classification should no be trivial.
 
-% this is how we prepare the graphz
-We evaluated our results on secondary RNA structure graphs, where each 
+% this is how we prepare the graphs
+We evaluated our results on secondary RNA structure graphs, were each 
 nucleotide is a vertex. The contracted graphs are obtained by 
 contracting vertices that belong to the same structural element,
 e.g. adjacent stem vertices are contracted into a single vertex.
 Secondary structures are obtained by \emph{muscle}-aligning \cite{muscle} with 
+\fxwarning{"muscle-aligning" is terrible. explain why we are doing it this way }
 the four closest neighbors by sequence and folding with \emph{RNAalifold}
 \cite{rnaalifold}.  For RNA sequences, the direction in which a sequence
 is read is important.  Working with directed graphs in the grammar
@@ -235,7 +268,7 @@ as adapt the model to the directed biological reality.
 
 % eval against Infernal
 We evaluate our generated sequences against the Infernal model.
-The Infernal model is human optimized and thus highly reliable.
+The Infernal model is hand curated and thus highly reliable.
  \textbf{INFERNALEVAL} shows the average bit-score of generated graphs
 and the size of the training set. Each family has its own quality threshold.
 Sequences above that threshold (marked in black) can reliably be considered
