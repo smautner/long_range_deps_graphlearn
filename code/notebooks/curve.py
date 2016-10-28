@@ -97,7 +97,7 @@ def plot(dataset, percentages, original_sample_repetitions, original_repetitions
     plt.plot(percentages,similarity_scores, 'ro')
     print similarity_scores 
     plt.xlim(percentages[0]-.05,percentages[-1]+.05)
-    plt.xlim(5,20)
+    plt.xlim(17,52)
     plt.ylim(0.0,1.005)
     plt.title(dataset+'\n',fontsize=20)
     plt.legend(loc='lower right',fontsize=18)
