@@ -41,8 +41,8 @@
 % https://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_bibliographystyle
 %https://de.sharelatex.com/learn/Bibtex_bibliography_styles
 %\bibliographystyle{abbrvnat} 
-\bibliographystyle{unsrt} 
-%\bibliographystyle{plainnat}
+%\bibliographystyle{unsrt} 
+\bibliographystyle{plainnat}
 
 
 
@@ -65,18 +65,18 @@
 % author name.
 
 \author{
+  Fabrizio Costa \\
+  Department of Computer Science\\
+  Albert-Ludwigs University Freiburg\\
+  Freiburg, 79085  \\
+  \texttt{costa@informatik.uni-freiburg.de} \\
+  \And
   Stefan Mautner\\
   Department of Computer Science\\
   Albert-Ludwigs University Freiburg\\
   Freiburg, 79085  \\
   \texttt{mautner@cs.uni-freiburg.de} \\
   %% examples of more authors
-  \And
-  Fabrizio Costa \\
-  Department of Computer Science\\
-  Albert-Ludwigs University Freiburg\\
-  Freiburg, 79085  \\
-  \texttt{costa@informatik.uni-freiburg.de} \\
   %%\AND
   %% Coauthor \\
   %% Affiliation \\
@@ -113,10 +113,10 @@ is to synthesize novel molecules with a desired bioactivity. Unfortunately
 most molecules exhibit complex dependencies between their different
 constituent parts. RNA polymers for example self interact, with nucleotides
 forming bounds that can typically span the entire length of the sequence.
-Modeling in an efficient way long range dependencies is a particularly
-difficult problem. Here we propose a solution, based on graph contractions,
+Since modeling long range dependencies is a
+difficult problem, we propose an efficient solution, based on graph contractions,
 that builds on top of a recent constructive approach and we show encouraging
-results on a RNA sequence synthesis task.
+experimental results on a RNA sequence synthesis task.
 
 % Graphs are flexible data structures whose generation 
 % is a mostly unexplored problem. As discriminative systems for graphs
@@ -141,6 +141,58 @@ results on a RNA sequence synthesis task.
 \end{abstract}
 \section{Introduction}
 
+Constructive machine learning addresses the problem of automatically 'build'
+or 'design' artifacts given a representative set of examples. The task becomes
+particularly challenging in a discrete setting when the solution space is
+exponential and ''direct enumeration'' approaches become unfeasible. In
+\cite{costa16} the problem of generating elements in a structured domain was
+framed as the equivalent problem of sampling from a corresponding underlying
+probability distribution defined over a (learned) class of structures.
+Approaches like ''rejection sampling'' where samples are generated without
+enforcing constraints but are then rejected if violations in the probability
+distribution occur are inefficient as the sampling space almost never yields
+valid samples. Instead \cite{costa16} proposes to use a Metropolis Hastings
+(MH) Markov Chain Monte Carlo (MCMC) method, where the problem of sampling is
+reduced to the easier task of 'simulation', provided that one can build an
+ergodic Markov chain with the desired distribution as its equilibrium
+distribution. They define a context sensitive graph grammar to inform the MH
+proposal distribution and use a probability density estimator based on a graph
+kernel approach to define the MH acceptance procedure. The authors acknowledge
+that a grammar approach  is not sufficient to solve the constructive machine
+learning problem. In fact, the number of proposed graphs grows exponentially
+with the number of production rules in the grammar. In order to select only
+the most promising candidates one needs to equip the grammar with a
+probabilistic notion. However any procedure to estimate the probabilities of
+such locally context-sensitive grammar needs to trade off the number of
+contextual rules with the expressiveness of the grammar. The larger the
+context, the (exponentially) larger the number of possible cases that need to
+be observed for a reliable estimate, which directly implies an exponentially
+large number of training examples. For this reason global or just long range
+constraints cannot be effectively modeled which in turn implies a language
+that can express non- viable instances. On the other hand, a probability
+density estimator based on a graph kernel approach cannot be used in a
+generative mode, i.e. it cannot be used to actually construct graphs. The
+solution proposed in \cite{costa16} instead employs both approaches to deal
+separately with local and global constraints: a locally context-sensitive
+graph grammar is used for the local constraints and a regularized statistical
+model is used for the global or long range constraints. The two approaches
+complement each other: the grammar is a flexible non-parametric approach that
+can model complex dependencies between vertices that are within a short path
+distance from each other; the statistical model, instead, can employ the bias
+derived from the particular functional family (linear) and the type of
+regularization used (a penalty over the L2 norm of the parameters) to
+generalize long range dependencies to cases that are similar but not identical
+to those observed in the training set. This approach is therefore adequate
+when natural dependencies exhibit local constraints that are more complex than
+long range ones.
+
+Unfortunately in some applications, such as those of chemo- and bio-
+informatics, most domain instances exhibit complex dependencies between their
+different constituent parts. RNA polymers for example self interact, with
+nucleotides forming bounds that can typically span the entire length of the
+sequence.
+
+here we propose xxx
 
 % 
 \begin{figure}[ht]
@@ -151,7 +203,7 @@ results on a RNA sequence synthesis task.
 \end{figure}
 
 \section{Method}
-Previously Costa \cite{costa14} introduced a method
+Previously \cite{costa16} introduced a method
 to construct novel graphs according to a distribution, which is given by
 examples. Graphs are vectorized by a \emph{decomposition kernel}
 to train a machine learning model, e.g. an SVM.
@@ -340,6 +392,7 @@ obvious as in chemical compounds cycles or charge maps are good candidates.
 For the general case the contraction can be learned.
 
 \fxwarning{general things: add pictures}
+
 \bibliography{mybib}
 
 
