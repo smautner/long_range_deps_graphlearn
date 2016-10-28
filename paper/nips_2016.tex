@@ -10,7 +10,7 @@
 \usepackage{nips_2016}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
-% \usepackage[final]{nips_2016}
+%\usepackage[final]{nips_2016}
 
 
 \usepackage[english, status=draft]{fixme} % these 2 make fixme comments :) 
@@ -52,7 +52,7 @@
 
 
 
-\title{Superawesome Graph Generation}
+\title{A constructive approach for graphs\\with long range dependencies}
 
 % The \author macro works with any number of authors. There are two
 % commands used to separate the names and addresses of multiple
@@ -71,12 +71,13 @@
   Freiburg, 79085  \\
   \texttt{mautner@cs.uni-freiburg.de} \\
   %% examples of more authors
-  %% \And
-  %% Coauthor \\
-  %% Affiliation \\
-  %% Address \\
-  %% \texttt{email} \\
-  %% \AND
+  \And
+  Fabrizio Costa \\
+  Department of Computer Science\\
+  Albert-Ludwigs University Freiburg\\
+  Freiburg, 79085  \\
+  \texttt{costa@informatik.uni-freiburg.de} \\
+  %%\AND
   %% Coauthor \\
   %% Affiliation \\
   %% Address \\
@@ -101,23 +102,38 @@
 \begin{abstract}
 %Scripts describing the generation of generic graphs based on examples
 %are scarce.
- 
-Graphs are flexible data structures whose generation 
-is a mostly unexplored problem. As discriminative systems for graphs
-exist, it is feasible to direct a generative process.
-An existing method is implementing Markov Chain Monte Carlo 
-sampling which is altering graphs incrementally.
-Alteration is done with a \emph{graph grammar}, a collection
-of sub graphs, grouped by exchangeability.
 
-\fxwarning{so the abstract was rewritten, i made sure to explain the contraction}
-By contracting edges in a graph i.e. merging adjacent vertices,
-we obtain a more abstract view on a graph. 
-We use this abstraction to overcome the shortcomings of the original 
-grammar.
-However, the modification is required to be automatically generate. 
-We explore the application of this idea
-on graphs representing RNA secondary structure. 
+Machine learning constructive approaches offer a way to answer interesting
+'design' questions on the basis of a collection of examples. Rather than
+focusing on the prediction of specific qualities for a given input object,
+these methods learn how to synthesize novel instances that share the same
+characteristics of a selected sample. In particular, graph constructive
+methods are of interest in chemo- and bio-informatics domains where the task
+is to synthesize novel molecules with a desired bioactivity. Unfortunately
+most molecules exhibit complex dependencies between their different
+constituent parts. RNA polymers for example self interact, with nucleotides
+forming bounds that can typically span the entire length of the sequence.
+Modeling in an efficient way long range dependencies is a particularly
+difficult problem. Here we propose a solution, based on graph contractions,
+that builds on top of a recent constructive approach and we show encouraging
+results on a RNA sequence synthesis task.
+
+% Graphs are flexible data structures whose generation 
+% is a mostly unexplored problem. As discriminative systems for graphs
+% exist, it is feasible to direct a generative process.
+% An existing method is implementing Markov Chain Monte Carlo 
+% sampling which is altering graphs incrementally.
+% Alteration is done with a \emph{graph grammar}, a collection
+% of sub graphs, grouped by exchangeability.
+
+% \fxwarning{so the abstract was rewritten, i made sure to explain the contraction}
+% By contracting edges in a graph i.e. merging adjacent vertices,
+% we obtain a more abstract view on a graph. 
+% We use this abstraction to overcome the shortcomings of the original 
+% grammar.
+% However, the modification is required to be automatically generate. 
+% We explore the application of this idea
+% on graphs representing RNA secondary structure. 
 
 
 
@@ -157,7 +173,6 @@ If two interfaces are isomorphic, we can exchange the core parts
 
 
 \subsection{Contribution}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \textbf{Modification to the grammar.}
 In place of simple CIPs as used previously,
 we use modified CIPs that consider contracted versions
