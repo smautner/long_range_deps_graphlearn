@@ -98,7 +98,7 @@ def plot(dataset, percentages, original_sample_repetitions, original_repetitions
     print similarity_scores 
     plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     plt.xlim(17,52)
-    plt.ylim(0.0,1.005)
+    plt.ylim(0.7,1.100)
     plt.title(dataset+'\n',fontsize=20)
     plt.legend(loc='lower right',fontsize=18)
     plt.ylabel('ROC AUC',fontsize=18)
@@ -259,8 +259,8 @@ def evaluate_point(size):
 
 
     res.append(  test(deepcopy(train_a),deepcopy(train_b),deepcopy(test_a),deepcopy(test_b)) )
-    eins=sumsim.simset(deepcopy(train_aa),deepcopy(train_a))
-    zwei=sumsim.simset(deepcopy(train_bb),deepcopy(train_b)) 
+    eins=sumsim.get_similarity(deepcopy(train_aa),deepcopy(train_a))
+    zwei=sumsim.get_similarity(deepcopy(train_bb),deepcopy(train_b))
     drei = (eins+zwei)/2.0
     res.append(  test(deepcopy(train_aa),deepcopy(train_bb),deepcopy(test_a),deepcopy(test_b)) )
     res.append(  test(deepcopy(train_a)+deepcopy(train_aa),deepcopy(train_b)+train_bb,deepcopy(test_a),deepcopy(test_b)) )
@@ -308,7 +308,7 @@ if __name__ == "__main__":
     print sys.argv
 
 
-    # subtract one because sge is shit
+    # subtract one because sge is sub good
     job = int(sys.argv[1])-1 
     print 'jobid:',job
     arguments=argz[job]

@@ -77,7 +77,7 @@ def vectorize(a,b):
     return a,b
 
 def similarity_mean(a,b,keepdiag=True):
-    simmatrix = [4]#cosine_similarity(a,b)
+    simmatrix = cosine_similarity(a,b)
     if not keepdiag:
         pass
         #np.fill_diagonal(simmatrix,0)
@@ -247,10 +247,16 @@ def compdistr(a,b):
 
 def score(alist,blist):
     a,b=vectorize(alist,blist)
-    distri=compdistr(a,b)
-    similarity=simset(a,b)
+    distri = compdistr(a,b)
+    similarity = simset(a,b)
     #print distri, similarity
     return distri - similarity
+
+def get_similarity(alist,blist):
+    a,b=vectorize(alist,blist)
+    #distri = compdistr(a,b)
+    similarity = simset(a,b)
+    return similarity
 
 
 
