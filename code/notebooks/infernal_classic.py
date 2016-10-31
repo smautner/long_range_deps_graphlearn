@@ -154,8 +154,8 @@ sizes=[10,20,50,100,200,400]
 repeats=5
 
 
-sizes=[10,20]
-repeats=2
+#sizes=[10,20]
+#repeats=2
 
 
 means2 = []

@@ -256,8 +256,8 @@ dataset_b='RF00162.fa'
 #sizes=[7,8,9,10,11,12,13,14,15]
 sizes=range(20,55,5)
 
-sizes=[20,25]
-repeats=3
+#sizes=[20,25]
+repeats=9
 
 # calc everything
 def get_results():
