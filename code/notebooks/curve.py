@@ -3,6 +3,7 @@
 import matplotlib as mpl
 mpl.use('Agg')
 
+''' appearently this is unused :)
 import eden
 import matplotlib.pyplot as plt
 from eden.util import configure_logging
@@ -20,6 +21,8 @@ import random
 from eden.converter.graph.gspan import gspan_to_eden
 from itertools import islice
 import random
+'''
+
 '''
 GET RNA DATA
 '''
@@ -67,7 +70,7 @@ def get_seq_tups(fname,size,sizeb):
     random.shuffle(graphs)
     return graphs[:size],graphs[size:size+sizeb]
 
-def plot(dataset, percentages, original_sample_repetitions, original_repetitions, sample_repetitions): # note that the var names are not real anymore.
+def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, sample_repetitions): # note that the var names are not real anymore.
     gc={'color':'g'}
     rc={'color':'r'}
     bc={'color':'b'}
@@ -77,11 +80,51 @@ def plot(dataset, percentages, original_sample_repetitions, original_repetitions
     o = np.mean(original_repetitions, axis=1)
     s = np.mean(sample_repetitions, axis=1)
     plt.figure(figsize=(18,8))
-    ax = plt.subplot() 
+    marksize=5
+
+
+    # OKOK NEW STUFF TESTING
+    fig, ax1 = plt.subplots()
+    ax2=ax1.twinx()
+    for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
+        label.set_fontname('Arial')
+        label.set_fontsize(15)
+    for label in (ax2.get_xticklabels() + ax2.get_yticklabels()):
+        label.set_fontname('Arial')
+        label.set_fontsize(15)
+    numgraphs=np.array(numgraphs)
+
+    #plt.grid()
+    ax1.set_axisbelow(True)
+    ax1.yaxis.grid(color='gray', linestyle='dashed')
+
+    ax1.plot(numgraphs, os, color='g', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='g', markerfacecolor='w', label='original')
+    ax1.boxplot(original_sample_repetitions, positions=numgraphs - 0.4, widths=ws, capprops=gc, medianprops=gc, boxprops=gc, whiskerprops=gc, flierprops=None)
+
+    ax1.plot(numgraphs, o, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='sample')
+    ax1.boxplot(original_repetitions, positions=numgraphs, widths=ws, capprops=rc, medianprops=rc, boxprops=rc, whiskerprops=rc, flierprops=None)
+
+
+    ax1.plot(numgraphs, s, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='sample+orig')
+    ax1.boxplot(sample_repetitions, positions=numgraphs + .4, widths=ws, capprops=bc, medianprops=bc, boxprops=bc, whiskerprops=bc, flierprops=None)
+
+
+    global similarity_scores
+    ax2.plot(numgraphs, similarity_scores, 'mo', markersize=marksize,label='similarity')
+    #print 'similarity_scores = %s' % similarity_scores
+
+    #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
+    print numgraphs
+    plt.xlim(min(numgraphs)-2,max(numgraphs)+2)
+    ax1.set_ylim(0.7,1.000)
+    ax2.set_ylim(0.8,1.100)
+    plt.xticks(numgraphs,numgraphs)
+    '''
+    ax = plt.subplot()
     for label in (ax.get_xticklabels() + ax.get_yticklabels()):
         label.set_fontname('Arial')
         label.set_fontsize(20)
-    
+
     plt.grid()
     plt.boxplot(original_sample_repetitions, positions=percentages, widths=ws, capprops=gc, medianprops=gc, boxprops=gc, whiskerprops=gc, flierprops=gc)
     plt.plot(percentages,os, color='g', marker='o', markeredgewidth=1, markersize=7, markeredgecolor='g', markerfacecolor='w', label='original')
@@ -95,15 +138,20 @@ def plot(dataset, percentages, original_sample_repetitions, original_repetitions
 
     global similarity_scores
     plt.plot(percentages,similarity_scores, 'ro')
-    print similarity_scores 
+    print 'similarity_scores = %s' % similarity_scores
+
     plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     plt.xlim(17,52)
-    plt.ylim(0.0,1.005)
-    plt.title(dataset+'\n',fontsize=20)
-    plt.legend(loc='lower right',fontsize=18)
-    plt.ylabel('ROC AUC',fontsize=18)
+    plt.ylim(0.7,1.100)
+    '''
+    plt.title(run_id + '\n', fontsize=18)
+    ax1.legend(loc='lower left',fontsize=14)
+    ax2.legend(loc='lower right',fontsize=14)
+    #plt.ylabel('ROC AUC',fontsize=18)
+    ax1.set_ylabel('ROC AUC',fontsize=18)
+    ax2.set_ylabel('similarity of instances',fontsize=18)
     plt.xlabel('Training set size per family',fontsize=18)
-    plt.savefig('%s_plot_predictive_performance_of_samples.png' % dataset)
+    plt.savefig('%s_plot_predictive_performance_of_samples.png' % run_id)
 
 #load("DATAS")
 #plot("RF00162 vs RF00005 learning curve", [30,70], [[.30,.30],[.20,.20]] , [[.40,.40],[.30,.30]],[[.70,.35],[.25,.25]])
@@ -205,17 +253,19 @@ size_test=20
 dataset_a='RF00005.fa'
 #dataset_a='RF01725.fa' 5 vs 162 was in the original paper 
 dataset_b='RF00162.fa'
-sizes=[7,8,9,10,11,12,13,14,15]
+#sizes=[7,8,9,10,11,12,13,14,15]
 sizes=range(20,55,5)
-#sizes=[10,11]
-repeats=5
+
+#sizes=[20,25]
+#repeats=3
 
 # calc everything
 def get_results():
     li = [ get_datapoint(size) for size in sizes ]
     # transpose , should work OO 
-    print 'li:',li
-    return [list(i) for i in zip(*li)]
+
+    li =  [list(i) for i in zip(*li)]
+    return li
 
 # calc for one "size", go over repeats
 def get_datapoint(size):
@@ -252,15 +302,13 @@ def get_trainthings(size,dataset):
 def evaluate_point(size):
     res=[]
 
-
-
     train_aa,train_a,test_a = get_trainthings(size,dataset_a)
     train_bb,train_b,test_b = get_trainthings(size,dataset_b)
 
 
     res.append(  test(deepcopy(train_a),deepcopy(train_b),deepcopy(test_a),deepcopy(test_b)) )
-    eins=sumsim.simset(deepcopy(train_aa),deepcopy(train_a))
-    zwei=sumsim.simset(deepcopy(train_bb),deepcopy(train_b)) 
+    eins=sumsim.get_similarity(deepcopy(train_aa),deepcopy(train_a))
+    zwei=sumsim.get_similarity(deepcopy(train_bb),deepcopy(train_b))
     drei = (eins+zwei)/2.0
     res.append(  test(deepcopy(train_aa),deepcopy(train_bb),deepcopy(test_a),deepcopy(test_b)) )
     res.append(  test(deepcopy(train_a)+deepcopy(train_aa),deepcopy(train_b)+train_bb,deepcopy(test_a),deepcopy(test_b)) )
@@ -307,12 +355,14 @@ if __name__ == "__main__":
     print 'len argz',len(argz)
     print sys.argv
 
-
-    # subtract one because sge is shit
+    # subtract one because sge is sub good
     job = int(sys.argv[1])-1 
     print 'jobid:',job
     arguments=argz[job]
     r=get_results()
+    print 'sizes = %s' % sizes
+    print 'result = %s' % r
+    print 'similarity_scores = %s' % similarity_scores
     plot(str(job), sizes, *r)
 
 

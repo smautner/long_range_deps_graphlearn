@@ -32,7 +32,6 @@ class PreProcessor(PreProcessor):
 
     def __init__(self,base_thickness_list=[2],structure_mod=True,include_base=False,ignore_inserts=False):
         '''
-
         Parameters
         ----------
         base_thickness_list: list of int
@@ -46,7 +45,6 @@ class PreProcessor(PreProcessor):
 
         Returns
         -------
-
         '''
         self.ignore_inserts=ignore_inserts
         self.base_thickness_list= [thickness*2 for thickness in base_thickness_list]
@@ -76,7 +74,6 @@ class PreProcessor(PreProcessor):
 
     def re_transform_single(self, graph):
         '''
-
         Parameters
         ----------
         graphwrapper
@@ -100,7 +97,6 @@ class PreProcessor(PreProcessor):
 
     def transform(self, sequences):
         """
-
         Parameters
         ----------
         sequences : iterable over rna sequences

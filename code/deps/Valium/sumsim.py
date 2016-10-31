@@ -77,12 +77,18 @@ def vectorize(a,b):
     return a,b
 
 def similarity_mean(a,b,keepdiag=True):
-    simmatrix = [4]#cosine_similarity(a,b)
-    if not keepdiag:
-        pass
-        #np.fill_diagonal(simmatrix,0)
-    #print 'cosine sim %f \n' % np.mean(simmatrix),simmatrix
-    return np.mean(simmatrix)
+    simmatrix = cosine_similarity(a,b)
+    if keepdiag:
+        return np.mean(simmatrix)
+
+    # len function:
+    le = lambda x: x.shape[0]
+    # i see howmany elements there are without the diag
+    elements = le(a)*le(b) - min(le(a),le(b))
+    # then i set the diag to zeroes
+    np.fill_diagonal(simmatrix,0)
+    # then sum(matrix)/ number of elements without diag
+    return np.sum(simmatrix) / float(elements)
 
 def simset(a,b):
     return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,False)*similarity_mean(b,b,False))
@@ -143,17 +149,13 @@ class OneClassEstimator:
 
 
     def fit(self, data_matrix, random_state=None):
-
         if random_state is not None:
             random.seed(random_state)
-
         # use eden to fitoooOoO
         self.estimator = self.fit_estimator(data_matrix, n_jobs=self.n_jobs, cv=self.cv, random_state=random_state)
-
         # move bias to obtain oneclassestimator
         # jaaa we have to work on this...
         self.cal_estimator = self.move_bias(data_matrix, estimator=self.estimator, nu=self.nu, cv=self.cv)
-
         return self
 
     def fit_estimator(self, data_matrix, n_jobs=-1, cv=2, random_state=42):
@@ -164,8 +166,6 @@ class OneClassEstimator:
         '''
         # make negative set 
         data_matrix_neg = data_matrix.multiply(-1)
-
-
         return eden_fit_estimator(self.classifier, positive_data_matrix=data_matrix,
                                   negative_data_matrix=data_matrix_neg,
                                   cv=cv,
@@ -247,10 +247,16 @@ def compdistr(a,b):
 
 def score(alist,blist):
     a,b=vectorize(alist,blist)
-    distri=compdistr(a,b)
-    similarity=simset(a,b)
+    distri = compdistr(a,b)
+    similarity = simset(a,b)
     #print distri, similarity
     return distri - similarity
+
+def get_similarity(alist,blist):
+    a,b=vectorize(alist,blist)
+    #distri = compdistr(a,b)
+    similarity = simset(a,b)
+    return similarity
 
 
 
