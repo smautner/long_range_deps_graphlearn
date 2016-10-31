@@ -256,14 +256,13 @@ dataset_b='RF00162.fa'
 #sizes=[7,8,9,10,11,12,13,14,15]
 sizes=range(20,55,5)
 
-#sizes=[20,25]
-#repeats=3
+sizes=[20,25]
+repeats=3
 
 # calc everything
 def get_results():
     li = [ get_datapoint(size) for size in sizes ]
-    # transpose , should work OO 
-
+    # transpose , should work OO
     li =  [list(i) for i in zip(*li)]
     return li
 
@@ -275,9 +274,7 @@ def get_datapoint(size):
     similarities=[]
     global similarity_scores
     for rep in range(repeats):
-
-
-        a,b,ab,similarity = evaluate_point(size)
+        a,b,ab,similarity = evaluate_point_no_deepcopy(size)
         ra.append(a)
         rab.append(ab)
         rb.append(b)
@@ -286,9 +283,37 @@ def get_datapoint(size):
     return ra,rb,rab
 
 
+
+def evaluate_point(size):
+    res=[]
+    train_aa,train_a,test_a = get_trainthings(size,dataset_a)
+    train_bb,train_b,test_b = get_trainthings(size,dataset_b)
+    res.append(  test(deepcopy(train_a),deepcopy(train_b),deepcopy(test_a),deepcopy(test_b)) )
+    eins=sumsim.get_similarity(deepcopy(train_aa),deepcopy(train_a))
+    zwei=sumsim.get_similarity(deepcopy(train_bb),deepcopy(train_b))
+    drei = (eins+zwei)/2.0
+    res.append(  test(deepcopy(train_aa),deepcopy(train_bb),deepcopy(test_a),deepcopy(test_b)) )
+    res.append(  test(deepcopy(train_a)+deepcopy(train_aa),deepcopy(train_b)+train_bb,deepcopy(test_a),deepcopy(test_b)) )
+    res.append(drei)
+    return res
+
+def evaluate_point_no_deepcopy(size):
+    res=[]
+    train_aa,train_a,test_a = get_trainthings(size,dataset_a)
+    train_bb,train_b,test_b = get_trainthings(size,dataset_b)
+    res.append(  test(train_a,train_b,test_a,test_b) )
+    eins=sumsim.get_similarity(train_aa,train_a)
+    zwei=sumsim.get_similarity(train_bb,train_b)
+    drei = (eins+zwei)/2.0
+    res.append(  test(train_aa,train_bb,test_a,test_b) )
+    res.append(  test(train_a+train_aa,train_b+train_bb,test_a,test_b) )
+    res.append(drei)
+    return res
+
+
+# does the fit stuff
 def get_trainthings(size,dataset):
     try:
-
         train,test = get_seq_tups(dataset,size,size_test)
         res=fit_sample(deepcopy(train))
         if len(res)<3:
@@ -299,28 +324,12 @@ def get_trainthings(size,dataset):
     print 'k',
     return (res,train,test)
 
-def evaluate_point(size):
-    res=[]
 
-    train_aa,train_a,test_a = get_trainthings(size,dataset_a)
-    train_bb,train_b,test_b = get_trainthings(size,dataset_b)
-
-
-    res.append(  test(deepcopy(train_a),deepcopy(train_b),deepcopy(test_a),deepcopy(test_b)) )
-    eins=sumsim.get_similarity(deepcopy(train_aa),deepcopy(train_a))
-    zwei=sumsim.get_similarity(deepcopy(train_bb),deepcopy(train_b))
-    drei = (eins+zwei)/2.0
-    res.append(  test(deepcopy(train_aa),deepcopy(train_bb),deepcopy(test_a),deepcopy(test_b)) )
-    res.append(  test(deepcopy(train_a)+deepcopy(train_aa),deepcopy(train_b)+train_bb,deepcopy(test_a),deepcopy(test_b)) )
-    res.append(drei)
-    return res
-
-
-
-### just evaluate the stuff
+#############
+# test()  will evaluate 2 sets of graphs
+##########
 from sklearn.linear_model import SGDClassifier
 from eden.path import Vectorizer
-
 def train_esti(neg,pos):
         v=Vectorizer()
         matrix=v.transform(neg+pos)
@@ -342,7 +351,11 @@ def test(a,b,ta,tb):
     return correct/float(size_test*2) # fraction correct
     
     
-    
+
+#############
+# MAIN
+###########
+
 if __name__ == "__main__":
     global similarity_scores
     similarity_scores=[]
