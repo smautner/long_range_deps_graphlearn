@@ -147,6 +147,12 @@ class NuRnaWrapper(Wrapper):
         self.structure= stru
         self.ignore_inserts=ignore_inserts
 
+
+    def out(self):
+        # copy and  if digraph make graph
+        sequence = get_sequence(self.base_graph())
+        return ('', sequence.replace("F", ""))
+
 class RnaWrapper(AbstractWrapper):
 
     # def core_substitution(self, orig_cip_graph, new_cip_graph):
@@ -296,6 +302,7 @@ class RnaWrapper(AbstractWrapper):
     def nextnode(self,g,n,down_direction=True):
         '''
         goto the nextnext node in a direction
+        seems to be used only internaly
         '''
         if down_direction:
             f=g.successors
