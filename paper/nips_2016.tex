@@ -137,7 +137,6 @@ experimental results on a RNA sequence synthesis task.
 
 
 
-
 \end{abstract}
 \section{Introduction}
 
@@ -224,7 +223,6 @@ instances are viable.
 \end{figure}
 
 \section{Method}
-\fxwarning{make a summary in words of the whole approach with pictures}
 
 Previously \cite{costa16} introduced a method
 to construct novel graphs according to a distribution, which is given by
@@ -305,42 +303,38 @@ $a$ is connected to the rest of the graph.
 Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
 
 
-\textbf{Extending what we can contract.}
-\fxwarning{all of this is questionable. describe problem with unconnected 
-nodes, mv rest to eval }
+\textbf{Contracting vertices.}
+In this chapter we have seen vertices being contracted
+that are connected with an edge. This is not a requirement
+as any two vertices in a graph could be contracted. This
+is called vertex identification.  
+We did so with vertices in the multi-loop that are not stem vertices.
+In fig. \ref{allcips} the multi-loop is labeled 'M', the stem 'S'.
 
 
-Edge contraction is one way to obtain a contraction graph.
-One might also contract nodes that are not connected by an edge.
-We did so with multi-loop nodes except stem nucleotides.
-This contraction model however will raise the problem 
-of two adjacent stems connected to a multi-loop being
-indistinguishable from one stem being connected.
-this may be resolved by adding an additional 'fake' vertex 
-between the stems. another problem with 
-this case is, that the order of the stems would normally get lost.
-Since the graph representing the molecule, is directed via 
-the backbone one is able to specify an order on the
-parts of loops that connect stems.
 
-\fxwarning{remove this eden part.. what about the directedness? look up what 
-i did!also the hashing part! and then explain it}
-Although the underlying EDeN kernel does not support directed graphs,
-the grammar may contain directed graphs. This is implemented by extracting
-CIPs as if undirected and creating the grammar as usual.
-% need to be able to recalculate abstractions
-A constraint to the contraction is that we need to be able to 
-generate it algorithmically. In the sampling phase we recalculate 
-the contraction after changes to the underlying graph.
+
+%\fxwarning{remove this eden part.. what about the directedness? look up what 
+%i did!also the hashing part! and then explain it}
+%Although the underlying EDeN kernel does not support directed graphs,
+%the grammar may contain directed graphs. This is implemented by extracting
+%CIPs as if undirected and creating the grammar as usual.
+%% need to be able to recalculate abstractions
+%A constraint to the contraction is that we need to be able to 
+%generate it algorithmically. In the sampling phase we recalculate 
+%the contraction after changes to the underlying graph.
 
 
 \section{Evaluation}
 % Infernal is the way to go
-\fxwarning{explain the secondary structure}
 RNA sequences are sequences over the four nucleotides A,G,U and C.
-They have a 5' and a 3' end, meaning that the direction matters.
-Nucleotides in the sequences bind to other nucleotides so
-the sequence forms a \emph{structure}.
+The nucleotides are connected to a backbone which 
+has a 5' and a 3' end.
+Thus, a sequence is translateable into a directed path graph.
+Nucleotides may bind to non adjacent nucleotides.
+In the graph we introduce a non directed edge between the two nucleotides.
+The resulting graph is called the  \emph{secondary structure} graph.
+The presented grammar works fine with directed graphs.
 RNAs are grouped into functional families whose classification
 is a problem of biology. \emph{Infernal}\cite{infernal} can classify and 
 create members of these families using covariance models.
