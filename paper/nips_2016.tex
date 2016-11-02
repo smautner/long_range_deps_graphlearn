@@ -111,10 +111,10 @@ characteristics of a selected sample. In particular, graph constructive
 methods are of interest in chemo- and bio-informatics domains where the task
 is to synthesize novel molecules with a desired bioactivity. Unfortunately
 most molecules exhibit complex dependencies between their different
-constituent parts. RNA polymers for example self interact, with nucleotides
+constituent parts. RNA polymers, for example, self interact, with nucleotides
 forming bounds that can typically span the entire length of the sequence.
-Since modeling long range dependencies is a
-difficult problem, we propose an efficient solution, based on graph contractions,
+Since modeling long range dependencies is a difficult problem, we propose an
+efficient solution, based on edge contractions and vertex identifications,
 that builds on top of a recent constructive approach and we show encouraging
 experimental results on a RNA sequence synthesis task.
 
@@ -164,40 +164,58 @@ the grammar. The larger the context, the (exponentially) larger the number of
 possible cases that need to be observed for a reliable estimate, which in turn
 requires an exponentially large number of training examples. For this reason
 global or just long range constraints cannot be effectively modeled, resulting
-in a grammar that could express non acceptable instances. To address the issue
-in \cite{costa16} it is proposed to use a Metropolis Hastings (MH) Markov
-Chain Monte Carlo (MCMC) method, where the problem of sampling is reduced to
-the easier task of {\em simulation}, provided that one can build an ergodic
-Markov chain with the desired distribution as its equilibrium distribution.
-They use the context sensitive graph grammar to inform the MH proposal
-distribution, but also introduce a probability density estimator to define the
-MH acceptance procedure. Employing both approaches they could deal
-separately with local and global constraints, the locally context-sensitive
-graph grammar is used for the local constraints and the regularized statistical
-model is used for the global or long range constraints. The two approaches
-complement each other: the grammar is a flexible non-parametric approach that
-can model complex dependencies between vertices that are within a short path
-distance from each other; the statistical model, instead, can employ the bias
-derived from the particular functional family (linear) and the type of
-regularization used (a penalty over the L2 norm of the parameters) to
-generalize long range dependencies to cases that are similar but not identical
-to those observed in the training set. This approach is therefore adequate
-when natural dependencies exhibit local constraints that are more complex than
-long range ones.
+in a grammar that could express non viable instances. To address the issue in
+\cite{costa16} it is proposed to use a Metropolis Hastings (MH) Markov Chain
+Monte Carlo (MCMC) method, where the problem of sampling is reduced to the
+easier task of {\em simulation}, provided that one can build an ergodic Markov
+chain with the desired distribution as its equilibrium distribution. They use
+the context sensitive graph grammar to inform the MH proposal distribution,
+but also introduce a probability density estimator to define the MH acceptance
+procedure. This allows to deal separately with local and global constraints:
+the locally context-sensitive graph grammar is used for the local constraints
+and the regularized statistical model is used for the global or long range
+constraints. The two approaches complement each other: the grammar is a
+flexible non-parametric approach that can model complex dependencies between
+vertices that are within a short path distance from each other; the
+statistical model, instead, can employ the bias derived from the particular
+functional family (linear) and the type of regularization used (a penalty over
+the L2 norm of the parameters) to generalize long range dependencies to cases
+that are similar but not identical to those observed in the training set.
 
-Unfortunately in application domains such as chemo- and bioinformatics,
-instances can exhibit complex and long range dependencies between their
-different constituent parts. RNA polymers, for example, self interact, with
-nucleotides forming bounds that can typically span the entire length of the
-sequence.
+This approach is therefore adequate when natural dependencies exhibit local
+constraints that are more complex than long range ones.  Unfortunately in
+some application domains instances can exhibit complex long range
+dependencies between their different constituent parts. This is the case for
+the biological domain where polymers as RNA for example, can be modeled as
+long sequences of atomic entities which self interact, establishing pairwise
+bounds that can typically span the entire length of the sequence (i.e. non
+local interactions).
 
-here we propose xxx
+A different way to view the issue of long range dependencies is that of the
+appropriate scale of representation. In certain application domains, instances
+are naturally encoded as graphs with nodes that represent atomic entities,
+such as nucleotides in the case of RNA sequences. However, it is known that a
+more effective functional description of these molecules can be obtained in
+terms of structural components such as {\em stems} (stretches of consecutive
+paired nucleotides) and {\em loops} (stretches of consecutive unpaired
+nucleotides), each made of multiple atomic units. Under this view,
+dependencies that are local at the coarser scales correspond to longer range
+dependencies at the original scale.
 
-% 
+A constructive system suitable for these domains needs to be able to
+adequately model complex long range dependencies and is more effective if it
+operates at a convenient scale rather than that of the individual units. Here we
+tackle all these issues building on the approach presented in \cite{costa16}
+introducing two key ideas: 1) we allow a user defined graph coarsening
+procedure based on edge contractions and vertex identifications, and 2) we
+allow a domain specific optimization approach to ensure that the generated
+instances are viable.
+
+%
 \begin{figure}[ht]
       \centering
         \includegraphics[width=1.0\linewidth]{images/allcipsinone.png}
-      \caption{Left: Simplified RNA molecule. Mid: The same molecule 
+      \caption{Left: Simplified RNA molecule. Mid: The same molecule
       condensed to its structural elements. Right: Chemical molecule and a
       \emph{congruent} CIP. Core (dark) Interface (brighter) Pair graphs (CIP)
       are
@@ -206,6 +224,8 @@ here we propose xxx
 \end{figure}
 
 \section{Method}
+\fxwarning{make a summary in words of the whole approach with pictures}
+
 Previously \cite{costa16} introduced a method
 to construct novel graphs according to a distribution, which is given by
 examples. Graphs are vectorized by a \emph{decomposition kernel}
@@ -222,18 +242,17 @@ The grammar consists of sets of interchangeable graph fragments.
 We call these fragments core interface pairs(CIPs) because 
 they consist of a core part and an interface part.
 In terms of a string grammar core and interface are imaginable 
-as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$. 
+as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$.
 In fig. \ref{allcips} (right) we can see a production applied to a graph $G$.
 Vertices in \emph{radius} $n$ of a root vertex are the vertices in distance $n$
 or less. The (in dark) core area is determined by vertices in a radius $R$
 around a root vertex $v$, hence $C_{R}^v(G)$. Here this radius is $0$. In a
-lighter green we observe the interface with its Thickness $T$. This is the graph 
+lighter green we observe the interface with its Thickness $T$. This is the graph
 induced by the vertices in distance $T$ around core vertices, it is
 described by $I_{R,T}^v(G)$.
 
 
-\subsection{Contribution}
-\textbf{Modification to the grammar.}
+\textbf{Contraction Extension.}
 In place of simple CIPs as used previously,
 we use modified CIPs that consider contracted versions
 of the original graphs. We obtain a contracted graph $G'$ by contracting edges
@@ -242,7 +261,7 @@ applied to the graph on the left. The set of contracted vertices of a
 created vertex is accessible with the $contracted$ function.
 The functions for extracting core and interface graphs, 
 $C_{R}^v(G')$ and $I_{R,T}^v(G')$, are unaltered except that we apply them
-on $G'$ instead of $G$, see fig. \ref{allcips}(mid). 
+on $G'$ instead of $G$, see fig. \ref{allcips}(mid).
 Since the sampling is performed on the uncontracted graphs,
 We are now defining related cores and interfaces in $G$.
 The core is given by the vertices that were contracted to form $C_{R}^v(G')$.
@@ -252,18 +271,18 @@ The core graph $C_{R}^v(G',G)$ is induced by the nodes
 $\bigcup\limits_{u \in C_R^v(G')} contracted(u)$.
 The new interface graph $I_{R,B}^v(G',G)$ is then obtained by the nodes 
 $\{ w | d(w,v) \leq B \wedge v\in C_R^v(G',G) \wedge w \in G \wedge w 
-\notin C_R^v(G',G) \}$.  $B$ is the thickness of the base graph. 
+\notin C_R^v(G',G) \}$.  $B$ is the thickness of the base graph.
 At this point we can construct a CIP from $C_R^v(G',G)$ and $I_{R,B}^v(G',G)$. 
 To find a congruent CIP, we previously compared the hashed $I_{R,T}^v(G)$ 
-graphs. By combining the hashes of $I_{R,T}^v(G')$ and $I_{R,B}^v(G,G')$ we 
+graphs. By combining the hashes of $I_{R,T}^v(G')$ and $I_{R,B}^v(G,G')$ we
 increase the specificity of this comparison.
 In the intended case $I_{R,T}^v(G')$ (see fig \ref{allcips}(mid)) is small
 which means that the
-specificity is not increasing too much while still providing 
+specificity is not increasing too much while still providing
 a helpful hint about the context in which a core is seen.
-In our application case, we contract according to the 
+In our application case, we contract according to the
 secondary RNA structure and label the resulting vertex accordingly e.g.
-'Hairpin loop'.$I_{R,T}^v(G')$  encodes far reaching and abstract 
+'Hairpin loop'.$I_{R,T}^v(G')$  encodes far reaching and abstract
 information about the surrounding vertices in our CIP interface matching.
 
 
@@ -280,8 +299,8 @@ $\forall u \in I_{R,T}^v(G) :
 to the closest core node is equal for every
 $u$ and $\phi(u)$.
 It is easy to see the benefit of this extension.
-Imagine a CIP embedded into a graph. Let the interface consist of 
-two connected vertices $a$ and $b$, $b$ being adjacent to the core while 
+Imagine a CIP embedded into a graph. Let the interface consist of
+two connected vertices $a$ and $b$, $b$ being adjacent to the core while
 $a$ is connected to the rest of the graph.
 Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
 
@@ -291,7 +310,7 @@ Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
 nodes, mv rest to eval }
 
 
-Edge contraction is one way to obtain a contraction graph. 
+Edge contraction is one way to obtain a contraction graph.
 One might also contract nodes that are not connected by an edge.
 We did so with multi-loop nodes except stem nucleotides.
 This contraction model however will raise the problem 
@@ -385,6 +404,7 @@ graphs.
 \end{figure}
 \fxwarning{ should we merge the 2 infernal charts?}
 \fxwarning{pictures are not in their final form}
+
 \begin{figure}[ht]
       \centering
         \includegraphics[width=0.8\linewidth]{images/learningcurve.png}
@@ -394,15 +414,16 @@ graphs.
 
 
 
-\section{Discussion} 
-We have compared the algorithm to its predecessor and shown
-that its result hold up in a state of the art, domain specific
-evaluation. Its drawback is the reliance on the ability to 
-generate a contraction. In some domains this contraction is 
-obvious as in chemical compounds cycles or charge maps are good candidates.
-For the general case the contraction can be learned.
+\section{Discussion and Conclusion}
 
-\fxwarning{general things: add pictures}
+We have introduced a flexible approach to tackle the problem of long range
+dependency modeling for a constructive machine learning approach. Allowing for
+a user defined coarsening procedure we have showed how we can synthesize novel
+RNA sequences that are functionally equivalent to an original example sample.
+The coarsening procedure allows the injection of domain knowledge,
+significantly improving the quality of the results over the original domain a-specific approach. In future work we will investigate how to learn task
+specific coarsening schemes in a supervised fashion directly from data.
+
 
 \bibliography{mybib}
 
