@@ -222,9 +222,14 @@ The grammar consists of sets of interchangeable graph fragments.
 We call these fragments core interface pairs(CIPs) because 
 they consist of a core part and an interface part.
 In terms of a string grammar core and interface are imaginable 
-as a production: $iiiCCCiii <-> iiiCCCCiii$. 
-
-If two interfaces are isomorphic, we can exchange the core parts
+as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$. 
+In fig. \ref{allcips} (right) we can see a production applied to a graph $G$.
+Vertices in \emph{radius} $n$ of a root vertex are the vertices in distance $n$
+or less. The (in dark) core area is determined by vertices in a radius $R$
+around a root vertex $v$, hence $C_{R}^v(G)$. Here this radius is $0$. In a
+lighter green we observe the interface with its Thickness $T$. This is the graph 
+induced by the vertices in distance $T$ around core vertices, it is
+described by $I_{R,T}^v(G)$.
 
 
 \subsection{Contribution}
@@ -232,27 +237,33 @@ If two interfaces are isomorphic, we can exchange the core parts
 In place of simple CIPs as used previously,
 we use modified CIPs that consider contracted versions
 of the original graphs. We obtain a contracted graph $G'$ by contracting edges
-in $G$. The set of contracted vertices of a
+in $G$. Fig. \ref{allcips} (mid) is showing the result of multiple contractions
+applied to the graph on the left. The set of contracted vertices of a
 created vertex is accessible with the $contracted$ function.
 The functions for extracting core and interface graphs, 
 $C_{R}^v(G')$ and $I_{R,T}^v(G')$, are unaltered except that we apply them
-on $G'$ instead of $G$. 
+on $G'$ instead of $G$, see fig. \ref{allcips}(mid). 
+Since the sampling is performed on the uncontracted graphs,
+We are now defining related cores and interfaces in $G$.
+The core is given by the vertices that were contracted to form $C_{R}^v(G')$.
+For the Interface we choose a nodes adjacent to the core in $G$ with a
+distance $B$.
 The core graph $C_{R}^v(G',G)$ is induced by the nodes 
 $\bigcup\limits_{u \in C_R^v(G')} contracted(u)$.
 The new interface graph $I_{R,B}^v(G',G)$ is then obtained by the nodes 
 $\{ w | d(w,v) \leq B \wedge v\in C_R^v(G',G) \wedge w \in G \wedge w 
 \notin C_R^v(G',G) \}$.  $B$ is the thickness of the base graph. 
-\fxwarning{say these formulas first in words}
 At this point we can construct a CIP from $C_R^v(G',G)$ and $I_{R,B}^v(G',G)$. 
 To find a congruent CIP, we previously compared the hashed $I_{R,T}^v(G)$ 
-graphs. By hashing the hashes of $I_{R,T}^v(G')$ and $I_{R,B}^v(G,G')$ we 
-increase the specificity of this comparison. The vertices in $I_{R,B}^v(G,G')$ 
-might have been relabeled to represent a concept of its $contracted$ set. In 
-\fxwarning{usage of CONCEPT  >:(}
-our application case, we will contract according to the 
+graphs. By combining the hashes of $I_{R,T}^v(G')$ and $I_{R,B}^v(G,G')$ we 
+increase the specificity of this comparison.
+In the intended case $I_{R,T}^v(G')$ (see fig \ref{allcips}(mid)) is small
+which means that the
+specificity is not increasing too much while still providing 
+a helpful hint about the context in which a core is seen.
+In our application case, we contract according to the 
 secondary RNA structure and label the resulting vertex accordingly e.g.
-'Hairpin loop'. This way we encode far reaching and abstract 
-\fxwarning{explain more the ENCODE part}
+'Hairpin loop'.$I_{R,T}^v(G')$  encodes far reaching and abstract 
 information about the surrounding vertices in our CIP interface matching.
 
 
@@ -269,14 +280,17 @@ $\forall u \in I_{R,T}^v(G) :
 to the closest core node is equal for every
 $u$ and $\phi(u)$.
 It is easy to see the benefit of this extension.
-\fxwarning{ a and b example sounds to casual i think}
-imagine two vertices labeled 'a' and 'b' connected by an edge. Let this graph
-be the sole interface graph. With the new model we can distinguish 
-between 'a' being closer to the core and 'b' being closer. 
+Imagine a CIP embedded into a graph. Let the interface consist of 
+two connected vertices $a$ and $b$, $b$ being adjacent to the core while 
+$a$ is connected to the rest of the graph.
+Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
+
 
 \textbf{Extending what we can contract.}
 \fxwarning{all of this is questionable. describe problem with unconnected 
 nodes, mv rest to eval }
+
+
 Edge contraction is one way to obtain a contraction graph. 
 One might also contract nodes that are not connected by an edge.
 We did so with multi-loop nodes except stem nucleotides.
@@ -371,12 +385,6 @@ graphs.
 \end{figure}
 \fxwarning{ should we merge the 2 infernal charts?}
 \fxwarning{pictures are not in their final form}
-\begin{figure}[ht]
-      \centering
-        \includegraphics[width=0.8\linewidth]{images/infernal_abstr.png}
-      \caption{infernal on unabstract graphlearn}
-      \label{alabeld}
-\end{figure}
 \begin{figure}[ht]
       \centering
         \includegraphics[width=0.8\linewidth]{images/learningcurve.png}
