@@ -111,10 +111,10 @@ characteristics of a selected sample. In particular, graph constructive
 methods are of interest in chemo- and bio-informatics domains where the task
 is to synthesize novel molecules with a desired bioactivity. Unfortunately
 most molecules exhibit complex dependencies between their different
-constituent parts. RNA polymers for example self interact, with nucleotides
+constituent parts. RNA polymers, for example, self interact, with nucleotides
 forming bounds that can typically span the entire length of the sequence.
-Since modeling long range dependencies is a
-difficult problem, we propose an efficient solution, based on graph contractions,
+Since modeling long range dependencies is a difficult problem, we propose an
+efficient solution, based on edge contractions and vertex identifications,
 that builds on top of a recent constructive approach and we show encouraging
 experimental results on a RNA sequence synthesis task.
 
@@ -164,44 +164,57 @@ the grammar. The larger the context, the (exponentially) larger the number of
 possible cases that need to be observed for a reliable estimate, which in turn
 requires an exponentially large number of training examples. For this reason
 global or just long range constraints cannot be effectively modeled, resulting
-in a grammar that could express non acceptable instances. To address the issue
-in \cite{costa16} it is proposed to use a Metropolis Hastings (MH) Markov
-Chain Monte Carlo (MCMC) method, where the problem of sampling is reduced to
-the easier task of {\em simulation}, provided that one can build an ergodic
-Markov chain with the desired distribution as its equilibrium distribution.
-They use the context sensitive graph grammar to inform the MH proposal
-distribution, but also introduce a probability density estimator to define the
-MH acceptance procedure. Employing both approaches they could deal
-separately with local and global constraints, the locally context-sensitive
-graph grammar is used for the local constraints and the regularized statistical
-model is used for the global or long range constraints. The two approaches
-complement each other: the grammar is a flexible non-parametric approach that
-can model complex dependencies between vertices that are within a short path
-distance from each other; the statistical model, instead, can employ the bias
-derived from the particular functional family (linear) and the type of
-regularization used (a penalty over the L2 norm of the parameters) to
-generalize long range dependencies to cases that are similar but not identical
-to those observed in the training set. This approach is therefore adequate
-when natural dependencies exhibit local constraints that are more complex than
-long range ones.
+in a grammar that could express non viable instances. To address the issue in
+\cite{costa16} it is proposed to use a Metropolis Hastings (MH) Markov Chain
+Monte Carlo (MCMC) method, where the problem of sampling is reduced to the
+easier task of {\em simulation}, provided that one can build an ergodic Markov
+chain with the desired distribution as its equilibrium distribution. They use
+the context sensitive graph grammar to inform the MH proposal distribution,
+but also introduce a probability density estimator to define the MH acceptance
+procedure. This allows to deal separately with local and global constraints:
+the locally context-sensitive graph grammar is used for the local constraints
+and the regularized statistical model is used for the global or long range
+constraints. The two approaches complement each other: the grammar is a
+flexible non-parametric approach that can model complex dependencies between
+vertices that are within a short path distance from each other; the
+statistical model, instead, can employ the bias derived from the particular
+functional family (linear) and the type of regularization used (a penalty over
+the L2 norm of the parameters) to generalize long range dependencies to cases
+that are similar but not identical to those observed in the training set. 
 
-Unfortunately in application domains such as chemo- and bioinformatics,
-instances can exhibit complex and long range dependencies between their
-different constituent parts. RNA polymers, for example, self interact, with
-nucleotides forming bounds that can typically span the entire length of the
-sequence.
+This approach is therefore adequate when natural dependencies exhibit local
+constraints that are more complex than long range ones.  Unfortunately in
+some application domains instances can exhibit complex long range
+dependencies between their different constituent parts. This is the case for
+the biological domain where polymers as RNA for example, can be modeled as
+long sequences of atomic entities which self interact, establishing pairwise
+bounds that can typically span the entire length of the sequence (i.e. non
+local interactions). 
 
-here we propose xxx
+A different way to view the issue of long range dependencies is that of the
+appropriate scale of representation. In certain application domains, instances
+are naturally encoded as graphs with nodes that represent atomic entities,
+such as nucleotides in the case of RNA sequences. However, it is known that a
+more effective functional description of these molecules can be obtained in
+terms of structural components such as {\em stems} (stretches of consecutive
+paired nucleotides) and {\em loops} (stretches of consecutive unpaired
+nucleotides), each made of multiple atomic units. Under this view,
+dependencies that are local at the coarser scales correspond to longer range
+dependencies at the original scale.
 
-% 
-\begin{figure}[ht]
-      \centering
-        \includegraphics[width=0.2\linewidth]{images/showcip.png}
-      \caption{Sample figure caption.}
-      \label{alabal}
-\end{figure}
+A constructive system suitable for these domains needs to be able to
+adequately model complex long range dependencies and is more effective if it
+operates at a convenient scale rather than that of the individual units. Here we
+tackle all these issues building on the approach presented in \cite{costa16}
+introducing two key ideas: 1) we allow a user defined graph coarsening
+procedure based on edge contractions and vertex identifications, and 2) we
+allow a domain specific optimization approach to ensure that the generated
+instances are viable.
+
 
 \section{Method}
+\fxwarning{make a summary in words of the whole approach with pictures}
+
 Previously \cite{costa16} introduced a method
 to construct novel graphs according to a distribution, which is given by
 examples. Graphs are vectorized by a \emph{decomposition kernel}
@@ -212,7 +225,17 @@ set of graphs incrementally. Such changes to a graph are evaluated with the
 model. 
 We present a method to increase the flexibility of the graph grammar.
 
-\subsection{Previous grammar and definitions}
+
+% 
+\begin{figure}[ht]
+      \centering
+        \includegraphics[width=0.2\linewidth]{images/showcip.png}
+      \caption{Sample figure caption.}
+      \label{alabal}
+\end{figure}
+
+\subsection{Definitions}
+\fxwarning{introduce grammar: core interfaces and the extension: edge contractions and vertex identification}
 
 The grammar consists of sets of interchangeable graph fragments.
 We call these fragments core interface pairs(CIPs) because 
@@ -223,8 +246,7 @@ as a production: $iiiCCCiii <-> iiiCCCCiii$.
 If two interfaces are isomorphic, we can exchange the core parts
 
 
-\subsection{Contribution}
-\textbf{Modification to the grammar.}
+\textbf{Contraction Extension.}
 In place of simple CIPs as used previously,
 we use modified CIPs that consider contracted versions
 of the original graphs. We obtain a contracted graph $G'$ by contracting edges
@@ -365,14 +387,7 @@ graphs.
       \caption{Infernal evaluation on new method}
       \label{alabelb}
 \end{figure}
-\fxwarning{ should we merge the 2 infernal charts?}
-\fxwarning{pictures are not in their final form}
-\begin{figure}[ht]
-      \centering
-        \includegraphics[width=0.8\linewidth]{images/infernal_abstr.png}
-      \caption{infernal on unabstract graphlearn}
-      \label{alabeld}
-\end{figure}
+
 \begin{figure}[ht]
       \centering
         \includegraphics[width=0.8\linewidth]{images/learningcurve.png}
@@ -382,15 +397,16 @@ graphs.
 
 
 
-\section{Discussion} 
-We have compared the algorithm to its predecessor and shown
-that its result hold up in a state of the art, domain specific
-evaluation. Its drawback is the reliance on the ability to 
-generate a contraction. In some domains this contraction is 
-obvious as in chemical compounds cycles or charge maps are good candidates.
-For the general case the contraction can be learned.
+\section{Discussion and Conclusion} 
 
-\fxwarning{general things: add pictures}
+We have introduced a flexible approach to tackle the problem of long range
+dependency modeling for a constructive machine learning approach. Allowing for
+a user defined coarsening procedure we have showed how we can synthesize novel
+RNA sequences that are functionally equivalent to an original example sample.
+The coarsening procedure allows the injection of domain knowledge,
+significantly improving the quality of the results over the original domain a-specific approach. In future work we will investigate how to learn task
+specific coarsening schemes in a supervised fashion directly from data.
+
 
 \bibliography{mybib}
 
