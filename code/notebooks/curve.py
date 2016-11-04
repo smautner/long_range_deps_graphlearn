@@ -71,6 +71,8 @@ def get_seq_tups(fname,size,sizeb):
     return graphs[:size],graphs[size:size+sizeb]
 
 def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, sample_repetitions): # note that the var names are not real anymore.
+    """
+    """
     gc={'color':'g'}
     rc={'color':'r'}
     bc={'color':'b'}
@@ -98,15 +100,13 @@ def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, s
     ax1.set_axisbelow(True)
     ax1.yaxis.grid(color='gray', linestyle='dashed')
 
-    ax1.plot(numgraphs, os, color='g', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='g', markerfacecolor='w', label='original')
+
     ax1.boxplot(original_sample_repetitions, positions=numgraphs - 0.4, widths=ws, capprops=gc, medianprops=gc, boxprops=gc, whiskerprops=gc, flierprops=None)
-
-    ax1.plot(numgraphs, o, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='sample')
     ax1.boxplot(original_repetitions, positions=numgraphs, widths=ws, capprops=rc, medianprops=rc, boxprops=rc, whiskerprops=rc, flierprops=None)
-
-
-    ax1.plot(numgraphs, s, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='sample+orig')
     ax1.boxplot(sample_repetitions, positions=numgraphs + .4, widths=ws, capprops=bc, medianprops=bc, boxprops=bc, whiskerprops=bc, flierprops=None)
+    ax1.plot(numgraphs, os, color='g', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='g', markerfacecolor='w', label='original',linewidth=2)
+    ax1.plot(numgraphs, o, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='sample',linewidth=2)
+    ax1.plot(numgraphs, s, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='both',linewidth=2)
 
 
     global similarity_scores
@@ -116,8 +116,8 @@ def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, s
     #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     print numgraphs
     plt.xlim(min(numgraphs)-2,max(numgraphs)+2)
-    ax1.set_ylim(0.7,1.000)
-    ax2.set_ylim(0.8,1.100)
+    ax1.set_ylim(0.85,1.000)
+    ax2.set_ylim(0.95,1.100)
     plt.xticks(numgraphs,numgraphs)
     '''
     ax = plt.subplot()
@@ -144,7 +144,99 @@ def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, s
     plt.xlim(17,52)
     plt.ylim(0.7,1.100)
     '''
-    plt.title(run_id + '\n', fontsize=18)
+
+    #plt.title(run_id + '\n', fontsize=18)
+    ax1.legend(loc='lower left',fontsize=14)
+    ax2.legend(loc='lower right',fontsize=14)
+    #plt.ylabel('ROC AUC',fontsize=18)
+    ax1.set_ylabel('ROC AUC',fontsize=18)
+    ax2.set_ylabel('similarity of instances',fontsize=18)
+    plt.xlabel('Training set size per family',fontsize=18)
+    plt.savefig('%s_plot_predictive_performance_of_samples.png' % run_id)
+
+
+def learning_curve_function(x, a, b):
+    return a * (1 - np.exp(-b * x))
+
+from scipy.optimize import curve_fit
+
+
+def plot2(run_id, numgraphs, original_sample, original, sample): # note that the var names are not real anymore.
+    """
+    drawing is buttugly... here we redraw it
+        # mache die lines breiter und scikit-curviere sie .. wie in rnasynth/util
+        https://github.com/fabriziocosta/RNAsynth/blob/master/evaluation/draw_utils.py
+    """
+    ws = .3
+    plt.figure(figsize=(18,8))
+    marksize=5
+
+
+    # OKOK NEW STUFF TESTING
+    fig, ax1 = plt.subplots()
+    ax2=ax1.twinx()
+    for ax in [ax1,ax2]:
+        for label in (ax.get_xticklabels() + ax.get_yticklabels()):
+            label.set_fontname('Arial')
+            label.set_fontsize(15)
+    numgraphs=np.array(numgraphs)
+
+    #plt.grid()
+    ax1.set_axisbelow(True)
+    ax1.yaxis.grid(color='gray', linestyle='dashed')
+
+
+
+    def draw_a_line(dataset, color='g',label='label'):
+
+        means = np.mean(dataset, axis=1)
+        std = np.std(dataset,axis=1)
+
+        tmpdata = [e for li in dataset for e in li]
+        # plot the dots
+        ax1.plot(numgraphs.tolist()*9, tmpdata,
+                 color=color,
+                 marker='o',
+                 markeredgewidth=1,
+                 markersize=marksize,
+                 markeredgecolor=color,
+                 markerfacecolor='w',
+                 linewidth=0)
+        # plot the calculated line
+        print 'means,ng',numgraphs, means
+        tmpx = numgraphs.tolist()*9
+        a, b = curve_fit(learning_curve_function, tmpx, tmpdata)
+        print 'a',a
+        print 'b',b
+        print '%'*80
+        x_fit = np.linspace(numgraphs.min()-10, numgraphs.max()+10, 120)
+        thing = learning_curve_function(x_fit, *a)
+        ax1.plot(x_fit, thing, color+'-', label=label)
+        #ax1.plot(numgraphs, means, 'r-', label=label)
+
+
+
+    draw_a_line(sample,color='r',label='sample')
+    draw_a_line(original,color='g',label='original')
+    draw_a_line(original_sample,color='b',label='both')
+
+
+    global similarity_scores
+    ax2.plot(numgraphs, similarity_scores, 'mo', markersize=marksize,label='similarity')
+    #print 'similarity_scores = %s' % similarity_scores
+
+    #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
+    print numgraphs
+    plt.xlim(min(numgraphs)-2,max(numgraphs)+2)
+    ax1.set_ylim(0.85,1.000)
+    ax2.set_ylim(0.95,1.100)
+    plt.xticks(numgraphs,numgraphs)
+
+    #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
+    #plt.xlim(17,52)
+    #plt.ylim(0.7,1.100)
+
+    #plt.title(run_id + '\n', fontsize=18)
     ax1.legend(loc='lower left',fontsize=14)
     ax2.legend(loc='lower right',fontsize=14)
     #plt.ylabel('ROC AUC',fontsize=18)
@@ -355,7 +447,6 @@ def test(a,b,ta,tb):
 #############
 # MAIN
 ###########
-
 if __name__ == "__main__":
     global similarity_scores
     similarity_scores=[]
