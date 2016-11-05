@@ -294,7 +294,7 @@ def fit_sample(graphs, random_state=random.random()):
     arguments are generated above Oo
     '''
     global arguments
-    NJOBS=1
+
 
     graphs = list(graphs)
     estimator=estimatorwrapper( nu=.5, cv=2, n_jobs=NJOBS)
@@ -341,15 +341,7 @@ def fit_sample(graphs, random_state=random.random()):
 from copy import deepcopy
 import numpy as np
 #  ok erstmal ueber alle x values, ne
-size_test=20
-dataset_a='RF00005.fa'
-#dataset_a='RF01725.fa' 5 vs 162 was in the original paper 
-dataset_b='RF00162.fa'
-#sizes=[7,8,9,10,11,12,13,14,15]
-sizes=range(20,55,5)
 
-#sizes=[20,25]
-repeats=9
 
 # calc everything
 def get_results():
@@ -445,24 +437,51 @@ def test(a,b,ta,tb):
     
 
 #############
-# MAIN
+# CONSTANTS AND MAIN
 ###########
+size_test=100
+dataset_a='RF00005.fa'
+#dataset_a='RF01725.fa' 5 vs 162 was in the original paper
+dataset_b='RF00162.fa'
+#sizes=[7,8,9,10,11,12,13,14,15]
+sizes=range(20,55,5)
+repeats=7
+NJOBS=1
+
+
+import sys
 if __name__ == "__main__":
+    debug= False
+    if 'debug' in sys.argv[1:]:
+       debug=True
+
+
+
+    # UGLY
     global similarity_scores
     similarity_scores=[]
 
-    global arguments
-    import sys
-    arguments=[]
-    argz = make_argsarray()
-    #print argz
-    print 'len argz',len(argz)
-    print sys.argv
 
+    if debug:
+        sizes = [20,30]
+        repeats = 3
+        NJOBS=4
+
+    # set up task
+    argz = make_argsarray()
+    if debug: print 'choosing from x options:',len(argz)
+    global arguments
+    arguments=[]
+    if debug: print 'argv:',sys.argv
     # subtract one because sge is sub good
     job = int(sys.argv[1])-1 
     print 'jobid:',job
     arguments=argz[job]
+
+    units=sum(sizes)*repeats/float(60)
+
+    print 'expected minutes: 4c:%f  1c:%f' %  (units*7.6, units*17.13)
+    # look at res
     r=get_results()
     print 'sizes = %s' % sizes
     print 'result = %s' % r
