@@ -519,6 +519,10 @@ if __name__ == "__main__":
     arguments=argz[job]
     if debug: print arguments
     dataset_a,dataset_b=argz[job]['fastafiles']
+
+    # reset just for now..
+    #dataset_a='RF00005.fa'
+    #dataset_b='RF00162.fa'
     units=sum(sizes)*repeats/float(60)
 
     if debug: print 'expected minutes: 4c:%f  1c:%f' %  (units*7.6, units*17.13)
@@ -532,5 +536,5 @@ if __name__ == "__main__":
 
 
 
-
+## NOTE TO SELF  CHECK NJOBS AND THE 524 where i overwrite the fastafilez. dataset_a= etc
 
