@@ -194,7 +194,8 @@ def plot2(run_id, numgraphs, original_sample, original, sample): # note that the
 
         tmpdata = [e for li in dataset for e in li]
         # plot the dots
-        ax1.plot(numgraphs.tolist()*9, tmpdata,
+        numgrmultiplier  = len(tmpdata)/len(numgraphs.tolist()) # should be equal to the repeats...
+        ax1.plot(numgraphs.tolist()*numgrmultiplier, tmpdata,
                  color=color,
                  marker='o',
                  markeredgewidth=1,
@@ -204,7 +205,7 @@ def plot2(run_id, numgraphs, original_sample, original, sample): # note that the
                  linewidth=0)
         # plot the calculated line
         print 'means,ng',numgraphs, means
-        tmpx = numgraphs.tolist()*9
+        tmpx = numgraphs.tolist()*numgrmultiplier
         a, b = curve_fit(learning_curve_function, tmpx, tmpdata)
         print 'a',a
         print 'b',b
@@ -228,7 +229,7 @@ def plot2(run_id, numgraphs, original_sample, original, sample): # note that the
     #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     print numgraphs
     plt.xlim(min(numgraphs)-2,max(numgraphs)+2)
-    ax1.set_ylim(0.85,1.000)
+    ax1.set_ylim(0.70,1.000)
     ax2.set_ylim(0.95,1.100)
     plt.xticks(numgraphs,numgraphs)
 
@@ -261,6 +262,7 @@ import itertools
 
 def make_argsarray():
     args=[
+   {'mininterfacecount': 2, 'burnin': 4, 'acc_min_sim': 0.24449402485485644, 'imp_lin_start': 0.19892265815047983, 'maxsizediff': 6, 'imp_thresh': 0.32120431812249317, 'mincipcount': 2, 'core_choice': False, 'n_samples': 10, 'n_steps': 25, 'quick_skip': True, 'SCORE':-0.000},
    {'mininterfacecount': 2, 'burnin': 13, 'acc_min_sim': 0.24449402485485644, 'imp_lin_start': 0.19892265815047983, 'maxsizediff': 17, 'imp_thresh': 0.32120431812249317, 'mincipcount': 2, 'core_choice': False, 'n_samples': 6, 'n_steps': 70, 'quick_skip': True, 'SCORE':-0.703362611732},
    {'mininterfacecount': 1, 'burnin': 11, 'acc_min_sim': 0.35723373060996666, 'imp_lin_start': 0.11639352115717616, 'maxsizediff': 12, 'imp_thresh': 0.34966775094400682, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 25, 'quick_skip': True, 'SCORE':-0.699739011906},
    {'mininterfacecount': 2, 'burnin': 2, 'acc_min_sim': 0.22989399280978964, 'imp_lin_start': 0.0077498579055246264, 'maxsizediff': 12, 'imp_thresh': 0.97485773117432351, 'mincipcount': 2, 'core_choice': True, 'n_samples': 3, 'n_steps': 86, 'quick_skip': True, 'SCORE':-0.698742678067},
@@ -271,6 +273,7 @@ def make_argsarray():
    {'mininterfacecount': 2, 'burnin': 5, 'acc_min_sim': 0.4486388144723355, 'imp_lin_start': 0.09374179056766796, 'maxsizediff': 19, 'imp_thresh': 0.24993359270552518, 'mincipcount': 2, 'core_choice': True, 'n_samples': 7, 'n_steps': 99, 'quick_skip': False, 'SCORE':-0.690620968873},
    {'mininterfacecount': 2, 'burnin': 11, 'acc_min_sim': 0.59318328541230492, 'imp_lin_start': 0.1842925803111628, 'maxsizediff': 18, 'imp_thresh': 0.79905439891716812, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 49, 'quick_skip': False, 'SCORE':-0.68998713873},
    {'mininterfacecount': 1, 'burnin': 8, 'acc_min_sim': 0.62734080199879139, 'imp_lin_start': 0.10469662908481758, 'maxsizediff': 7, 'imp_thresh': 0.11177296372179102, 'mincipcount': 2, 'core_choice': False, 'n_samples': 5, 'n_steps': 91, 'quick_skip': True, 'SCORE':-0.688879734274}] 
+
     '''
     for improving_threshold in [ .3,.4,.5,.6]:
         for imp_lin_start in [.1,.2]:
@@ -285,7 +288,23 @@ def make_argsarray():
                         argz['acc_min_sim']=acc_min_sim
                         args.append(argz)
                         '''
-    return args
+    fastas=[['RF01051.fa','RF01998.fa'],
+        ['RF00001.fa','RF00162.fa'],
+        ['RF00020.fa','RF01999.fa'],
+        ['RF01999.fa','RF02344.fa'],
+        ['RF00020.fa','RF02344.fa'],
+        ['RF01725.fa','RF00167.fa'],
+        ['RF01750.fa','RF00167.fa'],
+        ['RF01725.fa','RF01750.fa']]
+
+    realres=[]
+    for seqp in fastas:
+        for d in args:
+           z=d.copy()
+           z['fastafiles']=seqp
+           realres.append(z)
+
+    return realres
     
 
 def fit_sample(graphs, random_state=random.random()):
@@ -394,9 +413,26 @@ def evaluate_point_no_deepcopy(size):
     res.append(drei)
     return res
 
-
+'''
 # does the fit stuff
 def get_trainthings(size,dataset):
+    #try:
+        train,test = get_seq_tups(dataset,size,size_test)
+        res=fit_sample(deepcopy(train))
+        if len(res)<3:
+            print res
+            raise ValueError('wtf')
+    #except:
+    #    print '.',
+    #    return get_trainthings(size,dataset)
+    #print 'k',
+        return (res,train,test)
+
+'''
+# does the fit stuff
+def get_trainthings(size,dataset,depth=0):
+    if depth==6:
+        exit()
     try:
         train,test = get_seq_tups(dataset,size,size_test)
         res=fit_sample(deepcopy(train))
@@ -404,7 +440,7 @@ def get_trainthings(size,dataset):
             raise ValueError('wtf')
     except:
         print '.',
-        return get_trainthings(size,dataset)
+        return get_trainthings(size,dataset,depth+1)
     print 'k',
     return (res,train,test)
 
@@ -439,14 +475,21 @@ def test(a,b,ta,tb):
 #############
 # CONSTANTS AND MAIN
 ###########
-size_test=100
-dataset_a='RF00005.fa'
-#dataset_a='RF01725.fa' 5 vs 162 was in the original paper
-dataset_b='RF00162.fa'
+size_test=50
+#dataset_a='RF00005.fa'
+#dataset_b='RF00162.fa' RF01051 RF01998
+dataset_b='RF01051.fa'
+dataset_a='RF01998.fa'
+#RF00020 RF01999 RF02344
+
 #sizes=[7,8,9,10,11,12,13,14,15]
 sizes=range(20,55,5)
 repeats=7
-NJOBS=1
+NJOBS=2
+
+from eden.util import configure_logging
+import logging
+#configure_logging(logging.getLogger(),verbosity=2)
 
 
 import sys
@@ -455,12 +498,9 @@ if __name__ == "__main__":
     if 'debug' in sys.argv[1:]:
        debug=True
 
-
-
     # UGLY
     global similarity_scores
     similarity_scores=[]
-
 
     if debug:
         sizes = [20,30]
@@ -477,16 +517,18 @@ if __name__ == "__main__":
     job = int(sys.argv[1])-1 
     print 'jobid:',job
     arguments=argz[job]
-
+    if debug: print arguments
+    dataset_a,dataset_b=argz[job]['fastafiles']
     units=sum(sizes)*repeats/float(60)
 
-    print 'expected minutes: 4c:%f  1c:%f' %  (units*7.6, units*17.13)
+    if debug: print 'expected minutes: 4c:%f  1c:%f' %  (units*7.6, units*17.13)
     # look at res
     r=get_results()
     print 'sizes = %s' % sizes
     print 'result = %s' % r
     print 'similarity_scores = %s' % similarity_scores
     plot(str(job), sizes, *r)
+    #plot2('p2_'+str(job), sizes, *r)
 
 
 
