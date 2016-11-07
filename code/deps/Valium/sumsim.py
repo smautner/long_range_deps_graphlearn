@@ -242,8 +242,16 @@ def compdistr(a,b):
         #print score1,score2
     scoreaverage= scoresum / np.shape(data)[0]
     return scoreaverage
-  
 
+
+
+
+def get_dist_and_sim(alist,blist):
+    a,b=vectorize(alist,blist)
+    distri = compdistr(a,b)
+    similarity = simset(a,b)
+    #print distri, similarity
+    return distri,similarity
 
 def score(alist,blist):
     a,b=vectorize(alist,blist)

@@ -345,13 +345,12 @@ Therefore the contraction has to be recalculated if a change is accepted.
 %%%%%%%
 Ribonucleic acid (RNA) sequences are sequences over the four nucleotides guanine,
 uracil, adenine, and cytosine (G,U,A,C).
-The nucleotides are connected to a robose-phosphate backbone which imposes a
-direction.  Non coding RNA (ncRNA) is transcribed from DNA but not
+The nucleotides are connected to a ribose-phosphate backbone which imposes a
+direction. Non coding RNA (ncRNA) is transcribed from DNA but not
 translated into proteins. Instead it serves various other functions.
 The function depends on the sequence as well as the structure in which it 
 \emph{folds} by connecting non adjacent nucleotides with hydrogen bonds. 
-RNAs are grouped into functional families\cite{rfam} whose classification
-is a problem of biology.
+RNAs are grouped into functional families\cite{rfam}.
 Calculating the physically optimal folding for a single sequence
 is possible, but actual sequences will often fold in unison with 
 sequences in their family. Therefore, if we are to fold a sequence,
@@ -365,7 +364,7 @@ The result is a \emph{secondary structure} which is translated into a
 graph. First a directed path graph is generated which is labeled
 according to the nucleotides in the sequence, then undirected edges 
 are introduced that represent the hydrogen bonds.
-The presented grammar works on with directed graphs.
+The presented grammar is compatible with directed graphs.
 
 %%%%%%%%
 % INFERNAL STUFF AND PARAMOPT
