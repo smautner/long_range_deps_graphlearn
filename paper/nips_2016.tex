@@ -211,63 +211,63 @@ and 2) we allow a domain specific optimization approach to ensure that the
 generated instances are viable.
 
 %
+
+
 \begin{figure}[ht]
       \centering
-        \includegraphics[width=1.0\linewidth]{images/allcipsinone.png}
-      \caption{Left: Simplified RNA molecule. Mid: The same molecule
-      condensed to its structural elements. Right: Chemical molecule and a
-      \emph{congruent} CIP. Core (dark) Interface (brighter) Pair graphs (CIP)
-      are
-      highlighted in color.}
+        \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
+      \caption{Left: Chemical molecule and a \emph{congruent} CIP. 
+               Mid: Simplified RNA molecule.  Right:  The same molecule
+               condensed to its structural elements.
+             Core (dark) Interface (brighter) Pair graphs (CIP) are highlighted in color.}
       \label{allcips}
 \end{figure}
 
 \section{Method}
 
-Previously \cite{costa16} introduced a method
+\cite{costa16} introduced a method
 to construct novel graphs according to a distribution, which is given by
 examples. Graphs are vectorized by a \emph{decomposition kernel}
 to train a machine learning model, e.g. an SVM.
 Fragments of the graphs are collected in 
 a \emph{grammar} (analogous to a string grammar) to alter the initial
-set of graphs incrementally. Such changes to a graph are evaluated with the
+set of graphs incrementally. Changes to a graph are evaluated with the
 model. 
 We present a method to increase the flexibility of the graph grammar.
 
-\subsection{Previous grammar and definitions}
-
+We give an overview of the graph grammar in \cite{costa16}.
 The grammar consists of sets of interchangeable graph fragments.
 We call these fragments core interface pairs(CIPs) because 
 they consist of a core part and an interface part.
-In terms of a string grammar core and interface are imaginable 
+In terms of a string grammar, core and interface are imaginable 
 as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$.
-In fig. \ref{allcips} (right) we can see a production applied to a graph $G$.
+In fig. \ref{allcips} (left) we can see a production applied to a graph $G$.
 Vertices in \emph{radius} $n$ of a root vertex are the vertices in distance $n$
-or less. The (in dark) core area is determined by vertices in a radius $R$
-around a root vertex $v$, hence $C_{R}^v(G)$. Here this radius is $0$. In a
-lighter green we observe the interface with its Thickness $T$. This is the graph
-induced by the vertices in distance $T$ around core vertices, it is
-described by $I_{R,T}^v(G)$.
+or less. The core (dark) is determined by vertices in a radius $R$
+around a root vertex $v$, hence $C_{R}^v(G)$. In fig \ref{allcips}(left)
+this radius is $0$. In a lighter shade we observe the interface with 
+\emph{thickness} $T$. This is the graph induced by the vertices in distance $T$
+around core vertices, it is described by $I_{R,T}^v(G)$. In the figure $T=2$.
 
-
-\subsection{contribution}
-\textbf{Contraction Extension.}
+\textbf{ Extension of contraction.}
 In place of simple CIPs as used previously,
-we use modified CIPs that consider contracted versions
-of the original graphs. We obtain a contracted graph $G'$ by contracting edges
+we use modified CIPs that consider coarse versions
+of the original graphs. We obtain a coarse graph $G'$ by contracting edges
 in $G$. Fig. \ref{allcips} (mid) is showing the result of multiple contractions
 applied to the graph on the left. The set of contracted vertices of a
 created vertex is accessible with the $contracted$ function.
-The functions for extracting core and interface graphs, 
-$C_{R}^v(G')$ and $I_{R,T}^v(G')$, are unaltered except that we apply them
-on $G'$ instead of $G$, see fig. \ref{allcips}(mid).
+$C_{R}^v(G')$ and $I_{R,T}^v(G')$, functions for extracting core and
+interface graphs, are unaltered except that we apply them
+on $G'$ instead of $G$, see fig. \ref{allcips}(right).
 Since the sampling is performed on the uncontracted graphs,
-We are now defining related cores and interfaces in $G$.
-The core is given by the vertices that were contracted to form $C_{R}^v(G')$.
-For the Interface we choose a nodes adjacent to the core in $G$ with a
-distance $B$.
-The core graph $C_{R}^v(G',G)$ is induced by the nodes 
-$\bigcup\limits_{u \in C_R^v(G')} contracted(u)$.
+We now define the related core and interface in $G$.
+%def i+c
+The core graph $C_{R}^v(G',G)$ is induced by the vertices that were contracted
+ to form the nodes in $C_{R}^v(G')$;
+%$\bigcup\limits_{u \in C_R^v(G')} contracted(u)$.
+\fxwarning{style of the underset stuff? }
+$\bigcup_{u \in C_R^v(G')} contracted(u)$.
+For the Interface we choose a nodes adjacent to the core in $G$ with a distance $B$.
 The new interface graph $I_{R,B}^v(G',G)$ is then obtained by the nodes 
 $\{ w | d(w,v) \leq B \wedge v\in C_R^v(G',G) \wedge w \in G \wedge w 
 \notin C_R^v(G',G) \}$.  $B$ is the thickness of the base graph.
@@ -283,18 +283,21 @@ In our application case, we contract according to the
 secondary RNA structure and label the resulting vertex accordingly e.g.
 'Hairpin loop'.$I_{R,T}^v(G')$  encodes far reaching and abstract
 information about the surrounding vertices in our CIP interface matching.
-
-
 % graph contration, interface trick
 % change to congruency
 \textbf{An improvement to the notion of congruency.}
 CIPs require isomorphism to be considered congruent.
 We expand this requirement to incorporate
-the distance to the closest nodes in the core graph when 
-determining if graphs are congruent.
+the distance to the closest vertices in the core graph, for every interface
+vertex, when determining if graphs are congruent.
+%$\forall u \in I_{R,T}^v(G) : 
+%\underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
+%\underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $
+\fxwarning{formula style?}
 $\forall u \in I_{R,T}^v(G) : 
-\underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
-\underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $ i.e. the distance 
+\min_{z \in  C_{R}^v(G)} d(u,z) = 
+\min_{z' \in  C_{R}^{v'}(G')} d(\phi(u),z') $
+i.e. the distance 
 to the closest core node is equal for every
 $u$ and $\phi(u)$.
 It is easy to see the benefit of this extension.
@@ -302,25 +305,24 @@ Imagine a CIP embedded into a graph. Let the interface consist of
 two connected vertices $a$ and $b$, $b$ being adjacent to the core while
 $a$ is connected to the rest of the graph.
 Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
-
-
 \textbf{Contracting vertices.}
-In this chapter we have seen vertices being contracted
-that are connected with an edge. This is not a requirement
-as any two vertices in a graph could be contracted. This
-is called vertex identification.  
-We did so with vertices in the multi-loop that are not stem vertices.
-In fig. \ref{allcips} the multi-loop is labeled 'M', the stem 'S'.
-
+In fig \ref{allcips} (mid and right, dark) we see how a coarsened 
+graph can be obtained by contraction of edges.
+Dark nodes in the middle picture are contracted to a single 's' labeled
+vertex on the right. 
+Vertices not connected by an edge can also be contracted.
+This is called vertex identification.  
+We did so with vertices in the multi-loop "M" that are not stem "S" vertices 
+(here labeled 'A' and 'G').
 \textbf{Adaptation of the sampling process.}
-In a sampling step we generate a new graph and decide if
-we accept it. The new graph is generated by applying a
+In a simulation step a new graph is generated and an acceptance decision
+has to be made. The new graph is generated by applying a
 production to the current instance. 
-In fig. \ref{allcips}(left) we can see an production being applied. 
-In the case of the enhanced grammar, the base graph $G$ changes.
-These changes may alter the contracted view of the graph.
-Therefore the contraction has to be recalculated following each step
-of the sampling process.
+In fig. \ref{allcips}(left) we can see a production being applied
+to the base graph $G$. 
+These changes may alter the coarse graph.
+Therefore the contraction has to be recalculated if a change is accepted.
+
 
 
 %\fxwarning{remove this eden part.. what about the directedness? look up what 
@@ -335,100 +337,132 @@ of the sampling process.
 
 
 \section{Evaluation}
-% Infernal is the way to go, also describes secondary structure
-RNA sequences are sequences over the four nucleotides A,G,U and C.
-The nucleotides are connected to a backbone which 
-has a 5' and a 3' end.
-Thus, a sequence is translateable into a directed path graph.
-Nucleotides may bind to non adjacent nucleotides.
-In the graph we introduce a non directed edge between the two nucleotides.
-The resulting graph is called the  \emph{secondary structure} graph.
-The presented grammar works fine with directed graphs.
-RNAs are grouped into functional families whose classification
-is a problem of biology. \emph{Infernal}\cite{infernal} can classify and 
-create members of these families using covariance models.
-Infernal gives us a domain specific way to evaluate
-our Method for the generation of new graphs. 
 
 
-The process of obtaining the secondary structure (graph) for a seqence is 
-called folding. Folding is important for RNA to function in a living cell. 
+
+%%%%%%%
+%% RNA AND FOLDING 
+%%%%%%%
+Ribonucleic acid (RNA) sequences are sequences over the four nucleotides guanine,
+uracil, adenine, and cytosine (G,U,A,C).
+The nucleotides are connected to a robose-phosphate backbone which imposes a
+direction.  Non coding RNA (ncRNA) is transcribed from DNA but not
+translated into proteins. Instead it serves various other functions.
+The function depends on the sequence as well as the structure in which it 
+\emph{folds} by connecting non adjacent nucleotides with hydrogen bonds. 
+RNAs are grouped into functional families\cite{rfam} whose classification
+is a problem of biology.
 Calculating the physically optimal folding for a single sequence
 is possible, but actual sequences will often fold in unison with 
 sequences in their family. Therefore, if we are to fold a sequence,
-we find the four most similar sequences from the training set and 
-look for a consensus structure.
-This is done by first aligning the sequences with \emph{muscle} \cite{muscle}
-and then folding this alignment with  \emph{RNAalifold}
+we find the four most similar sequences from the training set, align them  and 
+look for a consensus folding.
+This is done by nearest neighbor searching the four closest sequences, 
+aligning the sequences with \emph{muscle} \cite{muscle}
+and then folding this alignment with \emph{RNAalifold}
 \cite{rnaalifold}.  
+The result is a \emph{secondary structure} which is translated into a 
+graph. First a directed path graph is generated which is labeled
+according to the nucleotides in the sequence, then undirected edges 
+are introduced that represent the hydrogen bonds.
+The presented grammar works on with directed graphs.
 
-% choose data this way
-We chose our RNA sequences from the seed sequences of each family
-that Infernal is using\cite{rfam}. Sequences were chosen from RNA families with
-a) many members, because some families contain 10
-instances which is very few for a classification task. b) interesting 
-structure, many sequences fold into structures that exhibit a large number of 
+%%%%%%%%
+% INFERNAL STUFF AND PARAMOPT
+%%%%%%%%
+\emph{Infernal}\cite{infernal} can classify members of these families using
+covariance models. Infernal gives us a domain specific way to evaluate
+the graphs we generate. 
+% infernal stuff
+For each family Infernal provides a model what is trained on 
+a hand curated list of family representatives (seeds) as well as a 
+bit score threshold. Evaluating a sequence with the model yields a bit score.
+Is this score higher than the threshold, the sequence should be considered 
+part of the family. 
+% choose params
+We chose our train and test RNA sequences among the seed sequences for each
+family. Sequences were chosen from RNA families with three properties:
+\fxwarning{how to enumerate?}
+1) many members; because some families contain 10
+instances which is very few for a classification task. 2)  interesting 
+structure; many sequences fold into structures that exhibit a large number of 
 unpaired bases which would result in a very simple contracted graph
-c) similar length, because classification should no be trivial.
-In the sampling process, many variables are involved. To obtain 
-sampling parameters, the parameterspace was randomly searched.
-To obtain the grammar parameters, a gridsearch over some options was conducted.
+3) similar length; because classification should no be trivial.
+In the sampling process, many variables are involved.
+%paramoptimisation 
+To obtain 
+\fxwarning{this might become obsolete since optimisation was only for the first dataset..
+gl is more unstable on other sets -> params should be more conservative...
+-> i hand picked a conservative dataset..
+also note to self: dont merge the curve from 'clevo.. also: i set the testsizes from 50 to 100 there..
+}
+sampling parameters, the parameter space was randomly searched.
+To obtain the grammar parameters, a grid search over some options was conducted.
 
 
 
-% eval against Infernal
-We evaluate our generated sequences with Infernal\cite{infernal}.
-For each Familily Infernal provides a model what is trained on 
-a hand curated list of familiy representatives as well as a 
-bit score threshold. Sequences whose score is above the threshold 
-can be considered part of the RNA family. 
+%%%%%%%%%%%%%%%%%
+% About the pics
+%%%%%%%%%%%%%%%%%
+%infevel 
 Fig. \ref{infeval} shows the average bit-score of generated graphs
-and the size of the training set. The black bar represents the threshold.
-In blue we see the scores of the sequences generated with the enhanced grammar.
-In green the sequences generated by a normal grammar. 
-Two results are notiveable 1) the sequences generated by our method
-are overwhelmingly above the threshold. 2) the new method outperforms
+and the size of the training set. The black bar represents the family specific 
+threshold. In blue we see the scores of the sequences generated with the
+enhanced grammar. In red the sequences generated by a normal grammar. 
+\fxwarning{how to enumerate? should i mention that the light color is the std?}
+Two results are noticeable: 1) the sequences generated by our method
+perform overwhelmingly above the threshold. 2) the new method outperforms
 the old. 
-
 % eval learning curve+ edit dist
+\fxwarning{is this the right citation?}
 Costa \cite{costa14} defines \emph{the constructive learning problem for 
 finite samples}.
 The goal is to generate graphs that are different from the training set,
 but depict a similar distribution.
-The similarity of two sets of seqences $a$ and $b$ 
+The similarity of two sets of sequences $a$ and $b$ 
 is obtained with $s(a,b)/\sqrt{(s(a,a)*s(b,b))}$ where $s$ is the mean of the
 similarity matrix between the two arguments. If the arguments are identical,
 the diagonal is removed from the matrix.
 Distributions are indirectly comparable by looking at the performance 
 of trained estimators. A high similarity in performance indicates a high
 similarity in distribution.
-Fig \ref{learncurve} shows the average (over positive and negative set)
+Fig \ref{learncurve} shows the average (over positive and negative generated sets)
 similarity as described above. 
 We also see the learning curves obtained by training an estimator
-on $x$ random instances from each of two rna family representatives.
+on $x$ random instances from each of two RNA family representatives.
 We see the curves for the original seeds, the sequences generated by 
 our graph generator and the combined set. 
+\fxwarning{drop a sentence on the interpretation}
 
 
 
 
 \begin{figure}[ht]
       \centering
-        \includegraphics[width=0.5\linewidth]{images/infernal_abstr.png}
-      \caption{Infernal evaluation on new method}
+  \begin{minipage}[b]{0.49\textwidth}
+    \includegraphics[width=\textwidth]{images/infernal_abstr.png}
+    \caption{Infernal scores of generated sequences for RNAs of family RF01725.}
       \label{infeval}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.49\textwidth}
+    \includegraphics[width=\textwidth]{images/learningcurve.png}
+    \caption{Learning curve for classification between RF00005 and RF00162.vs}
+     \label{learncurve}
+  \end{minipage}
 \end{figure}
+
 \fxwarning{pictures are not in their final form}
 
-\begin{figure}[ht]
-      \centering
-        \includegraphics[width=0.5\linewidth]{images/learningcurve.png}
-      \caption{learning curve}
-      \label{learncurve}
-\end{figure}
+%\begin{figure}[ht]
+%      \centering
+%        \includegraphics[width=0.5\linewidth]{images/learningcurve.png}
+%      \caption{learning curve}
+%      \label{learncurve}
+%\end{figure}
 
 
-
+ 
 \section{Discussion and Conclusion}
 
 We have introduced a flexible approach to tackle the problem of long range

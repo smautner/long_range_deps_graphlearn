@@ -71,6 +71,8 @@ def get_seq_tups(fname,size,sizeb):
     return graphs[:size],graphs[size:size+sizeb]
 
 def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, sample_repetitions): # note that the var names are not real anymore.
+    """
+    """
     gc={'color':'g'}
     rc={'color':'r'}
     bc={'color':'b'}
@@ -98,15 +100,13 @@ def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, s
     ax1.set_axisbelow(True)
     ax1.yaxis.grid(color='gray', linestyle='dashed')
 
-    ax1.plot(numgraphs, os, color='g', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='g', markerfacecolor='w', label='original')
+
     ax1.boxplot(original_sample_repetitions, positions=numgraphs - 0.4, widths=ws, capprops=gc, medianprops=gc, boxprops=gc, whiskerprops=gc, flierprops=None)
-
-    ax1.plot(numgraphs, o, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='sample')
     ax1.boxplot(original_repetitions, positions=numgraphs, widths=ws, capprops=rc, medianprops=rc, boxprops=rc, whiskerprops=rc, flierprops=None)
-
-
-    ax1.plot(numgraphs, s, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='sample+orig')
     ax1.boxplot(sample_repetitions, positions=numgraphs + .4, widths=ws, capprops=bc, medianprops=bc, boxprops=bc, whiskerprops=bc, flierprops=None)
+    ax1.plot(numgraphs, os, color='g', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='g', markerfacecolor='w', label='original',linewidth=2)
+    ax1.plot(numgraphs, o, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='sample',linewidth=2)
+    ax1.plot(numgraphs, s, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='both',linewidth=2)
 
 
     global similarity_scores
@@ -116,8 +116,8 @@ def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, s
     #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     print numgraphs
     plt.xlim(min(numgraphs)-2,max(numgraphs)+2)
-    ax1.set_ylim(0.7,1.000)
-    ax2.set_ylim(0.8,1.100)
+    ax1.set_ylim(0.85,1.000)
+    ax2.set_ylim(0.95,1.100)
     plt.xticks(numgraphs,numgraphs)
     '''
     ax = plt.subplot()
@@ -144,7 +144,100 @@ def plot(run_id, numgraphs, original_sample_repetitions, original_repetitions, s
     plt.xlim(17,52)
     plt.ylim(0.7,1.100)
     '''
-    plt.title(run_id + '\n', fontsize=18)
+
+    #plt.title(run_id + '\n', fontsize=18)
+    ax1.legend(loc='lower left',fontsize=14)
+    ax2.legend(loc='lower right',fontsize=14)
+    #plt.ylabel('ROC AUC',fontsize=18)
+    ax1.set_ylabel('ROC AUC',fontsize=18)
+    ax2.set_ylabel('similarity of instances',fontsize=18)
+    plt.xlabel('Training set size per family',fontsize=18)
+    plt.savefig('%s_plot_predictive_performance_of_samples.png' % run_id)
+
+
+def learning_curve_function(x, a, b):
+    return a * (1 - np.exp(-b * x))
+
+from scipy.optimize import curve_fit
+
+
+def plot2(run_id, numgraphs, original_sample, original, sample): # note that the var names are not real anymore.
+    """
+    drawing is buttugly... here we redraw it
+        # mache die lines breiter und scikit-curviere sie .. wie in rnasynth/util
+        https://github.com/fabriziocosta/RNAsynth/blob/master/evaluation/draw_utils.py
+    """
+    ws = .3
+    plt.figure(figsize=(18,8))
+    marksize=5
+
+
+    # OKOK NEW STUFF TESTING
+    fig, ax1 = plt.subplots()
+    ax2=ax1.twinx()
+    for ax in [ax1,ax2]:
+        for label in (ax.get_xticklabels() + ax.get_yticklabels()):
+            label.set_fontname('Arial')
+            label.set_fontsize(15)
+    numgraphs=np.array(numgraphs)
+
+    #plt.grid()
+    ax1.set_axisbelow(True)
+    ax1.yaxis.grid(color='gray', linestyle='dashed')
+
+
+
+    def draw_a_line(dataset, color='g',label='label'):
+
+        means = np.mean(dataset, axis=1)
+        std = np.std(dataset,axis=1)
+
+        tmpdata = [e for li in dataset for e in li]
+        # plot the dots
+        numgrmultiplier  = len(tmpdata)/len(numgraphs.tolist()) # should be equal to the repeats...
+        ax1.plot(numgraphs.tolist()*numgrmultiplier, tmpdata,
+                 color=color,
+                 marker='o',
+                 markeredgewidth=1,
+                 markersize=marksize,
+                 markeredgecolor=color,
+                 markerfacecolor='w',
+                 linewidth=0)
+        # plot the calculated line
+        print 'means,ng',numgraphs, means
+        tmpx = numgraphs.tolist()*numgrmultiplier
+        a, b = curve_fit(learning_curve_function, tmpx, tmpdata)
+        print 'a',a
+        print 'b',b
+        print '%'*80
+        x_fit = np.linspace(numgraphs.min()-10, numgraphs.max()+10, 120)
+        thing = learning_curve_function(x_fit, *a)
+        ax1.plot(x_fit, thing, color+'-', label=label)
+        #ax1.plot(numgraphs, means, 'r-', label=label)
+
+
+
+    draw_a_line(sample,color='r',label='sample')
+    draw_a_line(original,color='g',label='original')
+    draw_a_line(original_sample,color='b',label='both')
+
+
+    global similarity_scores
+    ax2.plot(numgraphs, similarity_scores, 'mo', markersize=marksize,label='similarity')
+    #print 'similarity_scores = %s' % similarity_scores
+
+    #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
+    print numgraphs
+    plt.xlim(min(numgraphs)-2,max(numgraphs)+2)
+    ax1.set_ylim(0.70,1.000)
+    ax2.set_ylim(0.95,1.100)
+    plt.xticks(numgraphs,numgraphs)
+
+    #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
+    #plt.xlim(17,52)
+    #plt.ylim(0.7,1.100)
+
+    #plt.title(run_id + '\n', fontsize=18)
     ax1.legend(loc='lower left',fontsize=14)
     ax2.legend(loc='lower right',fontsize=14)
     #plt.ylabel('ROC AUC',fontsize=18)
@@ -169,6 +262,7 @@ import itertools
 
 def make_argsarray():
     args=[
+   {'mininterfacecount': 2, 'burnin': 4, 'acc_min_sim': 0.24449402485485644, 'imp_lin_start': 0.19892265815047983, 'maxsizediff': 6, 'imp_thresh': 0.32120431812249317, 'mincipcount': 2, 'core_choice': False, 'n_samples': 10, 'n_steps': 25, 'quick_skip': True, 'SCORE':-0.000},
    {'mininterfacecount': 2, 'burnin': 13, 'acc_min_sim': 0.24449402485485644, 'imp_lin_start': 0.19892265815047983, 'maxsizediff': 17, 'imp_thresh': 0.32120431812249317, 'mincipcount': 2, 'core_choice': False, 'n_samples': 6, 'n_steps': 70, 'quick_skip': True, 'SCORE':-0.703362611732},
    {'mininterfacecount': 1, 'burnin': 11, 'acc_min_sim': 0.35723373060996666, 'imp_lin_start': 0.11639352115717616, 'maxsizediff': 12, 'imp_thresh': 0.34966775094400682, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 25, 'quick_skip': True, 'SCORE':-0.699739011906},
    {'mininterfacecount': 2, 'burnin': 2, 'acc_min_sim': 0.22989399280978964, 'imp_lin_start': 0.0077498579055246264, 'maxsizediff': 12, 'imp_thresh': 0.97485773117432351, 'mincipcount': 2, 'core_choice': True, 'n_samples': 3, 'n_steps': 86, 'quick_skip': True, 'SCORE':-0.698742678067},
@@ -179,6 +273,7 @@ def make_argsarray():
    {'mininterfacecount': 2, 'burnin': 5, 'acc_min_sim': 0.4486388144723355, 'imp_lin_start': 0.09374179056766796, 'maxsizediff': 19, 'imp_thresh': 0.24993359270552518, 'mincipcount': 2, 'core_choice': True, 'n_samples': 7, 'n_steps': 99, 'quick_skip': False, 'SCORE':-0.690620968873},
    {'mininterfacecount': 2, 'burnin': 11, 'acc_min_sim': 0.59318328541230492, 'imp_lin_start': 0.1842925803111628, 'maxsizediff': 18, 'imp_thresh': 0.79905439891716812, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 49, 'quick_skip': False, 'SCORE':-0.68998713873},
    {'mininterfacecount': 1, 'burnin': 8, 'acc_min_sim': 0.62734080199879139, 'imp_lin_start': 0.10469662908481758, 'maxsizediff': 7, 'imp_thresh': 0.11177296372179102, 'mincipcount': 2, 'core_choice': False, 'n_samples': 5, 'n_steps': 91, 'quick_skip': True, 'SCORE':-0.688879734274}] 
+
     '''
     for improving_threshold in [ .3,.4,.5,.6]:
         for imp_lin_start in [.1,.2]:
@@ -193,7 +288,23 @@ def make_argsarray():
                         argz['acc_min_sim']=acc_min_sim
                         args.append(argz)
                         '''
-    return args
+    fastas=[['RF01051.fa','RF01998.fa'],
+        ['RF00001.fa','RF00162.fa'],
+        ['RF00020.fa','RF01999.fa'],
+        ['RF01999.fa','RF02344.fa'],
+        ['RF00020.fa','RF02344.fa'],
+        ['RF01725.fa','RF00167.fa'],
+        ['RF01750.fa','RF00167.fa'],
+        ['RF01725.fa','RF01750.fa']]
+
+    realres=[]
+    for seqp in fastas:
+        for d in args:
+           z=d.copy()
+           z['fastafiles']=seqp
+           realres.append(z)
+
+    return realres
     
 
 def fit_sample(graphs, random_state=random.random()):
@@ -202,7 +313,7 @@ def fit_sample(graphs, random_state=random.random()):
     arguments are generated above Oo
     '''
     global arguments
-    NJOBS=1
+
 
     graphs = list(graphs)
     estimator=estimatorwrapper( nu=.5, cv=2, n_jobs=NJOBS)
@@ -249,15 +360,7 @@ def fit_sample(graphs, random_state=random.random()):
 from copy import deepcopy
 import numpy as np
 #  ok erstmal ueber alle x values, ne
-size_test=20
-dataset_a='RF00005.fa'
-#dataset_a='RF01725.fa' 5 vs 162 was in the original paper 
-dataset_b='RF00162.fa'
-#sizes=[7,8,9,10,11,12,13,14,15]
-sizes=range(20,55,5)
 
-#sizes=[20,25]
-repeats=9
 
 # calc everything
 def get_results():
@@ -310,9 +413,26 @@ def evaluate_point_no_deepcopy(size):
     res.append(drei)
     return res
 
-
+'''
 # does the fit stuff
 def get_trainthings(size,dataset):
+    #try:
+        train,test = get_seq_tups(dataset,size,size_test)
+        res=fit_sample(deepcopy(train))
+        if len(res)<3:
+            print res
+            raise ValueError('wtf')
+    #except:
+    #    print '.',
+    #    return get_trainthings(size,dataset)
+    #print 'k',
+        return (res,train,test)
+
+'''
+# does the fit stuff
+def get_trainthings(size,dataset,depth=0):
+    if depth==6:
+        exit()
     try:
         train,test = get_seq_tups(dataset,size,size_test)
         res=fit_sample(deepcopy(train))
@@ -320,7 +440,7 @@ def get_trainthings(size,dataset):
             raise ValueError('wtf')
     except:
         print '.',
-        return get_trainthings(size,dataset)
+        return get_trainthings(size,dataset,depth+1)
     print 'k',
     return (res,train,test)
 
@@ -353,32 +473,68 @@ def test(a,b,ta,tb):
     
 
 #############
-# MAIN
+# CONSTANTS AND MAIN
 ###########
+size_test=50
+#dataset_a='RF00005.fa'
+#dataset_b='RF00162.fa' RF01051 RF01998
+dataset_b='RF01051.fa'
+dataset_a='RF01998.fa'
+#RF00020 RF01999 RF02344
 
+#sizes=[7,8,9,10,11,12,13,14,15]
+sizes=range(20,55,5)
+repeats=7
+NJOBS=2
+
+from eden.util import configure_logging
+import logging
+#configure_logging(logging.getLogger(),verbosity=2)
+
+
+import sys
 if __name__ == "__main__":
+    debug= False
+    if 'debug' in sys.argv[1:]:
+       debug=True
+
+    # UGLY
     global similarity_scores
     similarity_scores=[]
 
-    global arguments
-    import sys
-    arguments=[]
-    argz = make_argsarray()
-    #print argz
-    print 'len argz',len(argz)
-    print sys.argv
+    if debug:
+        sizes = [20,30]
+        repeats = 3
+        NJOBS=4
 
+    # set up task
+    argz = make_argsarray()
+    if debug: print 'choosing from x options:',len(argz)
+    global arguments
+    arguments=[]
+    if debug: print 'argv:',sys.argv
     # subtract one because sge is sub good
     job = int(sys.argv[1])-1 
     print 'jobid:',job
     arguments=argz[job]
+    if debug: print arguments
+    dataset_a,dataset_b=argz[job]['fastafiles']
+
+    # reset just for now..
+    #dataset_a='RF00005.fa'
+    #dataset_b='RF00162.fa'
+    units=sum(sizes)*repeats/float(60)
+
+    if debug: print 'expected minutes: 4c:%f  1c:%f' %  (units*7.6, units*17.13)
+    # look at res
     r=get_results()
     print 'sizes = %s' % sizes
     print 'result = %s' % r
     print 'similarity_scores = %s' % similarity_scores
     plot(str(job), sizes, *r)
+    #plot2('p2_'+str(job), sizes, *r)
 
 
 
-
+## NOTE TO SELF  CHECK NJOBS AND THE 524 where i overwrite the fastafilez. dataset_a= etc
 
