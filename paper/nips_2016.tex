@@ -52,7 +52,7 @@
 
 
 
-\title{A constructive approach for graphs\\with long range dependencies}
+\title{A constructive approach for graph concepts\\with long range dependencies}
 
 % The \author macro works with any number of authors. There are two
 % commands used to separate the names and addresses of multiple
@@ -116,7 +116,7 @@ forming bounds that can typically span the entire length of the sequence.
 Since modeling long range dependencies is a difficult problem, we propose an
 efficient solution, based on edge contractions and vertex identifications,
 that builds on top of a recent constructive approach and we show encouraging
-experimental results on a RNA sequence synthesis task.
+experimental results on a RNA synthesis task.
 
 % Graphs are flexible data structures whose generation 
 % is a mostly unexplored problem. As discriminative systems for graphs
@@ -141,9 +141,10 @@ experimental results on a RNA sequence synthesis task.
 \section{Introduction}
 
 Constructive machine learning addresses the problem of automatically 'build'
-or 'design' artifacts given a representative set of examples. The task becomes
-particularly challenging in a discrete setting when the solution space is
-exponential and direct enumeration approaches become unfeasible. In
+or 'design' artifacts given a concept expressed as a representative set of
+examples. The task becomes particularly challenging in a discrete setting when
+the solution space is exponential and direct enumeration approaches become
+unfeasible, for example in the domain of graphs with discrete labels. In
 \cite{costa16} the problem of generating elements of a structured domain was
 framed as the equivalent problem of sampling from a corresponding underlying
 probability distribution defined over a (learned) class of structures.
@@ -151,25 +152,26 @@ Approaches like {\em rejection sampling} where instances are generated without
 enforcing constraints, but are then rejected if violations in the probability
 distribution occur, are inefficient as the sampling space almost never yields
 valid samples. In order to work with objects that have a non negligible
-probability of being accepted they use a context-sensitive graph grammar. The
-authors acknowledge that an approach based exclusively on a grammar is not
-sufficient to adequately solve the constructive machine learning problem. In
-fact, the number of proposed graphs grows exponentially with the number of
-production rules in the grammar. In order to select only the most promising
-candidates one needs to equip the grammar with a probabilistic notion. However
-any procedure to estimate the probabilities of a context-sensitive grammar
-needs to trade off the number of contextual rules with the expressiveness of
-the grammar. The larger the context, the (exponentially) larger the number of
-possible cases that need to be observed for a reliable estimate, which in turn
-requires an exponentially large number of training examples. For this reason
-global or just long range constraints cannot be effectively modeled, resulting
-in a grammar that could express non viable instances. To address the issue in
-\cite{costa16} it is proposed to use a Metropolis Hastings (MH) Markov Chain
-Monte Carlo (MCMC) method, where the problem of sampling is reduced to the
-easier task of {\em simulation}, provided that one can build an ergodic Markov
-chain with the desired distribution as its equilibrium distribution. They use
-the context sensitive graph grammar to inform the MH proposal distribution,
-but also introduce a probability density estimator to define the MH acceptance
+probability of being accepted they use a graph grammar. Specifically they
+employ a context-sensitive grammar to accurately model complex dependencies
+between different parts of an instance. The authors acknowledge that an
+approach based exclusively on a grammar is not sufficient since the number of
+proposed graphs grows exponentially with the number of production rules in the
+grammar. In order to select only the most promising candidates one needs to
+equip the grammar with a probabilistic notion. However any procedure to
+estimate the probabilities of a context-sensitive grammar needs to trade off
+the number of contextual rules with the expressiveness of the grammar. The
+larger the context, the (exponentially) larger the number of possible cases
+that need to be observed for a reliable estimate, which in turn requires an
+exponentially large number of training examples. For this reason global or
+just long range constraints cannot be effectively modeled, resulting in a
+grammar that could express non viable instances. To address the issue
+\cite{costa16} proposes to use a Metropolis Hastings (MH) Markov Chain Monte
+Carlo (MCMC) method, where the problem of sampling is reduced to the easier
+task of {\em simulation}, provided that one can build an ergodic Markov chain
+with the desired distribution as its equilibrium distribution. They use the
+context sensitive graph grammar to inform the MH proposal distribution, but
+also introduce a probability density estimator to define the MH acceptance
 procedure. This allows to deal separately with local and global constraints:
 the locally context-sensitive graph grammar is used for the local constraints
 and the regularized statistical model is used for the global or long range
@@ -178,50 +180,38 @@ flexible non-parametric approach that can model complex dependencies between
 vertices that are within a short path distance from each other; the
 statistical model, instead, can employ the bias derived from the particular
 functional family (linear) and the type of regularization used (a penalty over
-the L2 norm of the parameters) to generalize long range dependencies to cases
-that are similar but not identical to those observed in the training set.
+the $\ell_2$ norm of the parameters) to generalize long range dependencies to
+cases that are similar but not identical to those observed in the training
+set.
 
-This approach is therefore adequate when natural dependencies exhibit local
-constraints that are more complex than long range ones.  Unfortunately in
-some application domains instances can exhibit complex long range
-dependencies between their different constituent parts. This is the case for
-the biological domain where polymers as RNA for example, can be modeled as
-long sequences of atomic entities which self interact, establishing pairwise
-bounds that can typically span the entire length of the sequence (i.e. non
-local interactions).
+This approach is therefore adequate when the underlying concept exhibit local
+dependencies that are more complex than long range ones.  Unfortunately in
+some application domains instances can exhibit complex long range dependencies
+between their different constituent parts. This is the case for RNA polymers,
+long sequences of atomic entities (nucleotides) that self interact,
+establishing pairwise bounds that can typically span the entire length of the
+sequence.
 
 A different way to view the issue of long range dependencies is that of the
-appropriate scale of representation. In certain application domains, instances
-are naturally encoded as graphs with nodes that represent atomic entities,
-such as nucleotides in the case of RNA sequences. However, it is known that a
-more effective functional description of these molecules can be obtained in
-terms of structural components such as {\em stems} (stretches of consecutive
-paired nucleotides) and {\em loops} (stretches of consecutive unpaired
-nucleotides), each made of multiple atomic units. Under this view,
-dependencies that are local at the coarser scales correspond to longer range
-dependencies at the original scale.
+appropriate scale of representation. Certain application domains exhibit
+natural encodings, i.e. instances are encoded as graphs where nodes
+represent specific entities, such as nucleotides in the case of RNA sequences.
+However, it is known that a more effective functional description of these
+molecules can be obtained in terms of structural components such as {\em
+stems} (stretches of consecutive paired nucleotides) and {\em loops}
+(stretches of consecutive unpaired nucleotides), each made of multiple atomic
+units. Under this view, dependencies that are local at the coarser scales
+correspond to longer range dependencies at the original scale.
 
 A constructive system suitable for these domains needs to be able to
 adequately model complex long range dependencies and is more effective if it
 operates at a convenient coarser scale rather than that of the individual
 units. Here we tackle all these issues building on the approach presented in
-\cite{costa16} introducing two key ideas: 1) we allow a user defined graph
-coarsening procedure based on edge contractions and vertex identifications,
-and 2) we allow a domain specific optimization approach to ensure that the
-generated instances are viable.
+\cite{costa16} introducing two key ideas: 1) we allow a user/domain defined graph
+coarsening procedure,
+and 2) we allow domain specific optimization procedures to ensure that
+generated instances are always viable.
 
-%
-
-
-\begin{figure}[ht]
-      \centering
-        \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
-      \caption{Left: Chemical molecule and a \emph{congruent} CIP. 
-               Mid: Simplified RNA molecule.  Right:  The same molecule
-               condensed to its structural elements.
-             Core (dark) Interface (brighter) Pair graphs (CIP) are highlighted in color.}
-      \label{allcips}
-\end{figure}
 
 \section{Method}
 
@@ -248,6 +238,17 @@ around a root vertex $v$, hence $C_{R}^v(G)$. In fig \ref{allcips}(left)
 this radius is $0$. In a lighter shade we observe the interface with 
 \emph{thickness} $T$. This is the graph induced by the vertices in distance $T$
 around core vertices, it is described by $I_{R,T}^v(G)$. In the figure $T=2$.
+
+\begin{figure}[ht]
+      \centering
+        \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
+      \caption{Left: Chemical molecule and a \emph{congruent} CIP. 
+               Mid: Simplified RNA molecule.  Right:  The same molecule
+               condensed to its structural elements.
+             Core (dark) Interface (brighter) Pair graphs (CIP) are highlighted in color.}
+      \label{allcips}
+\end{figure}
+
 
 \textbf{ Extension of contraction.}
 In place of simple CIPs as used previously,
@@ -439,13 +440,13 @@ our graph generator and the combined set.
 
 \begin{figure}[ht]
       \centering
-  \begin{minipage}[b]{0.49\textwidth}
+  \begin{minipage}[b]{0.44\textwidth}
     \includegraphics[width=\textwidth]{images/infernal_abstr.png}
     \caption{Infernal scores of generated sequences for RNAs of family RF01725.}
       \label{infeval}
   \end{minipage}
   \hfill
-  \begin{minipage}[b]{0.49\textwidth}
+  \begin{minipage}[b]{0.52\textwidth}
     \includegraphics[width=\textwidth]{images/learningcurve.png}
     \caption{Learning curve for classification between RF00005 and RF00162.vs}
      \label{learncurve}
