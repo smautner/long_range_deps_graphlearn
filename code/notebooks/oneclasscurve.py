@@ -172,10 +172,6 @@ import random
 import graphlearn.abstract_graphs.RNA as rna
 from graphlearn.estimator import Wrapper as estimatorwrapper
 
-
-
-
-
 def make_argsarray():
     args=[
         {'mininterfacecount': 2, 'burnin': 4, 'acc_min_sim': 0.24449402485485644, 'imp_lin_start': 0.19892265815047983, 'maxsizediff': 6, 'imp_thresh': 0.32120431812249317, 'mincipcount': 2, 'core_choice': False, 'n_samples': 10, 'n_steps': 25, 'quick_skip': True, 'SCORE':-0.000},
@@ -265,7 +261,9 @@ import numpy as np
 
 
 # calc everything
-def get_results(repeats=7,sizes=[],argparam=0):
+def get_results(repeats=7,sizes=[],argparam=0,njobs=1):
+    global NJOBS
+    NJOBS=njobs
     global arguments
     arguments=argz[argparam]
     li = [ get_datapoint(size,repeats) for size in sizes ]
