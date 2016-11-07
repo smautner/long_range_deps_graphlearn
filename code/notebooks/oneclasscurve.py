@@ -273,6 +273,7 @@ def get_results(repeats=7,sizes=[],argparam=-2,njobs=1):
     # transpose
     # get datapoints is giving back 3 points per size.  the transposition seperates the data again
     li =  [list(i) for i in zip(*li)]
+    print li
     return li
 
 
