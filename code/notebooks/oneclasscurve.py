@@ -186,6 +186,9 @@ def make_argsarray():
         {'mininterfacecount': 2, 'burnin': 11, 'acc_min_sim': 0.59318328541230492, 'imp_lin_start': 0.1842925803111628, 'maxsizediff': 18, 'imp_thresh': 0.79905439891716812, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 49, 'quick_skip': False, 'SCORE':-0.68998713873},
         {'mininterfacecount': 1, 'burnin': 8, 'acc_min_sim': 0.62734080199879139, 'imp_lin_start': 0.10469662908481758, 'maxsizediff': 7, 'imp_thresh': 0.11177296372179102, 'mincipcount': 2, 'core_choice': False, 'n_samples': 5, 'n_steps': 91, 'quick_skip': True, 'SCORE':-0.688879734274}]
 
+    return args
+
+    '''
     fastas=[['RF01051.fa','RF01998.fa'],
             ['RF00001.fa','RF00162.fa'],
             ['RF00020.fa','RF01999.fa'],
@@ -203,7 +206,7 @@ def make_argsarray():
             realres.append(z)
 
     return realres
-
+    '''
 
 def fit_sample(graphs, random_state=random.random()):
     '''
@@ -261,7 +264,7 @@ import numpy as np
 
 
 # calc everything
-def get_results(repeats=7,sizes=[],argparam=0,njobs=1):
+def get_results(repeats=7,sizes=[],argparam=-2,njobs=1):
     global NJOBS
     NJOBS=njobs
     global arguments
@@ -407,3 +410,14 @@ if __name__ == "__main__":
 
 
 ## NOTE TO SELF  CHECK NJOBS AND THE 524 where i overwrite the fastafilez. dataset_a= etc
+'''   to make things parallel we should use this in evaluate point (e) .. also there is a mark on print
+# yes, this already existed in the old eden
+
+pool = mp.Pool()
+mpres = [eden.apply_async(pool, mass_annotate_mp, args=(graphs, vectorizer, score_attribute, estimator)) for
+         graphs in eden.grouper(inputs, 50)]
+result = []
+for res in mpres:
+    result += res.get()
+pool.close()
+'''
