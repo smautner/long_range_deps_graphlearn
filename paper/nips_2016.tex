@@ -349,7 +349,7 @@ The nucleotides are connected to a ribose-phosphate backbone which imposes a
 direction. Non coding RNA (ncRNA) is transcribed from DNA but not
 translated into proteins. Instead it serves various other functions.
 The function depends on the sequence as well as the structure in which it 
-\emph{folds} by connecting non adjacent nucleotides with hydrogen bonds. 
+\emph{folds} by connecting non adjacent nucleotides via hydrogen bonds. 
 RNAs are grouped into functional families\cite{rfam}.
 Calculating the physically optimal folding for a single sequence
 is possible, but actual sequences will often fold in unison with 
@@ -371,16 +371,17 @@ The presented grammar is compatible with directed graphs.
 %%%%%%%%
 \emph{Infernal}\cite{infernal} can classify members of these families using
 covariance models. Infernal gives us a domain specific way to evaluate
-the graphs we generate. 
+the generated graphs. 
 % infernal stuff
-For each family Infernal provides a model what is trained on 
+For each family Infernal provides a model which is trained on 
 a hand curated list of family representatives (seeds) as well as a 
-bit score threshold. Evaluating a sequence with the model yields a bit score.
+bit score threshold. Scoring a sequence with the model yields a bit score.
 Is this score higher than the threshold, the sequence should be considered 
 part of the family. 
 % choose params
-We chose our train and test RNA sequences among the seed sequences for each
-family. Sequences were chosen from RNA families with three properties:
+We chose our train and test RNA sequences among the seed sequences of the 
+families. 
+Sequences were chosen from RNA families with three properties:
 \fxwarning{how to enumerate?}
 1) many members; because some families contain 10
 instances which is very few for a classification task. 2)  interesting 
@@ -414,7 +415,7 @@ perform overwhelmingly above the threshold. 2) the new method outperforms
 the old. 
 % eval learning curve+ edit dist
 \fxwarning{is this the right citation?}
-Costa \cite{costa14} defines \emph{the constructive learning problem for 
+Costa \cite{costa16} defines \emph{the constructive learning problem for 
 finite samples}.
 The goal is to generate graphs that are different from the training set,
 but depict a similar distribution.

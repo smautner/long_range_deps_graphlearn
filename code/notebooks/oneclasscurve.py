@@ -186,9 +186,9 @@ def make_argsarray():
         {'mininterfacecount': 2, 'burnin': 11, 'acc_min_sim': 0.59318328541230492, 'imp_lin_start': 0.1842925803111628, 'maxsizediff': 18, 'imp_thresh': 0.79905439891716812, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 49, 'quick_skip': False, 'SCORE':-0.68998713873},
         {'mininterfacecount': 1, 'burnin': 8, 'acc_min_sim': 0.62734080199879139, 'imp_lin_start': 0.10469662908481758, 'maxsizediff': 7, 'imp_thresh': 0.11177296372179102, 'mincipcount': 2, 'core_choice': False, 'n_samples': 5, 'n_steps': 91, 'quick_skip': True, 'SCORE':-0.688879734274}]
 
-    return args
+    #return args
 
-    '''
+
     fastas=[['RF01051.fa','RF01998.fa'],
             ['RF00001.fa','RF00162.fa'],
             ['RF00020.fa','RF01999.fa'],
@@ -198,15 +198,19 @@ def make_argsarray():
             ['RF01750.fa','RF00167.fa'],
             ['RF01725.fa','RF01750.fa']]
 
+    fastadi={}
+    for a,b in fastas:
+        fastadi[a]=0
+        fastadi[b]=0
+
     realres=[]
-    for seqp in fastas:
+    for key in fastadi.keys():
         for d in args:
             z=d.copy()
-            z['fastafiles']=seqp
+            z['fastafile']=key
             realres.append(z)
 
     return realres
-    '''
 
 def fit_sample(graphs, random_state=random.random()):
     '''
@@ -292,7 +296,7 @@ def get_datapoint(size,repeats):
 
 def evaluate_point(size):
     new , train, test_a = get_trainthings(size,dataset_a)
-    return sumsim.get_dist_and_sim(new,train)
+    return sumsim.get_dist_and_sim_crossval(new,train,kfold=3)
 
 # does the fit stuff
 def get_trainthings_debug(size,dataset,depth=0):
@@ -371,14 +375,10 @@ argz = make_argsarray()
 
 import sys
 if __name__ == "__main__":
+
     debug= False
     if 'debug' in sys.argv[1:]:
         debug=True
-
-    # UGLY
-    global similarity_scores
-    similarity_scores=[]
-
     if debug:
         sizes = [20,30]
         repeats = 3
@@ -393,16 +393,10 @@ if __name__ == "__main__":
     job = int(sys.argv[1])-1
     print 'jobid:',job
     if debug: print arguments
-    dataset_a,dataset_b=argz[job]['fastafiles']
+    dataset_a=argz[job]['fastafile']
 
-    # reset just for now..
-    #dataset_a='RF00005.fa'
-    #dataset_b='RF00162.fa'
-    units=sum(sizes)*repeats/float(60)
-
-    if debug: print 'expected minutes: 4c:%f  1c:%f' %  (units*7.6, units*17.13)
     # look at res
-    r=get_results()
+    r=get_results(repeats=repeats,sizes=sizes,argparam=job,njobs=NJOBS)
     print 'sizes = %s' % sizes
     print 'result = %s' % r
     print 'similarity_scores = %s' % similarity_scores

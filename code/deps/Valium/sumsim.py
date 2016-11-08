@@ -122,7 +122,7 @@ from sklearn.calibration import CalibratedClassifierCV
 import numpy
 from scipy.sparse import vstack
 from sklearn.linear_model import SGDClassifier
-
+import random
 class OneClassEstimator:
     '''
     there might be a bug connected to nx.digraph..
@@ -215,7 +215,9 @@ class OneClassEstimator:
         #return numpy.array([1 if self.predict_single(thing) > .5 else 0 for thing in things])
 
 from scipy import stats
-def compdistr(a,b):
+
+
+def compdistr(a,b,test=None):
     """k
     a and b are eden vectors. 
     we train a oneclasssvm on each.
@@ -227,10 +229,43 @@ def compdistr(a,b):
     e2 =OneClassEstimator(n_jobs=1,nu=.3)
     e2.fit(b)
     data=vstack((a,b))
+    if test is not None:
+        data=test
     z1= e1.predict(data)[:,0]
-    #print z1
     z2= e2.predict(data)[:,0]
+
     return stats.entropy(z1,z2)+stats.entropy(z2,z1)
+
+
+from sklearn.cross_validation import KFold
+
+def get_dist_and_sim_crossval(alist,blist,kfold=3):
+    a,b=vectorize(alist,blist)
+    distri = compdistr_crossval(a,b,kfold)
+    similarity = simset(a,b)
+    #print distri, similarity
+    return distri,similarity
+
+from scipy.sparse import vstack
+def compdistr_crossval(alist,blist,kfold):
+    afold=KFold(alist.shape[0],n_folds=kfold,shuffle=True)
+    bfold=KFold(blist.shape[0],n_folds=kfold,shuffle=True)
+    afold=iter(afold)
+    bfold=iter(bfold)
+    res=0
+    for x in range(kfold):
+        atrain,atest= afold.next()
+        btrain,btest= bfold.next()
+        a=alist[atrain]
+        b=blist[btrain]
+
+        #print 'crossval', a.shape, b.shape, blist[btest].shape, np.vstack((alist[atest],blist[btest])).shape
+
+        test=vstack((alist[atest],blist[btest]))
+
+        res+=compdistr(a,b,test)
+    return res/float(kfold)
+
 
 
 
