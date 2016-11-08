@@ -204,7 +204,9 @@ def make_argsarray():
         fastadi[b]=0
 
     realres=[]
-    for key in fastadi.keys():
+    uniques=fastadi.keys()
+    uniques.sort()
+    for key in uniques:
         for d in args:
             z=d.copy()
             z['fastafile']=key
@@ -269,7 +271,7 @@ import numpy as np
 
 # calc everything
 def get_results(repeats=7,sizes=[],argparam=-2,njobs=1):
-    print "repeats %d ; sizes = %s ; argparam =%d " % (repeats,sizes,argparam )
+    print "repeats %d ; sizes = %s ; argparam =%d ; fastafile= %s" % (repeats,sizes,argparam, dataset_a )
     global NJOBS
     NJOBS=njobs
     global arguments
