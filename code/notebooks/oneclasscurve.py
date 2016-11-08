@@ -265,6 +265,7 @@ import numpy as np
 
 # calc everything
 def get_results(repeats=7,sizes=[],argparam=-2,njobs=1):
+    print "repeats %d ; sizes = %s ; argparam =%d " % (repeats,sizes,argparam )
     global NJOBS
     NJOBS=njobs
     global arguments
