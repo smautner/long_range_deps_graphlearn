@@ -365,6 +365,7 @@ dataset_a='RF01725.fa'
 
 #sizes=[7,8,9,10,11,12,13,14,15]
 sizes=range(20,55,5)
+sizes=[25,50,75,100]
 repeats=7
 NJOBS=2
 
@@ -394,7 +395,6 @@ if __name__ == "__main__":
     # subtract one because sge is sub good
     job = int(sys.argv[1])-1
     print 'jobid:',job
-    if debug: print arguments
     dataset_a=argz[job]['fastafile']
 
     # look at res
