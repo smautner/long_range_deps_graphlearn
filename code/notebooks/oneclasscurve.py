@@ -47,10 +47,11 @@ def plot(run_id, numgraphs, distribution, similarity): # note that the var names
 
     # OKOK NEW STUFF TESTING
     fig, ax1 = plt.subplots()
-    #ax2=ax1.twinx()
+    ax2=ax1.twinx()
     for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
         label.set_fontname('Arial')
         label.set_fontsize(15)
+
     numgraphs=np.array(numgraphs)
 
     #plt.grid()
@@ -58,25 +59,26 @@ def plot(run_id, numgraphs, distribution, similarity): # note that the var names
     ax1.yaxis.grid(color='gray', linestyle='dashed')
 
     ax1.boxplot(distribution, positions=numgraphs, widths=ws, capprops=bc, medianprops=bc, boxprops=bc, whiskerprops=bc, flierprops=None)
-    ax1.boxplot(similarity, positions=numgraphs, widths=ws, capprops=rc, medianprops=rc, boxprops=rc, whiskerprops=rc, flierprops=None)
-    ax1.plot(numgraphs, o, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='sample',linewidth=2)
-    ax1.plot(numgraphs, s, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='both',linewidth=2)
+    ax2.boxplot(similarity, positions=numgraphs, widths=ws, capprops=rc, medianprops=rc, boxprops=rc, whiskerprops=rc, flierprops=None)
+    ax1.plot(numgraphs, o, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='KL divergence',linewidth=2)
+    ax2.plot(numgraphs, s, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='similarity',linewidth=2)
 
 
     #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     print numgraphs
     plt.xlim(min(numgraphs)-2,max(numgraphs)+2)
-    ax1.set_ylim(0.0,1.200)
-    #ax2.set_ylim(0.95,1.100)
+    ax1.set_ylim(0.0,1.000)
+    ax2.set_ylim(0.6,1.100)
     plt.xticks(numgraphs,numgraphs)
 
     #plt.title(run_id + '\n', fontsize=18)
-    #ax1.legend(loc='lower left',fontsize=14)
-    #ax2.legend(loc='lower right',fontsize=14)
+    ax1.legend(loc='lower left',fontsize=14)
+    ax2.legend(loc='lower right',fontsize=14)
     #plt.ylabel('ROC AUC',fontsize=18)
-    ax1.set_ylabel('ROC AUC',fontsize=18)
-    #ax2.set_ylabel('similarity of instances',fontsize=18)
-    plt.xlabel('Training set size per family',fontsize=18)
+    ax1.set_ylabel('divergence',fontsize=18)
+    ax2.set_ylabel('similarity of instances',fontsize=18)
+    ax2.set_xlabel('number of training sequences',fontsize=18)
+    ax1.set_xlabel('number of training sequences',fontsize=18)
     plt.savefig('%s_plot_predictive_performance_of_samples.png' % run_id)
 
 
@@ -186,9 +188,9 @@ def make_argsarray():
         {'mininterfacecount': 2, 'burnin': 11, 'acc_min_sim': 0.59318328541230492, 'imp_lin_start': 0.1842925803111628, 'maxsizediff': 18, 'imp_thresh': 0.79905439891716812, 'mincipcount': 2, 'core_choice': True, 'n_samples': 6, 'n_steps': 49, 'quick_skip': False, 'SCORE':-0.68998713873},
         {'mininterfacecount': 1, 'burnin': 8, 'acc_min_sim': 0.62734080199879139, 'imp_lin_start': 0.10469662908481758, 'maxsizediff': 7, 'imp_thresh': 0.11177296372179102, 'mincipcount': 2, 'core_choice': False, 'n_samples': 5, 'n_steps': 91, 'quick_skip': True, 'SCORE':-0.688879734274}]
 
-    return args
+    #return args
 
-    '''
+
     fastas=[['RF01051.fa','RF01998.fa'],
             ['RF00001.fa','RF00162.fa'],
             ['RF00020.fa','RF01999.fa'],
@@ -198,15 +200,21 @@ def make_argsarray():
             ['RF01750.fa','RF00167.fa'],
             ['RF01725.fa','RF01750.fa']]
 
+    fastadi={}
+    for a,b in fastas:
+        fastadi[a]=0
+        fastadi[b]=0
+
     realres=[]
-    for seqp in fastas:
+    uniques=fastadi.keys()
+    uniques.sort()
+    for key in uniques:
         for d in args:
             z=d.copy()
-            z['fastafiles']=seqp
+            z['fastafile']=key
             realres.append(z)
 
     return realres
-    '''
 
 def fit_sample(graphs, random_state=random.random()):
     '''
@@ -265,6 +273,7 @@ import numpy as np
 
 # calc everything
 def get_results(repeats=7,sizes=[],argparam=-2,njobs=1):
+    print "repeats %d ; sizes = %s ; argparam =%d ; fastafile= %s" % (repeats,sizes,argparam, dataset_a )
     global NJOBS
     NJOBS=njobs
     global arguments
@@ -291,7 +300,7 @@ def get_datapoint(size,repeats):
 
 def evaluate_point(size):
     new , train, test_a = get_trainthings(size,dataset_a)
-    return sumsim.get_dist_and_sim(new,train)
+    return sumsim.get_dist_and_sim_crossval(new,train,kfold=3)
 
 # does the fit stuff
 def get_trainthings_debug(size,dataset,depth=0):
@@ -350,7 +359,7 @@ def test(a,b,ta,tb):
 #############
 # CONSTANTS AND MAIN
 ###########
-size_test=50
+size_test=1
 #dataset_a='RF00005.fa'
 #dataset_b='RF00162.fa' RF01051 RF01998
 dataset_b='RF01051.fa'
@@ -358,6 +367,7 @@ dataset_a='RF01725.fa'
 
 #sizes=[7,8,9,10,11,12,13,14,15]
 sizes=range(20,55,5)
+sizes=[25,50,75,100]
 repeats=7
 NJOBS=2
 
@@ -370,14 +380,10 @@ argz = make_argsarray()
 
 import sys
 if __name__ == "__main__":
+
     debug= False
     if 'debug' in sys.argv[1:]:
         debug=True
-
-    # UGLY
-    global similarity_scores
-    similarity_scores=[]
-
     if debug:
         sizes = [20,30]
         repeats = 3
@@ -391,17 +397,10 @@ if __name__ == "__main__":
     # subtract one because sge is sub good
     job = int(sys.argv[1])-1
     print 'jobid:',job
-    if debug: print arguments
-    dataset_a,dataset_b=argz[job]['fastafiles']
+    dataset_a=argz[job]['fastafile']
 
-    # reset just for now..
-    #dataset_a='RF00005.fa'
-    #dataset_b='RF00162.fa'
-    units=sum(sizes)*repeats/float(60)
-
-    if debug: print 'expected minutes: 4c:%f  1c:%f' %  (units*7.6, units*17.13)
     # look at res
-    r=get_results()
+    r=get_results(repeats=repeats,sizes=sizes,argparam=job,njobs=NJOBS)
     print 'sizes = %s' % sizes
     print 'result = %s' % r
     print 'similarity_scores = %s' % similarity_scores

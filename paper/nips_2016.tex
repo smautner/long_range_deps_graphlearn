@@ -114,9 +114,9 @@ most molecules exhibit complex dependencies between their different
 constituent parts. RNA polymers, for example, self interact, with nucleotides
 forming bounds that can typically span the entire length of the sequence.
 Since modeling long range dependencies is a difficult problem, we propose an
-efficient solution, based on edge contractions and vertex identifications,
-that builds on top of a recent constructive approach and we show encouraging
-experimental results on a RNA synthesis task.
+efficient solution, based on graph coarsening that builds on top of a recent
+constructive approach and we show encouraging experimental results on a RNA
+synthesis task.
 
 % Graphs are flexible data structures whose generation 
 % is a mostly unexplored problem. As discriminative systems for graphs
@@ -181,8 +181,7 @@ vertices that are within a short path distance from each other; the
 statistical model, instead, can employ the bias derived from the particular
 functional family (linear) and the type of regularization used (a penalty over
 the $\ell_2$ norm of the parameters) to generalize long range dependencies to
-cases that are similar but not identical to those observed in the training
-set.
+similar cases.
 
 This approach is therefore adequate when the underlying concept exhibit local
 dependencies that are more complex than long range ones.  Unfortunately in
@@ -214,42 +213,103 @@ generated instances are always viable.
 
 \section{Method}
 
-\cite{costa16} introduced a method
-to construct novel graphs according to a distribution, which is given by
-examples. Graphs are vectorized by a \emph{decomposition kernel}
-to train a machine learning model, e.g. an SVM.
-Fragments of the graphs are collected in 
-a \emph{grammar} (analogous to a string grammar) to alter the initial
-set of graphs incrementally. Changes to a graph are evaluated with the
-model. 
-We present a method to increase the flexibility of the graph grammar.
+%summary of the approach: sampling using MH with grammar.
+ 
+%what is a graph grammar. our grammar. CIPs.
 
-We give an overview of the graph grammar in \cite{costa16}.
-The grammar consists of sets of interchangeable graph fragments.
-We call these fragments core interface pairs(CIPs) because 
-they consist of a core part and an interface part.
-In terms of a string grammar, core and interface are imaginable 
-as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$.
-In fig. \ref{allcips} (left) we can see a production applied to a graph $G$.
-Vertices in \emph{radius} $n$ of a root vertex are the vertices in distance $n$
-or less. The core (dark) is determined by vertices in a radius $R$
-around a root vertex $v$, hence $C_{R}^v(G)$. In fig \ref{allcips}(left)
-this radius is $0$. In a lighter shade we observe the interface with 
-\emph{thickness} $T$. This is the graph induced by the vertices in distance $T$
-around core vertices, it is described by $I_{R,T}^v(G)$. In the figure $T=2$.
+%the extension.
+
+\cite{costa16} presented a novel way to sample graphs from an empirical
+probability distribution. The approach uses a variant of the Metropolis
+Hastings (MH) algorithm to generate a set of instances to approximately
+recover a hard to sample probability distribution (e.g. in structured
+domains). It does so by building a Markov process whose stationary
+distribution asymptotically matches the desired distribution. The MH approach
+decomposes the transition probability of the Markov process in two factors, 1)
+the proposal ($g$) and 2) the acceptance-rejection ($A$) probability
+distributions. The samples are obtained by an iterative procedure that
+modifies instances using $g$ which are then filtered by $A$. The key element
+for an efficient MH design consists in shaping the proposal distribution  in
+such a way that the generated elements will not be rejected too often. To do
+so Costa suggests to use a grammar and infer its rules from the
+available data using grammatical inference techniques upgraded to structured
+domains (i.e. domains where instances are naturally represented as labeled
+graphs).
+
+More precisely, a graph grammar \citep{rozenberg1999handbook} is a finite set
+of productions; a production is a triple $S=(M,D,E)$ where $M$ is the
+``mother'' graph, $D$ is the ``daughter'' graph and $E$ is an embedding
+mechanism. Given a ``host'' graph $H$, a production is applied as follows: 1)
+identify one occurrence of $M$ as an isomorphic subgraph of $H$; 2) remove $M$
+from $H$ and obtain $H^-$; 3) replace $M$ by an isomorphic copy of $D$; and
+finally 4) use the embedding mechanism $E$ to attach $D$ to $H^-$.
+\cite{costa16} introduced an efficient graph grammar based on the concept
+of {\em distributional semantics}
+\citep{harris1954distributional,harris1968mathematical}. Two
+key notions are defined: {\em internal core graphs} and {\em interface graphs}. An
+internal core graph (or {\em core} for simplicity), denoted $C^v_R(G)$, is a
+neighborhood graph of $G$ of radius $R$ rooted in $v$. An interface graph,
+denoted $I^v_{R,T}(G)$ is the difference graph of two neighborhood graphs of
+$G$ with the same root in $v$ and radius $R+1$ and $R+1+T$. The difference graph
+is the graph induced by the set difference of the two vertex sets. Intuitively
+an interface corresponds to the ``external shell'' of a core with {\em
+thickness} $T$. This shell represents the context available for the definition
+of a production rule. The general concepts of mother and daughter graphs are
+specialized as follows: given a production $S$, the mother graph $M$ and the
+daughter graph $D$ are union graphs of an interface graph and a correspondent
+internal core graph with the additional constraint that the interface graphs
+in the daughter and mother graph must be identical (up to isomorphism);
+finally, the embedding mechanism $E$ is given by the isomorphic bijection
+between the interface graphs. In words, new elements are produced by {\em
+swapping inner cores} in identical contexts.
+
+
+
+% \cite{costa16} introduced a method
+% to construct novel graphs according to a distribution, which is given by
+% examples. Graphs are vectorized by a \emph{decomposition kernel}
+% to train a machine learning model, e.g. an SVM.
+% Fragments of the graphs are collected in 
+% a \emph{grammar} (analogous to a string grammar) to alter the initial
+% set of graphs incrementally. Changes to a graph are evaluated with the
+% model. 
+% We present a method to increase the flexibility of the graph grammar.
+
+% We give an overview of the graph grammar in \cite{costa16}.
+% The grammar consists of sets of interchangeable graph fragments.
+% We call these fragments core interface pairs(CIPs) because 
+% they consist of a core part and an interface part.
+% In terms of a string grammar, core and interface are imaginable 
+% as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$.
+
+In Fig. \ref{allcips} (left) we can see a production step applied to a
+molecular graph $G$. The core $C_{R}^v(G)$ (dark) is determined by vertices at
+maximal distance $R$ ($R=0$ in this case) from a chosen root vertex $v$. In a
+lighter shade the interface $I_{R,T}^v(G)$ with \emph{thickness} $T=2$. This
+is the graph induced by the vertices at maximal distance $R+1+T=2$ and minimal
+distance $R+1=1$ from $v$. A new core-interface pair (CIP) is available with
+matching interface and a different core: the substitution can take place and
+yields th replacement of a carbon into a nitrogen atom.
+
+\cite{costa16} showed how the production rules (i.e. the CIPs) can be efficiently extracted from a set of graphs that is representative of the desired concept.
 
 \begin{figure}[ht]
       \centering
         \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
-      \caption{Left: Chemical molecule and a \emph{congruent} CIP. 
-               Mid: Simplified RNA molecule.  Right:  The same molecule
-               condensed to its structural elements.
-             Core (dark) Interface (brighter) Pair graphs (CIP) are highlighted in color.}
+      \caption{
+      Core and interface subgraphs are marked in dark and light color
+      respectively. Left: Molecular graph with highlighted CIP; alternative matching interface and.
+      Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding with structural elements encoding: H)airpin, M)ultiloop, S)tem, D)anglin end.}
       \label{allcips}
 \end{figure}
 
 
-\textbf{ Extension of contraction.}
+\textbf{Extension of core and interface notion.}
+
+
+2 problems for RNA: 1)  we would like larger blocks, 2) refolding.
+
+
 In place of simple CIPs as used previously,
 we use modified CIPs that consider coarse versions
 of the original graphs. We obtain a coarse graph $G'$ by contracting edges
@@ -285,26 +345,28 @@ secondary RNA structure and label the resulting vertex accordingly e.g.
 information about the surrounding vertices in our CIP interface matching.
 % graph contration, interface trick
 % change to congruency
-\textbf{An improvement to the notion of congruency.}
-CIPs require isomorphism to be considered congruent.
-We expand this requirement to incorporate
-the distance to the closest vertices in the core graph, for every interface
-vertex, when determining if graphs are congruent.
-%$\forall u \in I_{R,T}^v(G) : 
-%\underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
-%\underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $
-\fxwarning{formula style?}
-$\forall u \in I_{R,T}^v(G) : 
-\min_{z \in  C_{R}^v(G)} d(u,z) = 
-\min_{z' \in  C_{R}^{v'}(G')} d(\phi(u),z') $
-i.e. the distance 
-to the closest core node is equal for every
-$u$ and $\phi(u)$.
-It is easy to see the benefit of this extension.
-Imagine a CIP embedded into a graph. Let the interface consist of
-two connected vertices $a$ and $b$, $b$ being adjacent to the core while
-$a$ is connected to the rest of the graph.
-Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
+% \textbf{An improvement to the notion of congruency.}
+% CIPs require isomorphism to be considered congruent.
+% We expand this requirement to incorporate
+% the distance to the closest vertices in the core graph, for every interface
+% vertex, when determining if graphs are congruent.
+% %$\forall u \in I_{R,T}^v(G) : 
+% %\underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
+% %\underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $
+% \fxwarning{formula style?}
+% $\forall u \in I_{R,T}^v(G) : 
+% \min_{z \in  C_{R}^v(G)} d(u,z) = 
+% \min_{z' \in  C_{R}^{v'}(G')} d(\phi(u),z') $
+% i.e. the distance 
+% to the closest core node is equal for every
+% $u$ and $\phi(u)$.
+% It is easy to see the benefit of this extension.
+% Imagine a CIP embedded into a graph. Let the interface consist of
+% two connected vertices $a$ and $b$, $b$ being adjacent to the core while
+% $a$ is connected to the rest of the graph.
+% Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
+
+
 \textbf{Contracting vertices.}
 In fig \ref{allcips} (mid and right, dark) we see how a coarsened 
 graph can be obtained by contraction of edges.
@@ -314,6 +376,8 @@ Vertices not connected by an edge can also be contracted.
 This is called vertex identification.  
 We did so with vertices in the multi-loop "M" that are not stem "S" vertices 
 (here labeled 'A' and 'G').
+
+
 \textbf{Adaptation of the sampling process.}
 In a simulation step a new graph is generated and an acceptance decision
 has to be made. The new graph is generated by applying a
@@ -336,9 +400,7 @@ Therefore the contraction has to be recalculated if a change is accepted.
 %the contraction after changes to the underlying graph.
 
 
-\section{Evaluation}
-
-
+\section{Empirical evaluation}
 
 %%%%%%%
 %% RNA AND FOLDING 
@@ -349,7 +411,7 @@ The nucleotides are connected to a ribose-phosphate backbone which imposes a
 direction. Non coding RNA (ncRNA) is transcribed from DNA but not
 translated into proteins. Instead it serves various other functions.
 The function depends on the sequence as well as the structure in which it 
-\emph{folds} by connecting non adjacent nucleotides with hydrogen bonds. 
+\emph{folds} by connecting non adjacent nucleotides via hydrogen bonds. 
 RNAs are grouped into functional families\cite{rfam}.
 Calculating the physically optimal folding for a single sequence
 is possible, but actual sequences will often fold in unison with 
@@ -371,16 +433,17 @@ The presented grammar is compatible with directed graphs.
 %%%%%%%%
 \emph{Infernal}\cite{infernal} can classify members of these families using
 covariance models. Infernal gives us a domain specific way to evaluate
-the graphs we generate. 
+the generated graphs. 
 % infernal stuff
-For each family Infernal provides a model what is trained on 
+For each family Infernal provides a model which is trained on 
 a hand curated list of family representatives (seeds) as well as a 
-bit score threshold. Evaluating a sequence with the model yields a bit score.
+bit score threshold. Scoring a sequence with the model yields a bit score.
 Is this score higher than the threshold, the sequence should be considered 
 part of the family. 
 % choose params
-We chose our train and test RNA sequences among the seed sequences for each
-family. Sequences were chosen from RNA families with three properties:
+We chose our train and test RNA sequences among the seed sequences of the 
+families. 
+Sequences were chosen from RNA families with three properties:
 \fxwarning{how to enumerate?}
 1) many members; because some families contain 10
 instances which is very few for a classification task. 2)  interesting 
@@ -414,7 +477,7 @@ perform overwhelmingly above the threshold. 2) the new method outperforms
 the old. 
 % eval learning curve+ edit dist
 \fxwarning{is this the right citation?}
-Costa \cite{costa14} defines \emph{the constructive learning problem for 
+Costa \cite{costa16} defines \emph{the constructive learning problem for 
 finite samples}.
 The goal is to generate graphs that are different from the training set,
 but depict a similar distribution.
@@ -436,15 +499,16 @@ our graph generator and the combined set.
 
 
 
+
 \begin{figure}[ht]
       \centering
-  \begin{minipage}[b]{0.44\textwidth}
+  \begin{minipage}[b]{0.47\textwidth}
     \includegraphics[width=\textwidth]{images/infernal_abstr.png}
     \caption{Infernal scores of generated sequences for RNAs of family RF01725.}
       \label{infeval}
   \end{minipage}
   \hfill
-  \begin{minipage}[b]{0.52\textwidth}
+  \begin{minipage}[b]{0.50\textwidth}
     \includegraphics[width=\textwidth]{images/learningcurve.png}
     \caption{Learning curve for classification between RF00005 and RF00162.vs}
      \label{learncurve}
