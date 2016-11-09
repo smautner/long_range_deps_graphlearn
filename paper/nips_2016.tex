@@ -28,6 +28,7 @@
 \usepackage{amsmath}        %METH, ok appears to be included in the amsfontz
 
 
+\newcommand*{\IN}[0]{\ensuremath{\mathbb{N}}}
 
 
 
@@ -52,7 +53,7 @@
 
 
 
-\title{A constructive approach for graphs\\with long range dependencies}
+\title{A constructive approach for graph concepts\\with long range dependencies}
 
 % The \author macro works with any number of authors. There are two
 % commands used to separate the names and addresses of multiple
@@ -114,9 +115,9 @@ most molecules exhibit complex dependencies between their different
 constituent parts. RNA polymers, for example, self interact, with nucleotides
 forming bounds that can typically span the entire length of the sequence.
 Since modeling long range dependencies is a difficult problem, we propose an
-efficient solution, based on edge contractions and vertex identifications,
-that builds on top of a recent constructive approach and we show encouraging
-experimental results on a RNA sequence synthesis task.
+efficient solution, based on graph coarsening that builds on top of a recent
+constructive approach and we show encouraging experimental results on a RNA
+synthesis task.
 
 % Graphs are flexible data structures whose generation 
 % is a mostly unexplored problem. As discriminative systems for graphs
@@ -141,9 +142,10 @@ experimental results on a RNA sequence synthesis task.
 \section{Introduction}
 
 Constructive machine learning addresses the problem of automatically 'build'
-or 'design' artifacts given a representative set of examples. The task becomes
-particularly challenging in a discrete setting when the solution space is
-exponential and direct enumeration approaches become unfeasible. In
+or 'design' artifacts given a concept expressed as a representative set of
+examples. The task becomes particularly challenging in a discrete setting when
+the solution space is exponential and direct enumeration approaches become
+unfeasible, for example in the domain of graphs with discrete labels. In
 \cite{costa16} the problem of generating elements of a structured domain was
 framed as the equivalent problem of sampling from a corresponding underlying
 probability distribution defined over a (learned) class of structures.
@@ -151,25 +153,26 @@ Approaches like {\em rejection sampling} where instances are generated without
 enforcing constraints, but are then rejected if violations in the probability
 distribution occur, are inefficient as the sampling space almost never yields
 valid samples. In order to work with objects that have a non negligible
-probability of being accepted they use a context-sensitive graph grammar. The
-authors acknowledge that an approach based exclusively on a grammar is not
-sufficient to adequately solve the constructive machine learning problem. In
-fact, the number of proposed graphs grows exponentially with the number of
-production rules in the grammar. In order to select only the most promising
-candidates one needs to equip the grammar with a probabilistic notion. However
-any procedure to estimate the probabilities of a context-sensitive grammar
-needs to trade off the number of contextual rules with the expressiveness of
-the grammar. The larger the context, the (exponentially) larger the number of
-possible cases that need to be observed for a reliable estimate, which in turn
-requires an exponentially large number of training examples. For this reason
-global or just long range constraints cannot be effectively modeled, resulting
-in a grammar that could express non viable instances. To address the issue in
-\cite{costa16} it is proposed to use a Metropolis Hastings (MH) Markov Chain
-Monte Carlo (MCMC) method, where the problem of sampling is reduced to the
-easier task of {\em simulation}, provided that one can build an ergodic Markov
-chain with the desired distribution as its equilibrium distribution. They use
-the context sensitive graph grammar to inform the MH proposal distribution,
-but also introduce a probability density estimator to define the MH acceptance
+probability of being accepted they use a graph grammar. Specifically they
+employ a context-sensitive grammar to accurately model complex dependencies
+between different parts of an instance. The authors acknowledge that an
+approach based exclusively on a grammar is not sufficient since the number of
+proposed graphs grows exponentially with the number of production rules in the
+grammar. In order to select only the most promising candidates one needs to
+equip the grammar with a probabilistic notion. However any procedure to
+estimate the probabilities of a context-sensitive grammar needs to trade off
+the number of contextual rules with the expressiveness of the grammar. The
+larger the context, the (exponentially) larger the number of possible cases
+that need to be observed for a reliable estimate, which in turn requires an
+exponentially large number of training examples. For this reason global or
+just long range constraints cannot be effectively modeled, resulting in a
+grammar that could express non viable instances. To address the issue
+\cite{costa16} proposes to use a Metropolis Hastings (MH) Markov Chain Monte
+Carlo (MCMC) method, where the problem of sampling is reduced to the easier
+task of {\em simulation}, provided that one can build an ergodic Markov chain
+with the desired distribution as its equilibrium distribution. They use the
+context sensitive graph grammar to inform the MH proposal distribution, but
+also introduce a probability density estimator to define the MH acceptance
 procedure. This allows to deal separately with local and global constraints:
 the locally context-sensitive graph grammar is used for the local constraints
 and the regularized statistical model is used for the global or long range
@@ -178,84 +181,160 @@ flexible non-parametric approach that can model complex dependencies between
 vertices that are within a short path distance from each other; the
 statistical model, instead, can employ the bias derived from the particular
 functional family (linear) and the type of regularization used (a penalty over
-the L2 norm of the parameters) to generalize long range dependencies to cases
-that are similar but not identical to those observed in the training set.
+the $\ell_2$ norm of the parameters) to generalize long range dependencies to
+similar cases.
 
-This approach is therefore adequate when natural dependencies exhibit local
-constraints that are more complex than long range ones.  Unfortunately in
-some application domains instances can exhibit complex long range
-dependencies between their different constituent parts. This is the case for
-the biological domain where polymers as RNA for example, can be modeled as
-long sequences of atomic entities which self interact, establishing pairwise
-bounds that can typically span the entire length of the sequence (i.e. non
-local interactions).
+This approach is therefore adequate when the underlying concept exhibit local
+dependencies that are more complex than long range ones.  Unfortunately in
+some application domains instances can exhibit complex long range dependencies
+between their different constituent parts. This is the case for RNA polymers,
+long sequences of atomic entities (nucleotides) that self interact,
+establishing pairwise bounds that can typically span the entire length of the
+sequence.
 
 A different way to view the issue of long range dependencies is that of the
-appropriate scale of representation. In certain application domains, instances
-are naturally encoded as graphs with nodes that represent atomic entities,
-such as nucleotides in the case of RNA sequences. However, it is known that a
-more effective functional description of these molecules can be obtained in
-terms of structural components such as {\em stems} (stretches of consecutive
-paired nucleotides) and {\em loops} (stretches of consecutive unpaired
-nucleotides), each made of multiple atomic units. Under this view,
-dependencies that are local at the coarser scales correspond to longer range
-dependencies at the original scale.
+appropriate scale of representation. Certain application domains exhibit
+natural encodings, i.e. instances are encoded as graphs where nodes represent
+specific entities, such as nucleotides in the case of RNA sequences. However,
+it is known that a more effective functional description of RNA polymers can
+be obtained in terms of structural components such as {\em stems} (stretches
+of consecutive paired nucleotides) and {\em loops} (stretches of consecutive
+unpaired nucleotides). Under this view, dependencies that are local at the
+coarser scales correspond to longer range dependencies at the original scale.
 
 A constructive system suitable for these domains needs to be able to
 adequately model complex long range dependencies and is more effective if it
 operates at a convenient coarser scale rather than that of the individual
 units. Here we tackle all these issues building on the approach presented in
-\cite{costa16} introducing two key ideas: 1) we allow a user defined graph
-coarsening procedure based on edge contractions and vertex identifications,
-and 2) we allow a domain specific optimization approach to ensure that the
-generated instances are viable.
+\cite{costa16} introducing two key ideas: 1) we allow a user/domain defined graph
+coarsening procedure,
+and 2) we allow domain specific optimization procedures to ensure that
+generated instances are always viable.
 
-%
 
+\section{Method}
+
+%summary of the approach: sampling using MH with grammar.
+ 
+%what is a graph grammar. our grammar. CIPs.
+
+%the extension.
+
+\cite{costa16} presented a novel way to sample graphs from an empirical
+probability distribution. The approach uses a variant of the Metropolis
+Hastings (MH) algorithm to generate a set of instances to approximately
+recover a hard to sample probability distribution (e.g. in structured
+domains). It does so by building a Markov process whose stationary
+distribution asymptotically matches the desired distribution. The MH approach
+decomposes the transition probability of the Markov process in two factors, 1)
+the proposal  and 2) the acceptance-rejection  probability distributions. The
+key element for an efficient MH design consists in shaping the proposal
+distribution  in such a way that the generated elements will not be rejected
+too often. To do so Costa suggests to use a grammar and infer its rules from
+the available data using grammatical inference techniques upgraded to
+structured domains (i.e. domains where instances are naturally represented as
+labeled graphs).
+
+More precisely, a graph grammar \citep{rozenberg1999handbook} is a finite set
+of productions; a production is a triple $S=(M,D,E)$ where $M$ is the
+``mother'' graph, $D$ is the ``daughter'' graph and $E$ is an embedding
+mechanism. Given a ``host'' graph $H$, a production is applied as follows: 1)
+identify one occurrence of $M$ as an isomorphic subgraph of $H$; 2) remove $M$
+from $H$ and obtain $H^-$; 3) replace $M$ by an isomorphic copy of $D$; and
+finally 4) use the embedding mechanism $E$ to attach $D$ to $H^-$.
+\cite{costa16} introduced an efficient graph grammar based on the concept
+of {\em distributional semantics}
+\citep{harris1954distributional,harris1968mathematical}. Two
+key notions are defined: {\em internal core graphs} and {\em interface graphs}. An
+internal core graph (or {\em core} for simplicity), denoted $C^v_R(G)$, is a
+neighborhood graph of $G$ of radius $R$ rooted in $v$. An interface graph,
+denoted $I^v_{R,T}(G)$ is the difference graph of two neighborhood graphs of
+$G$ with the same root in $v$ and radius $R+1$ and $R+1+T$. The difference graph
+is the graph induced by the set difference of the two vertex sets. Intuitively
+an interface corresponds to the ``external shell'' of a core with {\em
+thickness} $T$. This shell represents the context available for the definition
+of a production rule. The general concepts of mother and daughter graphs are
+specialized as follows: given a production $S$, the mother graph $M$ and the
+daughter graph $D$ are union graphs of an interface graph and a correspondent
+internal core graph with the additional constraint that the interface graphs
+in the daughter and mother graph must be identical (up to isomorphism);
+finally, the embedding mechanism $E$ is given by the isomorphic bijection
+between the interface graphs. In words, new elements are produced by {\em
+swapping inner cores} in identical contexts.
+
+
+
+% \cite{costa16} introduced a method
+% to construct novel graphs according to a distribution, which is given by
+% examples. Graphs are vectorized by a \emph{decomposition kernel}
+% to train a machine learning model, e.g. an SVM.
+% Fragments of the graphs are collected in 
+% a \emph{grammar} (analogous to a string grammar) to alter the initial
+% set of graphs incrementally. Changes to a graph are evaluated with the
+% model. 
+% We present a method to increase the flexibility of the graph grammar.
+
+% We give an overview of the graph grammar in \cite{costa16}.
+% The grammar consists of sets of interchangeable graph fragments.
+% We call these fragments core interface pairs(CIPs) because 
+% they consist of a core part and an interface part.
+% In terms of a string grammar, core and interface are imaginable 
+% as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$.
+
+In Fig. \ref{allcips} (left) we can see a production step applied to a
+molecular graph $G$. The core $C_{R}^v(G)$ (dark) is determined by vertices at
+maximal distance $R$ ($R=0$ in this case) from a chosen root vertex $v$. In a
+lighter shade the interface $I_{R,T}^v(G)$ with \emph{thickness} $T=2$. This
+is the graph induced by the vertices at maximal distance $R+1+T=2$ and minimal
+distance $R+1=1$ from $v$. A new core-interface pair (CIP) is available with
+matching interface and a different core: the substitution can take place and
+yields th replacement of a carbon into a nitrogen atom.
+
+\cite{costa16} showed how the production rules (i.e. the CIPs) can be efficiently extracted from a set of graphs that is representative of the desired concept.
 
 \begin{figure}[ht]
       \centering
         \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
-      \caption{Left: Chemical molecule and a \emph{congruent} CIP. 
-               Mid: Simplified RNA molecule.  Right:  The same molecule
-               condensed to its structural elements.
-             Core (dark) Interface (brighter) Pair graphs (CIP) are highlighted in color.}
+      \caption{
+      Core and interface subgraphs are marked in dark and light color
+      respectively. Left: Molecular graph with indicated CIP substitution.
+      Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding with structural element resolution, with symbols: H)airpin, M)ultiloop, S)tem, D)angling end.}
       \label{allcips}
 \end{figure}
 
-\section{Method}
 
-\cite{costa16} introduced a method
-to construct novel graphs according to a distribution, which is given by
-examples. Graphs are vectorized by a \emph{decomposition kernel}
-to train a machine learning model, e.g. an SVM.
-Fragments of the graphs are collected in 
-a \emph{grammar} (analogous to a string grammar) to alter the initial
-set of graphs incrementally. Changes to a graph are evaluated with the
-model. 
-We present a method to increase the flexibility of the graph grammar.
+\subsection{Method extension}
 
-We give an overview of the graph grammar in \cite{costa16}.
-The grammar consists of sets of interchangeable graph fragments.
-We call these fragments core interface pairs(CIPs) because 
-they consist of a core part and an interface part.
-In terms of a string grammar, core and interface are imaginable 
-as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$.
-In fig. \ref{allcips} (left) we can see a production applied to a graph $G$.
-Vertices in \emph{radius} $n$ of a root vertex are the vertices in distance $n$
-or less. The core (dark) is determined by vertices in a radius $R$
-around a root vertex $v$, hence $C_{R}^v(G)$. In fig \ref{allcips}(left)
-this radius is $0$. In a lighter shade we observe the interface with 
-\emph{thickness} $T$. This is the graph induced by the vertices in distance $T$
-around core vertices, it is described by $I_{R,T}^v(G)$. In the figure $T=2$.
+Two problems arise when dealing with complex structures such as RNA polymers:
+a) resolution issues and b) a viability problem. Replacing only few nodes at
+each iteration can be inefficient when instances consist of several hundreds
+of nodes. It is known that, in the case of RNA, a more effective description
+is obtained considering larger structural components such as {\em stems}
+(stretches of consecutive paired nucleotides) and {\em loops} (stretches of
+consecutive unpaired nucleotides). As for b), it is known that the function of
+RNA polymers depends on their global structure (i.e. the set of pairs of
+interacting nucleotides), which can significantly change when even a single
+nucleotide is altered. To deal with these issues we propose two contributions
+to Costa's approach: a) user defined grammar coarsening and b) user defined
+constraint integration.
 
-\textbf{ Extension of contraction.}
-In place of simple CIPs as used previously,
-we use modified CIPs that consider coarse versions
-of the original graphs. We obtain a coarse graph $G'$ by contracting edges
-in $G$. Fig. \ref{allcips} (mid) is showing the result of multiple contractions
-applied to the graph on the left. The set of contracted vertices of a
-created vertex is accessible with the $contracted$ function.
+
+\textbf{Grammar coarsening.} The idea is to allow users to specify in a simple
+way a coarsening procedure. We do so via the notion of {\em edge contraction}:
+an operation which removes an edge from a graph while simultaneously merging
+the two vertices that it previously joined. In addition we allow the less
+restrictive notion of {\em vertex contraction}: which removes the restriction
+that the contraction must occur over vertices sharing an incident edge. Both
+procedures are implemented defining a node attribute $cid \in \IN$ called {\em
+contraction ID} and contracting all vertices that share the same $cid$ value.
+The contraction operation transforms graphs to their coarser versions $G
+\mapsto G'$. Cores and interfaces are now defined using the coarse version. We
+consider the original CIP definition on the coarse graph: to define the core
+we identify all vertices of the original graph that have been contracted in
+the coarse core
+
+
+
 $C_{R}^v(G')$ and $I_{R,T}^v(G')$, functions for extracting core and
 interface graphs, are unaltered except that we apply them
 on $G'$ instead of $G$, see fig. \ref{allcips}(right).
@@ -285,26 +364,28 @@ secondary RNA structure and label the resulting vertex accordingly e.g.
 information about the surrounding vertices in our CIP interface matching.
 % graph contration, interface trick
 % change to congruency
-\textbf{An improvement to the notion of congruency.}
-CIPs require isomorphism to be considered congruent.
-We expand this requirement to incorporate
-the distance to the closest vertices in the core graph, for every interface
-vertex, when determining if graphs are congruent.
-%$\forall u \in I_{R,T}^v(G) : 
-%\underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
-%\underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $
-\fxwarning{formula style?}
-$\forall u \in I_{R,T}^v(G) : 
-\min_{z \in  C_{R}^v(G)} d(u,z) = 
-\min_{z' \in  C_{R}^{v'}(G')} d(\phi(u),z') $
-i.e. the distance 
-to the closest core node is equal for every
-$u$ and $\phi(u)$.
-It is easy to see the benefit of this extension.
-Imagine a CIP embedded into a graph. Let the interface consist of
-two connected vertices $a$ and $b$, $b$ being adjacent to the core while
-$a$ is connected to the rest of the graph.
-Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
+% \textbf{An improvement to the notion of congruency.}
+% CIPs require isomorphism to be considered congruent.
+% We expand this requirement to incorporate
+% the distance to the closest vertices in the core graph, for every interface
+% vertex, when determining if graphs are congruent.
+% %$\forall u \in I_{R,T}^v(G) : 
+% %\underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
+% %\underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $
+% \fxwarning{formula style?}
+% $\forall u \in I_{R,T}^v(G) : 
+% \min_{z \in  C_{R}^v(G)} d(u,z) = 
+% \min_{z' \in  C_{R}^{v'}(G')} d(\phi(u),z') $
+% i.e. the distance 
+% to the closest core node is equal for every
+% $u$ and $\phi(u)$.
+% It is easy to see the benefit of this extension.
+% Imagine a CIP embedded into a graph. Let the interface consist of
+% two connected vertices $a$ and $b$, $b$ being adjacent to the core while
+% $a$ is connected to the rest of the graph.
+% Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
+
+
 \textbf{Contracting vertices.}
 In fig \ref{allcips} (mid and right, dark) we see how a coarsened 
 graph can be obtained by contraction of edges.
@@ -314,7 +395,9 @@ Vertices not connected by an edge can also be contracted.
 This is called vertex identification.  
 We did so with vertices in the multi-loop "M" that are not stem "S" vertices 
 (here labeled 'A' and 'G').
-\textbf{Adaptation of the sampling process.}
+
+
+\textbf{Constraint integration.}
 In a simulation step a new graph is generated and an acceptance decision
 has to be made. The new graph is generated by applying a
 production to the current instance. 
@@ -336,9 +419,7 @@ Therefore the contraction has to be recalculated if a change is accepted.
 %the contraction after changes to the underlying graph.
 
 
-\section{Evaluation}
-
-
+\section{Empirical evaluation}
 
 %%%%%%%
 %% RNA AND FOLDING 
