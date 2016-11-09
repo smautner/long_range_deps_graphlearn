@@ -28,6 +28,7 @@
 \usepackage{amsmath}        %METH, ok appears to be included in the amsfontz
 
 
+\newcommand*{\IN}[0]{\ensuremath{\mathbb{N}}}
 
 
 
@@ -226,15 +227,13 @@ recover a hard to sample probability distribution (e.g. in structured
 domains). It does so by building a Markov process whose stationary
 distribution asymptotically matches the desired distribution. The MH approach
 decomposes the transition probability of the Markov process in two factors, 1)
-the proposal ($g$) and 2) the acceptance-rejection ($A$) probability
-distributions. The samples are obtained by an iterative procedure that
-modifies instances using $g$ which are then filtered by $A$. The key element
-for an efficient MH design consists in shaping the proposal distribution  in
-such a way that the generated elements will not be rejected too often. To do
-so Costa suggests to use a grammar and infer its rules from the
-available data using grammatical inference techniques upgraded to structured
-domains (i.e. domains where instances are naturally represented as labeled
-graphs).
+the proposal  and 2) the acceptance-rejection  probability distributions. The
+key element for an efficient MH design consists in shaping the proposal
+distribution  in such a way that the generated elements will not be rejected
+too often. To do so Costa suggests to use a grammar and infer its rules from
+the available data using grammatical inference techniques upgraded to
+structured domains (i.e. domains where instances are naturally represented as
+labeled graphs).
 
 More precisely, a graph grammar \citep{rozenberg1999handbook} is a finite set
 of productions; a production is a triple $S=(M,D,E)$ where $M$ is the
@@ -298,24 +297,44 @@ yields th replacement of a carbon into a nitrogen atom.
         \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
       \caption{
       Core and interface subgraphs are marked in dark and light color
-      respectively. Left: Molecular graph with highlighted CIP; alternative matching interface and.
-      Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding with structural elements encoding: H)airpin, M)ultiloop, S)tem, D)anglin end.}
+      respectively. Left: Molecular graph with indicated CIP substitution.
+      Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding with structural element resolution, with symbols: H)airpin, M)ultiloop, S)tem, D)angling end.}
       \label{allcips}
 \end{figure}
 
 
-\textbf{Extension of core and interface notion.}
+\subsection{Method extension}
+
+Two problems arise when dealing with complex structures such as RNA polymers:
+a) resolution issues and b) a viability problem. Replacing only few nodes at
+each iteration can be inefficient when instances consist of several hundreds
+of nodes. It is known that, in the case of RNA, a more effective description
+is obtained considering larger structural components such as {\em stems}
+(stretches of consecutive paired nucleotides) and {\em loops} (stretches of
+consecutive unpaired nucleotides). As for b), it is known that the function of
+RNA polymers depends on their global structure (i.e. the set of pairs of
+interacting nucleotides), which can significantly change when even a single
+nucleotide is altered. To deal with these issues we propose two contributions
+to Costa's approach: a) user defined grammar coarsening and b) user defined
+constraint integration.
 
 
-2 problems for RNA: 1)  we would like larger blocks, 2) refolding.
+\textbf{Grammar coarsening.} The idea is to allow users to specify in a simple
+way a coarsening procedure. We do so via the notion of {\em edge contraction}:
+an operation which removes an edge from a graph while simultaneously merging
+the two vertices that it previously joined. In addition we allow the less
+restrictive notion of {\em vertex contraction}: which removes the restriction
+that the contraction must occur over vertices sharing an incident edge. Both
+procedures are implemented defining a node attribute $cid \in \IN$ called {\em
+contraction ID} and contracting all vertices that share the same $cid$ value.
+The contraction operation transforms graphs to their coarser versions $G
+\mapsto G'$. Cores and interfaces are now defined using the coarse version. We
+consider the original CIP definition on the coarse graph: to define the core
+we identify all vertices of the original graph that have been contracted in
+the coarse core
 
 
-In place of simple CIPs as used previously,
-we use modified CIPs that consider coarse versions
-of the original graphs. We obtain a coarse graph $G'$ by contracting edges
-in $G$. Fig. \ref{allcips} (mid) is showing the result of multiple contractions
-applied to the graph on the left. The set of contracted vertices of a
-created vertex is accessible with the $contracted$ function.
+
 $C_{R}^v(G')$ and $I_{R,T}^v(G')$, functions for extracting core and
 interface graphs, are unaltered except that we apply them
 on $G'$ instead of $G$, see fig. \ref{allcips}(right).
@@ -378,7 +397,7 @@ We did so with vertices in the multi-loop "M" that are not stem "S" vertices
 (here labeled 'A' and 'G').
 
 
-\textbf{Adaptation of the sampling process.}
+\textbf{Constraint integration.}
 In a simulation step a new graph is generated and an acceptance decision
 has to be made. The new graph is generated by applying a
 production to the current instance. 
