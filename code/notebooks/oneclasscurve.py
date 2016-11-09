@@ -47,10 +47,11 @@ def plot(run_id, numgraphs, distribution, similarity): # note that the var names
 
     # OKOK NEW STUFF TESTING
     fig, ax1 = plt.subplots()
-    #ax2=ax1.twinx()
+    ax2=ax1.twinx()
     for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
         label.set_fontname('Arial')
         label.set_fontsize(15)
+
     numgraphs=np.array(numgraphs)
 
     #plt.grid()
@@ -58,25 +59,26 @@ def plot(run_id, numgraphs, distribution, similarity): # note that the var names
     ax1.yaxis.grid(color='gray', linestyle='dashed')
 
     ax1.boxplot(distribution, positions=numgraphs, widths=ws, capprops=bc, medianprops=bc, boxprops=bc, whiskerprops=bc, flierprops=None)
-    ax1.boxplot(similarity, positions=numgraphs, widths=ws, capprops=rc, medianprops=rc, boxprops=rc, whiskerprops=rc, flierprops=None)
-    ax1.plot(numgraphs, o, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='sample',linewidth=2)
-    ax1.plot(numgraphs, s, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='both',linewidth=2)
+    ax2.boxplot(similarity, positions=numgraphs, widths=ws, capprops=rc, medianprops=rc, boxprops=rc, whiskerprops=rc, flierprops=None)
+    ax1.plot(numgraphs, o, color='b', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='b', markerfacecolor='w', label='KL divergence',linewidth=2)
+    ax2.plot(numgraphs, s, color='r', marker='o', markeredgewidth=1, markersize=marksize, markeredgecolor='r', markerfacecolor='w', label='similarity',linewidth=2)
 
 
     #plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     print numgraphs
     plt.xlim(min(numgraphs)-2,max(numgraphs)+2)
-    ax1.set_ylim(0.0,1.200)
-    #ax2.set_ylim(0.95,1.100)
+    ax1.set_ylim(0.0,1.000)
+    ax2.set_ylim(0.6,1.100)
     plt.xticks(numgraphs,numgraphs)
 
     #plt.title(run_id + '\n', fontsize=18)
-    #ax1.legend(loc='lower left',fontsize=14)
-    #ax2.legend(loc='lower right',fontsize=14)
+    ax1.legend(loc='lower left',fontsize=14)
+    ax2.legend(loc='lower right',fontsize=14)
     #plt.ylabel('ROC AUC',fontsize=18)
-    ax1.set_ylabel('ROC AUC',fontsize=18)
-    #ax2.set_ylabel('similarity of instances',fontsize=18)
-    plt.xlabel('Training set size per family',fontsize=18)
+    ax1.set_ylabel('divergence',fontsize=18)
+    ax2.set_ylabel('similarity of instances',fontsize=18)
+    ax2.set_xlabel('number of training sequences',fontsize=18)
+    ax1.set_xlabel('number of training sequences',fontsize=18)
     plt.savefig('%s_plot_predictive_performance_of_samples.png' % run_id)
 
 
