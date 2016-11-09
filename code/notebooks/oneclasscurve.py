@@ -357,7 +357,7 @@ def test(a,b,ta,tb):
 #############
 # CONSTANTS AND MAIN
 ###########
-size_test=50
+size_test=1
 #dataset_a='RF00005.fa'
 #dataset_b='RF00162.fa' RF01051 RF01998
 dataset_b='RF01051.fa'
