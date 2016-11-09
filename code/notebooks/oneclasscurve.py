@@ -44,14 +44,20 @@ def plot(run_id, numgraphs, distribution, similarity): # note that the var names
     plt.figure(figsize=(18,8))
     marksize=5
 
+    # fontsize...
+    fsa=13
+    fsb=15
+
 
     # OKOK NEW STUFF TESTING
     fig, ax1 = plt.subplots()
     ax2=ax1.twinx()
     for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
         label.set_fontname('Arial')
-        label.set_fontsize(15)
-
+        label.set_fontsize(fsa)
+    for label in (ax2.get_xticklabels() + ax2.get_yticklabels()):
+        label.set_fontname('Arial')
+        label.set_fontsize(fsa)
     numgraphs=np.array(numgraphs)
 
     #plt.grid()
@@ -72,13 +78,13 @@ def plot(run_id, numgraphs, distribution, similarity): # note that the var names
     plt.xticks(numgraphs,numgraphs)
 
     #plt.title(run_id + '\n', fontsize=18)
-    ax1.legend(loc='lower left',fontsize=14)
-    ax2.legend(loc='lower right',fontsize=14)
+    ax1.legend(loc='lower left',fontsize=fsa)
+    ax2.legend(loc='lower right',fontsize=fsa)
     #plt.ylabel('ROC AUC',fontsize=18)
-    ax1.set_ylabel('divergence',fontsize=18)
-    ax2.set_ylabel('similarity of instances',fontsize=18)
-    ax2.set_xlabel('number of training sequences',fontsize=18)
-    ax1.set_xlabel('number of training sequences',fontsize=18)
+    ax1.set_ylabel('divergence',fontsize=fsb)
+    ax2.set_ylabel('similarity',fontsize=fsb)
+    ax2.set_xlabel('training sequences',fontsize=fsb)
+    ax1.set_xlabel('training sequences',fontsize=fsb)
     plt.savefig('%s_plot_predictive_performance_of_samples.png' % run_id)
 
 
