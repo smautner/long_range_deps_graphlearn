@@ -266,38 +266,39 @@ level (in dark) comprises only one node, this corresponds to multiple nodes at
 base level. Moreover, while the interface at base level requires only the
 presence of few nucleotides, these have to belong to a context defined at the
 coarse level that can span a much larger fraction of the instance and can be
-viewed as a sort of global positioning constraint.
+viewed as a sort of global localization constraint.
 
 \begin{figure}[ht]
       \centering
         \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
       \caption{
       Core and interface subgraphs are marked in dark and light color
-      respectively. Left: Molecular graph with indicated CIP substitution.
+      respectively. Left: Molecular graph with indicated core substitution.
       Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding with structural element resolution, with symbols: H)airpin, M)ultiloop, S)tem, D)angling end.}
       \label{allcips}
 \end{figure}
 
 
-\textbf{Constraint integration.} Specific feasibility constraints can be
-available for a given domain. For RNAs the relation between sequence and
-structure is known to be governed by thermodynamical forces that seek to
-minimize the amount of free energy of the biopolymer. The structure for a
-given sequence can be computed using sophisticated dynamic programming
-optimization algorithms. To integrate these constraints in the constructive
-protocol we let the user specify a transformation function which maps
-candidate instances to feasible instances. In our case the transformation
-takes a graph representing an RNA structure constructed by the proposed
-procedure, removes the pairwise bounds and recomputes them as the solution of
-a given folding algorithm. This transformation ensures that we are computing
-the acceptance probability always on viable RNA structures.
+\textbf{Constraint integration.} It should be possible to easily make use of
+specific feasibility constraints when these are available for a given domain.
+For RNAs the relation between sequence and structure is known to be governed
+by thermodynamical forces that seek to minimize the amount of free energy of
+the molecule. The structure for a given sequence can be computed using
+sophisticated dynamic programming optimization algorithms. To integrate these
+constraints in the constructive protocol we let the user specify a
+transformation function which maps candidate instances to feasible instances.
+In our case the transformation takes a graph representing an RNA structure
+constructed by the proposed procedure, removes the pairwise bounds and
+recomputes them as the solution of a given folding algorithm. This
+transformation ensures that we are computing the acceptance probability always
+on viable RNA structures.
 
 
 \section{Empirical evaluation and discussion}
 
 RNA polymers cover essential biological roles ranging from coding, decoding,
 regulation, and expression of genes. The RFam database \citep{rfam} groups
-known RNA sequences in functionally and evolutionarily related families. To
+known RNA sequences in functionally and evolutionarily related {\em families}. To
 empirically investigate the performance of the proposed constructive approach
 we selected the SAM-I/IV variant riboswitch (RF01725) and SAM riboswitch (S
 box leader) (RF00162), which are families that exhibit a rich structure (e.g.
@@ -305,24 +306,24 @@ that do not consist only of a single hairpin). The general aim is to
 synthesize functionally equivalent but novel sequences, a task with important
 biomedical applications.
 
-When working with RNAs the feasibility constraints are related to the
-structure determination. For this we use a two step approach in order to
-ensure higher accuracy. Given a candidate sequence we first identify $k=5$
-nearest neighbors among the available instances in the training set, we then
-align the $k+1$ sequences using the \emph{MUSCLE} (MUltiple Sequence
-Comparison by Log- Expectation) program \citep{muscle} and compute the
-consensus structure using the \emph{RNAalifold} program \citep{rnaalifold}.
-This procedure allows a robust identification of the most representative
-structure in the ensemble of possible suboptimal solutions.
+When working with RNAs, the feasibility constraints are related to the
+structure determination. To improve accuracy we use a two step approach:
+given a candidate sequence we 1) identify $k$ nearest neighbors among the
+available training instances, then 2) we align the $k+1$ sequences using the
+\emph{MUSCLE} (MUltiple Sequence Comparison by Log- Expectation) program
+\citep{muscle} and compute the consensus structure using the \emph{RNAalifold}
+program \citep{rnaalifold}. This procedure identifies
+the most representative structure in the ensemble of possible suboptimal
+solutions.
 
 In order to evaluate if the constructed sequences are functionally equivalent
-we use a surrogate approach: instead of synthesizing the sequences and testing
-their functionality in a biological experiment we use an external state-of-
-the-art computational approach as {\em oracle}. To define the membership of a
-sequence to a given family, the RFam database uses the covariance model
-computed by the program \emph{Infernal} (INFERence of RNA ALignment)
-\citep{infernal} induced over a hand curated set of representative sequences.
-
+to the original examples, we use an independent state-of-the-art computational
+approach as {\em oracle} \footnote{The correct, and expensive, procedure would
+instead be to synthesize the sequences and test their functionality in a
+biological experiment.}. To define the membership of a sequence to a given
+family, the RFam database uses the covariance model computed by the program
+\emph{Infernal} (INFERence of RNA ALignment) \citep{infernal} induced over a
+hand curated set of representative sequences.
 In Fig.~\ref{infeval} we report the average score achieved by the constructed
 sequences as the training set increases. The black horizontal line indicated
 the family specific threshold above which the Infernal model accepts a
