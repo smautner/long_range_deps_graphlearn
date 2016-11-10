@@ -101,8 +101,6 @@
 \maketitle
 
 \begin{abstract}
-%Scripts describing the generation of generic graphs based on examples
-%are scarce.
 
 Machine learning constructive approaches offer a way to answer interesting
 'design' questions on the basis of a collection of examples.  In particular,
@@ -115,25 +113,6 @@ the sequence. Since modeling long range dependencies is a difficult problem,
 we propose an efficient solution, based on graph coarsening that builds on top
 of a recent constructive approach and we show encouraging experimental results
 on a RNA synthesis task.
-
-% Graphs are flexible data structures whose generation 
-% is a mostly unexplored problem. As discriminative systems for graphs
-% exist, it is feasible to direct a generative process.
-% An existing method is implementing Markov Chain Monte Carlo 
-% sampling which is altering graphs incrementally.
-% Alteration is done with a \emph{graph grammar}, a collection
-% of sub graphs, grouped by exchangeability.
-
-% \fxwarning{so the abstract was rewritten, i made sure to explain the contraction}
-% By contracting edges in a graph i.e. merging adjacent vertices,
-% we obtain a more abstract view on a graph. 
-% We use this abstraction to overcome the shortcomings of the original 
-% grammar.
-% However, the modification is required to be automatically generate. 
-% We explore the application of this idea
-% on graphs representing RNA secondary structure. 
-
-
 
 \end{abstract}
 \section{Introduction}
@@ -211,12 +190,6 @@ generated instances are always viable.
 
 \section{Method}
 
-%summary of the approach: sampling using MH with grammar.
- 
-%what is a graph grammar. our grammar. CIPs.
-
-%the extension.
-
 \cite{costa16} presented an approach to sample graphs from an empirical
 probability distribution, using a variant of the Metropolis Hastings (MH)
 algorithm. The MH approach decomposes the transition probability of an
@@ -254,25 +227,6 @@ in the daughter and mother graph must be identical (up to isomorphism);
 finally, the embedding mechanism $E$ is given by the isomorphic bijection
 between the interface graphs. In words, new elements are produced by {\em
 swapping inner cores} in identical contexts.
-
-
-
-% \cite{costa16} introduced a method
-% to construct novel graphs according to a distribution, which is given by
-% examples. Graphs are vectorized by a \emph{decomposition kernel}
-% to train a machine learning model, e.g. an SVM.
-% Fragments of the graphs are collected in 
-% a \emph{grammar} (analogous to a string grammar) to alter the initial
-% set of graphs incrementally. Changes to a graph are evaluated with the
-% model. 
-% We present a method to increase the flexibility of the graph grammar.
-
-% We give an overview of the graph grammar in \cite{costa16}.
-% The grammar consists of sets of interchangeable graph fragments.
-% We call these fragments core interface pairs(CIPs) because 
-% they consist of a core part and an interface part.
-% In terms of a string grammar, core and interface are imaginable 
-% as a production: $iiiCCCiii \Longleftrightarrow iiiCCCCiii$.
 
 In Fig. \ref{allcips} (left) a production step is applied to a molecular graph
 $G$. The core $C_{R}^v(G)$ (dark) is determined by vertices at maximal
@@ -342,173 +296,78 @@ coarse level that can span a much larger fraction of the instance and can be
 viewed as a sort of global positioning constraint.
 
 
-% In our application case, we contract according to the
-% secondary RNA structure and label the resulting vertex accordingly e.g.
-% 'Hairpin loop'.$I_{R,T}^v(G')$  encodes far reaching and abstract
-% information about the surrounding vertices in our CIP interface matching.
-% % graph contration, interface trick
-% % change to congruency
-% % \textbf{An improvement to the notion of congruency.}
-% % CIPs require isomorphism to be considered congruent.
-% % We expand this requirement to incorporate
-% % the distance to the closest vertices in the core graph, for every interface
-% % vertex, when determining if graphs are congruent.
-% % %$\forall u \in I_{R,T}^v(G) : 
-% % %\underset{z \in  C_{R}^v(G)}{\min} d(u,z) = 
-% % %\underset{z' \in  C_{R}^{v'}(G')}{\min} d(\phi(u),z') $
-% % \fxwarning{formula style?}
-% % $\forall u \in I_{R,T}^v(G) : 
-% % \min_{z \in  C_{R}^v(G)} d(u,z) = 
-% % \min_{z' \in  C_{R}^{v'}(G')} d(\phi(u),z') $
-% % i.e. the distance 
-% % to the closest core node is equal for every
-% % $u$ and $\phi(u)$.
-% % It is easy to see the benefit of this extension.
-% % Imagine a CIP embedded into a graph. Let the interface consist of
-% % two connected vertices $a$ and $b$, $b$ being adjacent to the core while
-% % $a$ is connected to the rest of the graph.
-% % Clearly a CIP whose $a$ vertex is connected to its core should not be matched.
+\textbf{Constraint integration.} Specific feasibility constraints can be
+available for a given domain. For RNAs the relation between sequence and
+structure is known to be governed by thermodynamical forces that seek to
+minimize the amount of free energy of the biopolymer. The structure for a
+given sequence can be computed using sophisticated dynamic programming
+optimization algorithms. To integrate these constraints in the constructive
+protocol we let the user specify a transformation function which maps
+candidate instances to feasible instances. In our case the transformation
+takes a graph representing an RNA structure constructed by the proposed
+procedure, removes the pairwise bounds and recomputes them as the solution of
+a given folding algorithm. This transformation ensures that we are computing
+the acceptance probability always on viable RNA structures.
 
 
-% \textbf{Contracting vertices.}
-% In fig \ref{allcips} (mid and right, dark) we see how a coarsened 
-% graph can be obtained by contraction of edges.
-% Dark nodes in the middle picture are contracted to a single 's' labeled
-% vertex on the right. 
-% Vertices not connected by an edge can also be contracted.
-% This is called vertex identification.  
-% We did so with vertices in the multi-loop "M" that are not stem "S" vertices 
-% (here labeled 'A' and 'G').
+\section{Empirical evaluation and discussion}
 
+RNA polymers cover essential biological roles ranging from coding, decoding,
+regulation, and expression of genes. The RFam database \citep{rfam} groups
+known RNA sequences in functionally and evolutionarily related families. To
+empirically investigate the constructive performance of the proposed approach
+we selected RF01725, a family that exhibit a rich structure (e.g. that do not
+consist only of a single hairpin). The general aim is to synthesize
+functionally equivalent but novel sequences, a task with important biomedical
+applications.
 
-\textbf{Constraint integration.}
+When working with RNAs the feasibility constraints are related to the
+structure determination. For this we use a two step approach in order to
+ensure higher accuracy. Given a candidate sequence we first identify $k=5$
+nearest neighbors among the available instances in the training set, we then
+align the $k+1$ sequences using the \emph{MUSCLE} (MUltiple Sequence
+Comparison by Log- Expectation) program \citep{muscle} and compute the
+consensus structure using the \emph{RNAalifold} program \citep{rnaalifold}.
+This procedure allows a robust identification of the most representative
+structure in the ensemble of possible suboptimal solutions.
 
-Specific feasibility constraints can be available for a given domain. For RNAs
-the relation between sequence and structure is known to be governed by
-thermodynamical forces that seek to minimize the amount of free energy of the
-system. The optimal structure can be approximately computed using
-sophisticated dynamic programming optimization algorithms. To integrate these
-constraints we let the user specify a transformation function which maps instances to feasible instances. In our case the transformation takes a graph representing a candidate RNA structure, removes the pairwise bounds and recomputes them as the solution of a optimal folding algorithm.
+In order to evaluate if the constructed sequences are functionally equivalent
+we use a surrogate approach: instead of synthesizing the sequences and testing
+their functionality in a biological experiment we use an external
+state-of-the-art computational approach as {\em oracle}. To define the
+membership of a sequence to a given family, the RFam database uses the covariance
+model (a context free grammar variant) computed by the program \emph{Infernal}
+(INFERence of RNA ALignment) \citep{infernal} induced over a hand curated set
+of representative sequences.
 
-
-
-% In a simulation step a new graph is generated and an acceptance decision
-% has to be made. The new graph is generated by applying a
-% production to the current instance. 
-% In fig. \ref{allcips}(left) we can see a production being applied
-% to the base graph $G$. 
-% These changes may alter the coarse graph.
-% Therefore the contraction has to be recalculated if a change is accepted.
+In Fig.~\ref{infeval} we report the average bit-score achieved by the
+constructed sequences as a function of the size of the training set. The black
+horizontal line indicated the family specific threshold above which the
+Infernal model accepts a sequence as a valid instance of the family. In blue
+we report the results for the proposed extension and in red the results for
+the original method. We note that the coarsening strategy consistently
+improves the quality of the results.
 
 
 
-%\fxwarning{remove this eden part.. what about the directedness? look up what 
-%i did!also the hashing part! and then explain it}
-%Although the underlying EDeN kernel does not support directed graphs,
-%the grammar may contain directed graphs. This is implemented by extracting
-%CIPs as if undirected and creating the grammar as usual.
-%% need to be able to recalculate abstractions
-%A constraint to the contraction is that we need to be able to 
-%generate it algorithmically. In the sampling phase we recalculate 
-%the contraction after changes to the underlying graph.
-
-
-\section{Empirical evaluation}
-
-%%%%%%%
-%% RNA AND FOLDING 
-%%%%%%%
-Ribonucleic acid (RNA) sequences are sequences over the four nucleotides guanine,
-uracil, adenine, and cytosine (G,U,A,C).
-The nucleotides are connected to a ribose-phosphate backbone which imposes a
-direction. Non coding RNA (ncRNA) is transcribed from DNA but not
-translated into proteins. Instead it serves various other functions.
-The function depends on the sequence as well as the structure in which it 
-\emph{folds} by connecting non adjacent nucleotides via hydrogen bonds. 
-RNAs are grouped into functional families\cite{rfam}.
-Calculating the physically optimal folding for a single sequence
-is possible, but actual sequences will often fold in unison with 
-sequences in their family. Therefore, if we are to fold a sequence,
-we find the four most similar sequences from the training set, align them  and 
-look for a consensus folding.
-This is done by nearest neighbor searching the four closest sequences, 
-aligning the sequences with \emph{muscle} \cite{muscle}
-and then folding this alignment with \emph{RNAalifold}
-\cite{rnaalifold}.  
-The result is a \emph{secondary structure} which is translated into a 
-graph. First a directed path graph is generated which is labeled
-according to the nucleotides in the sequence, then undirected edges 
-are introduced that represent the hydrogen bonds.
-The presented grammar is compatible with directed graphs.
-
-%%%%%%%%
-% INFERNAL STUFF AND PARAMOPT
-%%%%%%%%
-\emph{Infernal}\cite{infernal} can classify members of these families using
-covariance models. Infernal gives us a domain specific way to evaluate
-the generated graphs. 
-% infernal stuff
-For each family Infernal provides a model which is trained on 
-a hand curated list of family representatives (seeds) as well as a 
-bit score threshold. Scoring a sequence with the model yields a bit score.
-Is this score higher than the threshold, the sequence should be considered 
-part of the family. 
-% choose params
-We chose our train and test RNA sequences among the seed sequences of the 
-families. 
-Sequences were chosen from RNA families with three properties:
-\fxwarning{how to enumerate?}
-1) many members; because some families contain 10
-instances which is very few for a classification task. 2)  interesting 
-structure; many sequences fold into structures that exhibit a large number of 
-unpaired bases which would result in a very simple contracted graph
-3) similar length; because classification should no be trivial.
-In the sampling process, many variables are involved.
-%paramoptimisation 
-To obtain 
-\fxwarning{this might become obsolete since optimisation was only for the first dataset..
-gl is more unstable on other sets -> params should be more conservative...
--> i hand picked a conservative dataset..
-also note to self: dont merge the curve from 'clevo.. also: i set the testsizes from 50 to 100 there..
-}
-sampling parameters, the parameter space was randomly searched.
-To obtain the grammar parameters, a grid search over some options was conducted.
-
-
-
-
-%%%%%%%%%%%%%%%%%
-% About the pics
-%%%%%%%%%%%%%%%%%
-%infevel 
-Fig. \ref{infeval} shows the average bit-score of generated graphs
-and the size of the training set. The black bar represents the family specific 
-threshold. In blue we see the scores of the sequences generated with the
-enhanced grammar. In red the sequences generated by a normal grammar. 
-\fxwarning{how to enumerate? should i mention that the light color is the std?}
-Two results are noticeable: 1) the sequences generated by our method
-perform overwhelmingly above the threshold. 2) the new method outperforms
-the old. 
-% eval learning curve+ edit dist
-\fxwarning{is this the right citation?}
-Costa \cite{costa16} defines \emph{the constructive learning problem for 
-finite samples}.
-The goal is to generate graphs that are different from the training set,
-but depict a similar distribution.
-The similarity of two sets of sequences $a$ and $b$ 
-is obtained with $s(a,b)/\sqrt{(s(a,a)*s(b,b))}$ where $s$ is the mean of the
-similarity matrix between the two arguments. If the arguments are identical,
-the diagonal is removed from the matrix.
-Distributions are indirectly comparable by looking at the performance 
-of trained estimators. A high similarity in performance indicates a high
-similarity in distribution.
-Fig \ref{learncurve} shows the average (over positive and negative generated sets)
-similarity as described above. 
-We also see the learning curves obtained by training an estimator
-on $x$ random instances from each of two RNA family representatives.
-We see the curves for the original seeds, the sequences generated by 
-our graph generator and the combined set. 
-\fxwarning{drop a sentence on the interpretation}
+% % eval learning curve+ edit dist
+% Costa \cite{costa16} defines \emph{the constructive learning problem for 
+% finite samples}.
+% The goal is to generate graphs that are different from the training set,
+% but depict a similar distribution.
+% The similarity of two sets of sequences $a$ and $b$ 
+% is obtained with $s(a,b)/\sqrt{(s(a,a)*s(b,b))}$ where $s$ is the mean of the
+% similarity matrix between the two arguments. If the arguments are identical,
+% the diagonal is removed from the matrix.
+% Distributions are indirectly comparable by looking at the performance 
+% of trained estimators. A high similarity in performance indicates a high
+% similarity in distribution.
+% Fig \ref{learncurve} shows the average (over positive and negative generated sets)
+% similarity as described above. 
+% We also see the learning curves obtained by training an estimator
+% on $x$ random instances from each of two RNA family representatives.
+% We see the curves for the original seeds, the sequences generated by 
+% our graph generator and the combined set. 
 
 
 
@@ -530,25 +389,16 @@ our graph generator and the combined set.
   \end{minipage}
 \end{figure}
 
-\fxwarning{pictures are not in their final form}
-
-%\begin{figure}[ht]
-%      \centering
-%        \includegraphics[width=0.5\linewidth]{images/learningcurve.png}
-%      \caption{learning curve}
-%      \label{learncurve}
-%\end{figure}
-
-
  
-\section{Discussion and Conclusion}
+\section{Conclusion}
 
-We have introduced a flexible approach to tackle the problem of long range
+We have introduced a generic approach to tackle the problem of long range
 dependency modeling for a constructive machine learning approach. Allowing for
 a user defined coarsening procedure we have showed how we can synthesize novel
 RNA sequences that are functionally equivalent to an original example sample.
 The coarsening procedure allows the injection of domain knowledge,
-significantly improving the quality of the results over the original domain a-specific approach. In future work we will investigate how to learn task
+significantly improving the quality of the results over the original domain
+a-specific approach. In future work we will investigate how to learn task
 specific coarsening schemes in a supervised fashion directly from data.
 
 
