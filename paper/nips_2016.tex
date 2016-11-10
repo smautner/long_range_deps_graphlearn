@@ -174,7 +174,7 @@ to ensure that generated instances are always viable.
 \section{Method}
 
 \cite{costa16} presented an approach to sample graphs from an empirical
-probability distribution, using a variant of the Metropolis Hastings (MH)
+probability distribution using a variant of the Metropolis Hastings (MH)
 algorithm \citep{metropolis1953equation}. The MH approach decomposes the
 transition probability of an underlying  Markov process in two factors, 1) the
 proposal  and 2) the acceptance-rejection probability distributions. The
@@ -202,8 +202,8 @@ substitutability principle} \citep{Clark:2007}. Two key notions are defined:
 (or {\em core} for simplicity), denoted $C^v_R(G)$, is a neighborhood graph of
 $G$ of radius $R$ rooted in $v$. An interface graph, denoted $I^v_{R,T}(G)$ is
 the difference graph of two neighborhood graphs of $G$ with the same root in
-$v$ and radius $R+1$ and $R+1+T$. The difference graph is the graph induced by
-the set difference of the two vertex sets. Intuitively an interface
+$v$ and radius $R$ and $R+T$. The difference graph is the graph induced by
+the difference of the two vertex sets. Intuitively an interface
 corresponds to the ``external shell'' of a core with {\em thickness} $T$. This
 shell represents the context available for the definition of a production
 rule. The general concepts of mother and daughter graphs are specialized as
@@ -229,7 +229,7 @@ efficiently (i.e. in linear complexity) from a representative set of graphs
 
 Two main issues arise when dealing with complex structures such as RNA
 polymers, we call them 1) the {\em resolution} and 2) the {\em viability}
-problem. The first issue is due to the fact that replacing only few nodes at
+problem. The first issue is the fact that replacing only few nodes at
 each iteration can be inefficient when instances consist of several hundreds
 of nodes. It is known that for RNAs a more effective description is obtained
 considering larger structural components such as stems  and loops. As for the
@@ -240,8 +240,9 @@ these issues we propose two enhancements to Costa's approach, namely: 1) a
 grammar coarsening procedure and 2) a constraint integration procedure.
 
 
-\textbf{Grammar coarsening.} The idea is to allow users to specify in a simple
-way a coarsening procedure. We do so via the notion of {\em edge contraction}:
+\textbf{Grammar coarsening.} The idea is to allow users to specify 
+a coarsening procedure in a simple way. We do so via the notion of {\em edge
+contraction}:
 an operation which removes an edge from a graph while simultaneously merging
 the two vertices that it previously joined. In addition we allow the more
 general notion of {\em vertex contraction}: which removes the restriction that
@@ -260,13 +261,13 @@ thickness in the base graph) and the interface graph on the coarse graph. In
 words, we require that both the interface at base level and at coarse level
 match for a core swap to take place. In Fig. \ref{allcips}  we depict a RNA
 polymer graph at nucleotide level (center) and its coarse version (right)
-where the contraction was informed by the notion of structural component such
+where the contraction was informed by the notion of structural components such
 as stems, hairpin loops and multiloops. Note that even if the core at coarse
 level (in dark) comprises only one node, this corresponds to multiple nodes at
 base level. Moreover, while the interface at base level requires only the
 presence of few nucleotides, these have to belong to a context defined at the
 coarse level that can span a much larger fraction of the instance and can be
-viewed as a sort of global localization constraint.
+viewed as a sort of global localization indicator.
 
 \begin{figure}[ht]
       \centering
