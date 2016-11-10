@@ -125,24 +125,11 @@ unfeasible, for example in the domain of graphs with discrete labels. In
 \cite{costa16} the problem of generating elements of a structured domain was
 framed as the equivalent problem of sampling from a corresponding underlying
 probability distribution defined over a (learned) class of structures.
-Approaches like {\em rejection sampling} where instances are generated without
-enforcing constraints, but are then rejected if violations in the probability
-distribution occur, are inefficient as the sampling space almost never yields
-valid samples. In order to work with objects that have a non negligible
-probability of being accepted they use a graph grammar. Specifically they
-employ a context-sensitive grammar to accurately model complex dependencies
-between different parts of an instance. The authors acknowledge that an
-approach based exclusively on a grammar is not sufficient since the number of
-proposed graphs grows exponentially with the number of production rules in the
-grammar. In order to select only the most promising candidates one needs to
-equip the grammar with a probabilistic notion. However any procedure to
-estimate the probabilities of a context-sensitive grammar needs to trade off
-the number of contextual rules with the expressiveness of the grammar. The
-larger the context, the (exponentially) larger the number of possible cases
-that need to be observed for a reliable estimate, which in turn requires an
-exponentially large number of training examples. For this reason global or
-just long range constraints cannot be effectively modeled, resulting in a
-grammar that could express non viable instances. To address the issue
+Specifically they employ a context-sensitive grammar to accurately model
+complex dependencies between different parts of an instance. The authors
+acknowledge that an approach based exclusively on a grammar is not sufficient
+since the number of proposed graphs grows exponentially with the number of
+production rules in the grammar. To address the issue
 \cite{costa16} proposes to use a Metropolis Hastings (MH) Markov Chain Monte
 Carlo (MCMC) method, where the problem of sampling is reduced to the easier
 task of {\em simulation}, provided that one can build an ergodic Markov chain
@@ -235,17 +222,6 @@ interface $I_{R,T}^v(G)$ with \emph{thickness} $T=2$ is in a lighter shade.
 Given a new core-interface pair (CIP) with matching interface, the
 substitution can take place to yield the replacement of a carbon with a
 nitrogen atom.
-
-\begin{figure}[ht]
-      \centering
-        \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
-      \caption{
-      Core and interface subgraphs are marked in dark and light color
-      respectively. Left: Molecular graph with indicated CIP substitution.
-      Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding with structural element resolution, with symbols: H)airpin, M)ultiloop, S)tem, D)angling end.}
-      \label{allcips}
-\end{figure}
-
 Note that this type of production rules can be inferred efficiently (i.e. in
 linear complexity) from a representative set of graphs.
 
@@ -295,6 +271,16 @@ presence of few nucleotides, these have to belong to a context defined at the
 coarse level that can span a much larger fraction of the instance and can be
 viewed as a sort of global positioning constraint.
 
+\begin{figure}[ht]
+      \centering
+        \includegraphics[width=0.7\linewidth]{images/allcipsinone.png}
+      \caption{
+      Core and interface subgraphs are marked in dark and light color
+      respectively. Left: Molecular graph with indicated CIP substitution.
+      Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding with structural element resolution, with symbols: H)airpin, M)ultiloop, S)tem, D)angling end.}
+      \label{allcips}
+\end{figure}
+
 
 \textbf{Constraint integration.} Specific feasibility constraints can be
 available for a given domain. For RNAs the relation between sequence and
@@ -315,11 +301,11 @@ the acceptance probability always on viable RNA structures.
 RNA polymers cover essential biological roles ranging from coding, decoding,
 regulation, and expression of genes. The RFam database \citep{rfam} groups
 known RNA sequences in functionally and evolutionarily related families. To
-empirically investigate the constructive performance of the proposed approach
-we selected RF01725, a family that exhibit a rich structure (e.g. that do not
-consist only of a single hairpin). The general aim is to synthesize
-functionally equivalent but novel sequences, a task with important biomedical
-applications.
+empirically investigate the performance of the proposed constructive approach
+we selected the SAM-I/IV variant riboswitch (RF01725), a family that exhibit a
+rich structure (e.g. that do not consist only of a single hairpin). The
+general aim is to synthesize functionally equivalent but novel sequences, a
+task with important biomedical applications.
 
 When working with RNAs the feasibility constraints are related to the
 structure determination. For this we use a two step approach in order to
@@ -333,20 +319,33 @@ structure in the ensemble of possible suboptimal solutions.
 
 In order to evaluate if the constructed sequences are functionally equivalent
 we use a surrogate approach: instead of synthesizing the sequences and testing
-their functionality in a biological experiment we use an external
-state-of-the-art computational approach as {\em oracle}. To define the
-membership of a sequence to a given family, the RFam database uses the covariance
-model (a context free grammar variant) computed by the program \emph{Infernal}
-(INFERence of RNA ALignment) \citep{infernal} induced over a hand curated set
-of representative sequences.
+their functionality in a biological experiment we use an external state-of-
+the-art computational approach as {\em oracle}. To define the membership of a
+sequence to a given family, the RFam database uses the covariance model
+computed by the program \emph{Infernal} (INFERence of RNA ALignment)
+\citep{infernal} induced over a hand curated set of representative sequences.
 
-In Fig.~\ref{infeval} we report the average bit-score achieved by the
-constructed sequences as a function of the size of the training set. The black
-horizontal line indicated the family specific threshold above which the
-Infernal model accepts a sequence as a valid instance of the family. In blue
-we report the results for the proposed extension and in red the results for
-the original method. We note that the coarsening strategy consistently
-improves the quality of the results.
+In Fig.~\ref{infeval} we report the average score achieved by the constructed
+sequences as the training set increases. The black horizontal line indicated
+the family specific threshold above which the Infernal model accepts a
+sequence as a valid instance of the family. In blue we report the results for
+the proposed extension and in red the results for the original method. We note
+that the coarsening strategy consistently improves the quality of the results.
+
+In \cite{costa16} the \emph{the constructive learning problem for finite
+samples} is formally specified as an optimization procedure where a parametric
+generator yields instances that satisfy two competing objectives: on the one
+hand one should obtain similar probability density estimators when these are
+trained on the original data or on the generated data; on the other hand the
+generated instances should be different from those already known in the
+training phase \footnote{The notion of similarity between probability density
+estimators is defined in terms of Kullback-Leibler divergence and the notion
+of similarity between instances of a structured domain is defined in terms of
+a set graph kernel.}. In Fig.~\ref{learncurve} we evaluate these properties as
+the training set increases. We observe that the similarity tends to decrease
+as more diverse material becomes available and that also the divergence tends
+to vanish, indicating that the instances generated induce the same probability
+density as the original ones, albeit being increasingly different.
 
 
 
@@ -394,7 +393,8 @@ improves the quality of the results.
 
 We have introduced a generic approach to tackle the problem of long range
 dependency modeling for a constructive machine learning approach. Allowing for
-a user defined coarsening procedure we have showed how we can synthesize novel
+a user defined coarsening procedure and allowing the user to specify a
+feasibility constraint optimizer, we have showed how we can synthesize novel
 RNA sequences that are functionally equivalent to an original example sample.
 The coarsening procedure allows the injection of domain knowledge,
 significantly improving the quality of the results over the original domain
