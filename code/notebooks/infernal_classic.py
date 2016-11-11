@@ -147,8 +147,6 @@ def getargsarray():
 
 args=getargsarray()
 
-import sys
-job = int(sys.argv[1]) - 1
 
 sizes=[10,20,50,100,200,400]
 repeats=5
@@ -162,14 +160,16 @@ means2 = []
 stds2 = []
 
 
+if __name__ == "__main__":
+    import sys
+    job = int(sys.argv[1]) - 1
+    for size in sizes:
+        m, s = evaluate(repeats, size, lambda x: fit_sample_noabstr(x,args[job]) )
+        means2.append(m)
+        stds2.append(s)
 
-for size in sizes:
-    m, s = evaluate(repeats, size, lambda x: fit_sample_noabstr(x,args[job]) )
-    means2.append(m)
-    stds2.append(s)
 
-
-print "job = %d" % job
-print "means2 = %s" % means2
-print "stds2 = %s" % stds2
-print 'sum = %s' % sum(means2)
+    print "job = %d" % job
+    print "means2 = %s" % means2
+    print "stds2 = %s" % stds2
+    print 'sum = %s' % sum(means2)
