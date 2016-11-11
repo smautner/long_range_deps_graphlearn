@@ -7,10 +7,10 @@
 % to avoid loading the natbib package, add option nonatbib
 % \usepackage[nonatbib]{nips_2016}
 
-\usepackage{nips_2016}
+%\usepackage{nips_2016}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
-%\usepackage[final]{nips_2016}
+\usepackage[final]{nips_2016}
 
 
 \usepackage[english, status=draft]{fixme} % these 2 make fixme comments :) 
@@ -117,40 +117,39 @@ on a RNA synthesis task.
 \end{abstract}
 \section{Introduction}
 
-Constructive machine learning addresses the problem of automatically 'build'
-or 'design' artifacts given a concept expressed as a representative set of
-examples. The task becomes particularly challenging in a discrete setting when
-the solution space is exponential and direct enumeration approaches become
-unfeasible, as it is the case in the domain of graphs with discrete labels. In
-\cite{costa16} the problem of generating elements of a structured domain was
-framed as the equivalent problem of sampling from a corresponding underlying
-probability distribution defined over a (learned) class of structures.
-Specifically they employ a context-sensitive grammar to accurately model
-complex dependencies between different parts of an instance. The authors
-acknowledge that an approach based exclusively on a grammar is not sufficient
-since the number of proposed graphs grows exponentially with the number of
-production rules in the grammar. To address the issue \cite{costa16} proposes
-to use a Metropolis Hastings (MH) Markov Chain Monte Carlo (MCMC) method,
-where the problem of sampling is reduced to the easier task of {\em
-simulation}. They use the context sensitive graph grammar to inform the MH
-proposal distribution, but also introduce a probability density estimator to
-define the MH acceptance procedure. This allows to deal separately with local
-and global constraints: the locally context-sensitive graph grammar is used
-for the local constraints and the regularized statistical model is used for
-the global or long range constraints. The two approaches complement each
-other: the grammar is a flexible non-parametric approach that can model
-complex dependencies between vertices that are within a short path distance
-from each other; the statistical model, instead, can employ the bias derived
-from the particular functional family (linear) and the type of regularization
-used (a penalty over the $\ell_2$ norm of the parameters) to generalize long
-range dependencies to similar cases.
-This approach is therefore adequate when the underlying concept exhibit local
-dependencies that are more complex than long range ones.  Unfortunately in
-some application domains instances can exhibit complex long range dependencies
-between their different constituent parts. This is the case for RNA polymers,
-long sequences of atomic entities (nucleotides) that self interact,
-establishing pairwise bounds that can typically span the entire length of the
-sequence.
+Constructive machine learning addresses the problem of automatically 'design'
+artifacts given a concept expressed as a representative set of examples. The
+task becomes particularly challenging in a discrete setting when the solution
+space is exponential and direct enumeration approaches become unfeasible, as
+it is the case in the domain of graphs with discrete labels. In \cite{costa16}
+the problem of generating elements of a structured domain was framed as the
+equivalent problem of sampling from a corresponding underlying probability
+distribution defined over a (learned) class of structures. Specifically they
+employ a context-sensitive grammar to accurately model complex dependencies
+between different parts of an instance. The authors acknowledge that an
+approach based exclusively on a grammar is not sufficient since the number of
+proposed graphs grows exponentially with the number of production rules in the
+grammar. To address the issue \cite{costa16} proposes to use a Metropolis
+Hastings (MH) Markov Chain Monte Carlo (MCMC) method, where the problem of
+sampling is reduced to the easier task of {\em simulation}. They use the
+context sensitive graph grammar to inform the MH proposal distribution, but
+also introduce a probability density estimator to define the MH acceptance
+procedure. This allows to deal separately with local and global constraints:
+the locally context-sensitive graph grammar is used for the local constraints
+and the regularized statistical model is used for the global or long range
+constraints. The two approaches complement each other: the grammar is a
+flexible non-parametric approach that can model complex dependencies between
+vertices that are within a short path distance from each other; the
+statistical model, instead, can employ the bias derived from the particular
+functional family (linear) and the type of regularization used (a penalty over
+the $\ell_2$ norm of the parameters) to generalize long range dependencies to
+similar cases. This approach is therefore adequate when the underlying concept
+exhibit local dependencies that are more complex than long range ones.
+Unfortunately in some application domains instances can exhibit complex long
+range dependencies between their different constituent parts. This is the case
+for RNA polymers, long sequences of atomic entities (nucleotides) that self
+interact, establishing pairwise bounds that can typically span the entire
+length of the sequence.
 
 A different way to view the issue of long range dependencies is that of the
 appropriate scale of representation. Certain application domains exhibit
@@ -180,9 +179,9 @@ transition probability of an underlying  Markov process in two factors, 1) the
 proposal  and 2) the acceptance-rejection probability distributions. The
 algorithm starts from a seed element and iteratively proposes new instances
 that are stochastically accepted if they fit appropriate membership
-requirements. The key element for an efficient MH design consists in shaping
-the proposal distribution  in such a way that the generated elements will not
-be rejected too often. To do so Costa suggests to use a grammar and infer its
+requirements. The key element for an efficient MH design is building the
+proposal distribution in such a way that the generated elements will not be
+rejected too often. To do so Costa suggests to use a grammar and infer its
 rules from the available data using grammatical inference techniques upgraded
 to structured domains (i.e. domains where instances are naturally represented
 as labeled graphs).
@@ -229,14 +228,14 @@ efficiently (i.e. in linear complexity) from a representative set of graphs
 
 Two main issues arise when dealing with complex structures such as RNA
 polymers, we call them 1) the {\em resolution} and 2) the {\em viability}
-problem. The first issue is the fact that replacing only few nodes at
+problem. Replacing only few nodes at
 each iteration can be inefficient when instances consist of several hundreds
 of nodes. It is known that for RNAs a more effective description is obtained
 considering larger structural components such as stems  and loops. As for the
 second issue, it is known that the function of RNA polymers depends on their
 global structure (i.e. the set of pairs of interacting nucleotides), which can
 significantly change when even a single nucleotide is altered. To deal with
-these issues we propose two enhancements to Costa's approach, namely: 1) a
+these issues we propose two enhancements to Costa's approach: 1) a
 grammar coarsening procedure and 2) a constraint integration procedure.
 
 
@@ -245,11 +244,10 @@ a coarsening procedure in a simple way. We do so via the notion of {\em edge
 contraction}:
 an operation which removes an edge from a graph while simultaneously merging
 the two vertices that it previously joined. In addition we allow the more
-general notion of {\em vertex contraction}: which removes the restriction that
+general notion of {\em vertex contraction}, which removes the restriction that
 the contraction must occur over vertices sharing an incident edge. Both
 procedures are defined using a node attribute $cid \in \IN$ called {\em
-contraction-identifier} and contracting all vertices that share the same $cid$
-value. We propose to use the contraction operation as a flexible way to
+contraction-identifier} and contracting all vertices that share the same $cid$. We propose to use the contraction operation as a flexible way to
 transform a graph to its coarser version, $G \mapsto G'$. Cores and interfaces
 can now be defined exploiting the contracted graph. Starting from a CIP on the
 coarse graph, we define the core as the sub graph induced by the vertices of
@@ -262,12 +260,12 @@ words, we require that both the interface at base level and at coarse level
 match for a core swap to take place. In Fig. \ref{allcips}  we depict a RNA
 polymer graph at nucleotide level (center) and its coarse version (right)
 where the contraction was informed by the notion of structural components such
-as stems, hairpin loops and multiloops. Note that even if the core at coarse
-level (in dark) comprises only one node, this corresponds to multiple nodes at
+as stems, hairpin loops and multiloops. Note that a core at coarse
+level (in dark) made only of one node, corresponds to multiple nodes at
 base level. Moreover, while the interface at base level requires only the
 presence of few nucleotides, these have to belong to a context defined at the
 coarse level that can span a much larger fraction of the instance and can be
-viewed as a sort of global localization indicator.
+viewed as a global localization indicator.
 
 \begin{figure}[ht]
       \centering
@@ -298,7 +296,7 @@ on viable RNA structures.
 \section{Empirical evaluation and discussion}
 
 RNA polymers cover essential biological roles ranging from coding, decoding,
-regulation, and expression of genes. The RFam database \citep{rfam} groups
+regulation and expression of genes. The RFam database \citep{rfam} groups
 known RNA sequences in functionally and evolutionarily related {\em families}. To
 empirically investigate the performance of the proposed constructive approach
 we selected the SAM-I/IV variant riboswitch (RF01725) and SAM riboswitch (S
@@ -326,7 +324,7 @@ family, the RFam database uses the covariance model computed by the program
 \emph{Infernal} (INFERence of RNA ALignment) \citep{infernal} induced over a
 hand curated set of representative sequences.
 In Fig.~\ref{infeval} we report the average score achieved by the constructed
-sequences as the training set increases. The black horizontal line indicated
+sequences as the training set increases. The black horizontal line indicates
 the family specific threshold above which the Infernal model accepts a
 sequence as a valid instance of the family. In blue we report the results for
 the proposed extension and in red the results for the original method. We note
@@ -369,13 +367,14 @@ different.
 \section{Conclusion}
 
 We have introduced a generic approach to tackle the problem of long range
-dependency modeling for a constructive machine learning approach. Allowing for
-a user defined coarsening procedure and allowing the user to specify a
-feasibility constraint optimizer, we have showed how we can synthesize novel
+dependency modeling for a constructive machine learning approach.
+Preliminary results are encouraging and show that we can propose novel
 RNA sequences that are functionally equivalent to an original example sample.
 The coarsening procedure allows the injection of domain knowledge,
-significantly improving the quality of the results over the original domain
-a-specific approach. In future work we will investigate how to learn task
+significantly improving the quality of the results over the original non domain
+specific approach. 
+
+In future work we will investigate how to learn task
 specific coarsening schemes in a supervised fashion directly from data.
 
 
