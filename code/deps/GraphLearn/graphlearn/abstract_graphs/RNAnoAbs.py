@@ -23,13 +23,11 @@ i am not ready yet to give up on the  free energy meassure for bad graphs
 
 
 class PostProcessor(PostProcessor):
-
     def re_transform_single(self, input):
         return self.pp.re_transform_single(input)
 
 
 class PreProcessor(PreProcessor):
-
     def __init__(self,base_thickness_list=[2],structure_mod=True,include_base=False,ignore_inserts=False):
         '''
         Parameters

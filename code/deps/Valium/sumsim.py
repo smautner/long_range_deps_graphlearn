@@ -127,7 +127,6 @@ class OneClassEstimator:
     '''
     there might be a bug connected to nx.digraph..
     '''
-
     def __init__(self, nu=.5, cv=2, n_jobs=-1,
         classifier=SGDClassifier(loss='log')):
         '''
@@ -145,8 +144,6 @@ class OneClassEstimator:
         self.cv = cv
         self.n_jobs = n_jobs
         self.classifier = classifier
-
-
 
     def fit(self, data_matrix, random_state=None):
         if random_state is not None:

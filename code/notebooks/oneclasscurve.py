@@ -48,7 +48,6 @@ def plot(run_id, numgraphs, distribution, similarity): # note that the var names
     fsa=13
     fsb=15
 
-
     # OKOK NEW STUFF TESTING
     fig, ax1 = plt.subplots()
     ax2=ax1.twinx()
@@ -373,11 +372,6 @@ size_test=1
 dataset_b='RF01051.fa'
 dataset_a='RF01725.fa'
 
-#sizes=[7,8,9,10,11,12,13,14,15]
-sizes=range(20,55,5)
-sizes=[25,50,75,100]
-repeats=7
-NJOBS=2
 
 from eden.util import configure_logging
 import logging
@@ -429,3 +423,8 @@ for res in mpres:
     result += res.get()
 pool.close()
 '''
+
+
+
+
+

@@ -35,17 +35,14 @@ def get_sequences_with_names(size=9999, rand=True):
 SET UP THE SAMPLERS/// FITTING AND SAMPLING
 '''
 import random
-import graphlearn.abstract_graphs.RNA as rna
 from  graphlearn.feasibility import FeasibilityChecker as Checker
 from graphlearn.estimator import Wrapper as estimatorwrapper
 import graphlearn.utils.draw as draw
 from graphlearn.graphlearn import Sampler as GLS
 import itertools
 import graphlearn.abstract_graphs.RNAnoAbs as rnana
-
-
+import graphlearn.abstract_graphs.RNA as rna
 # ok for the evaluation we need to
-
 def fit_sample_noabstr(sequences,argz, random_state=random.random()):
     '''
     graphs -> more graphs
