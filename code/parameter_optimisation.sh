@@ -7,5 +7,5 @@
 #$ -e /home/mautner/JOBZ/paramopt_e/$JOB_NAME.$JOB_ID_e_$TASK_ID
 
 
-cd notebooks; python -u parametersearch.py
+cd experiments; python -u optimizer.py
 
