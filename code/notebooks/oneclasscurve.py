@@ -293,21 +293,6 @@ def get_results(repeats=7,sizes=[],argparam=-2,njobs=1):
     return li
 
 
-# calc for one "size", go over repeats
-def get_datapoint(size,repeats):
-    resa=[]
-    resb=[]
-    for rep in range(repeats):
-        a,b = evaluate_point(size)
-        resa.append(a)
-        resb.append(b)
-    return resa,resb
-
-
-
-def evaluate_point(size):
-    new , train, test_a = get_trainthings(size,dataset_a)
-    return sumsim.get_dist_and_sim_crossval(new,train,kfold=3)
 
 # does the fit stuff
 def get_trainthings_debug(size,dataset,depth=0):

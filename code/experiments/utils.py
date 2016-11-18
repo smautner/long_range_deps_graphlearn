@@ -113,3 +113,11 @@ def get_seq_tups(fname,size,sizeb):
     random.shuffle(graphs)
     return graphs[:size],graphs[size:size+sizeb]
 
+
+def transpose(li):
+    return [list(i) for i in zip(*li)]
+
+
+
+
+
