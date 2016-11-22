@@ -1,0 +1,42 @@
+
+
+rule all:
+    shell: "echo 'targets: clean, test_distr, test_infernal'"
+
+
+rule write_distr:
+    output: "test_distribution"
+    shell: """echo "{{'fastafile': 'RF01725.fa', 'mininterfacecount': 2, 'burnin': 4, 'acc_min_sim': 0.24449402485485644, 'imp_lin_start': 0.19892265815047983, 'maxsizediff': 6, 'imp_thresh': 0.32120431812249317, 'mincipcount': 2, 'SCORE': -0.0, 'core_choice': False, 'n_samples': 10, 'n_steps': 25, 'quick_skip': True}}" > test_distribution"""
+
+rule write_inf:
+    input: 
+        "test_distribution"
+    output:
+        "test_infernal_oldgrammar"
+    shell: 
+        """echo "{{'radius_list': [0, 1, 2], 'thickness_list': [2], 'mincip_count': 2, 'min_interfacecount': 3}}">test_infernal_oldgrammar"""
+        
+rule test_distr:
+    input:
+        "test_distribution"
+    output: 
+        "0_displot.png"
+    shell:
+        "cat test_distribution | python distribution.py --sizes=[20,30] --repeats=3 > tmp ; "
+        "cat tmp | ./draw.py distribution"
+
+rule test_infernal:
+    input:
+        "test_distribution",
+        "test_infernal_oldgrammar"
+    output:
+        "0_infplot.png"
+    shell:
+        "cat test_infernal_oldgrammar | python infernal.py --sizes=[20,30] --repeats=1 oldgrammar > tmp2 ; "
+        "cat test_distribution | python infernal.py --sizes=[20,30] --repeats=1 extgrammar > tmp3  ; "
+        "paste -d ',' tmp3 tmp2  > tmp4 ; "
+        "cat tmp4 | ./draw.py infernal"
+rule clean:
+    shell:
+        "rm -rf test_distribution test_infernal_oldgrammar tmp tmp2 tmp3 tmp4 ;"
+        "rm -rf 0_infplot.png 0_displot.png temp.fa"

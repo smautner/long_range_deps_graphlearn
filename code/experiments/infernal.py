@@ -57,7 +57,8 @@ if __name__ == "__main__":
     for k, v in optlist.items():
         optlist[k] = eval(v)
 
-    print optlist
+    #print optlist
+
     ext = 'extgrammar' in args
     old = 'oldgrammar' in args
     if old == ext:
