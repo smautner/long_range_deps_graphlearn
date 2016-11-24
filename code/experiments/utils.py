@@ -1,7 +1,13 @@
 
 
 
-
+import subprocess
+def shell_exec(cmd):
+    #print "\n"+cmd+"\n"
+    process = subprocess.Popen(cmd,stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    output, stderr = process.communicate()
+    retcode = process.poll()
+    return (retcode,stderr,output)
 
 
 
@@ -107,9 +113,12 @@ def fit_sample(sequences, arguments,NJOBS=1, random_state=random.random()):
 
 # GET SEQUENCES, a sequence is actually a tupple (header,sequence)
 from eden.converter.fasta import fasta_to_sequence
+
+def fasta_to_list(fname):
+    return [e for e in fasta_to_sequence(fname)]
+
 def get_seq_tups(fname,size,sizeb):
-    kram = fasta_to_sequence("../toolsdata/"+fname)
-    graphs=[g for g in kram]
+    graphs=fasta_to_list('../toolsdata/'+fname)
     random.shuffle(graphs)
     return graphs[:size],graphs[size:size+sizeb]
 
@@ -117,6 +126,50 @@ def get_seq_tups(fname,size,sizeb):
 def transpose(li):
     return [list(i) for i in zip(*li)]
 
+##############################3
+# the rest of this is dedicated to the infernal sampler
+############################
+def getstr(str):
+    str=str.split("\n")
+    second_line=str[1]
+    return second_line.split(' ')[0]
+
+def to_stockholm(fastaalifile, secondary_structure, outfile):
+    seqs=fasta_to_list(fastaalifile)
+    res="# STOCKHOLM 1.0\n\n#=GF SQ   %d\n\n" % len(seqs)
+    for header,sequence in seqs:
+        res+="%s       %s\n" % (header,sequence)
+    res+="#=GC SS_cons        %s\n//\n" % secondary_structure
+    with open(outfile,'w') as file:
+        file.write(res)
+
+def fit_sample_infernal(seques,dummy):
+    """
+    ok wir machen
+     write fasta
+     muscle,
+     alifold,
+     biopython,
+     create_cm und cmemit oO
+    """
+    #print seques
+    sequences = [b for a,b in seques]
+    rna.write_fasta(sequences,"tmp.fa")
+    shell_exec('muscle -in tmp.fa -out museld.fa')
+    a,b,out = shell_exec('cat museld.fa | RNAalifold -f F --noPS')
+    ss= getstr(out)
+    to_stockholm('museld.fa',ss, 'sto.sto')
+    shell_exec("cmbuild -F mod3l sto.sto")
+    shell_exec("cmemit -N %d --exp 3.92  mod3l > out.fa" % (len(sequences)*2))
+    return fasta_to_list('out.fa')
+
+
+
+
+
+if __name__ == '__main__':
+    seqs,trash=get_seq_tups("RF00005.fa",20,1)
+    fit_sample_infernal(seqs)
 
 
 

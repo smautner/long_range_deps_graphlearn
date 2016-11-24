@@ -7,7 +7,7 @@ import eden.converter.rna as converter
 from eden import path
 import sklearn
 import os
-import textwrap
+#import textwrap
 from graphlearn.graphlearn import Sampler
 from graphlearn.processing import PreProcessor
 import eden.RNA
@@ -447,7 +447,9 @@ class NearestNeighborFolding(object):
         seqs = self.get_nearest_sequences(sequence)
         seqs.append(sequence)
         filename = './tmp/fold' + str(os.getpid())
+
         write_fasta(seqs, filename=filename)
+
         try:
             r = self.call_folder(filename=filename)
         except:
@@ -675,6 +677,18 @@ def is_sequence(seq):
     return len(seq) > 5
 
 
+def textwrap(seq,width=10):
+    '''
+    "asdasdasd"-> "asd" "asd" "asd"
+    '''
+    res=[]
+    while len(seq) > width:
+        #print seq
+        res.append(seq[:width])
+        seq=seq[width:]
+    res.append(seq)
+    return res
+
 def write_fasta(sequences, filename='asdasd'):
     fasta = ''
     for i, s in enumerate(sequences):
@@ -682,7 +696,7 @@ def write_fasta(sequences, filename='asdasd'):
             seq = s.replace("F", "")
             if not is_sequence(seq):
                 continue
-            seq = '\n'.join(textwrap.wrap(seq, width=60))
+            seq = '\n'.join(textwrap(seq, width=60))
             fasta += '>HACK%d\n%s\n\n' % (i, seq)
     with open(filename, 'w') as f:
         f.write(fasta)

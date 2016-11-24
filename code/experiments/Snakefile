@@ -36,6 +36,15 @@ rule test_infernal:
         "cat test_distribution | python infernal.py --sizes=[20,30] --repeats=1 extgrammar > tmp3  ; "
         "paste -d ',' tmp3 tmp2  > tmp4 ; "
         "cat tmp4 | ./draw.py infernal"
+
+rule testinf2:
+    output:
+        "0_infplot.png"
+    shell:
+        "paste -d ',' tmp test_inf_data  > tmp4 ; "
+        "cat tmp4 | ./draw.py infernal"
+
+
 rule clean:
     shell:
         "rm -rf test_distribution test_infernal_oldgrammar tmp tmp2 tmp3 tmp4 ;"

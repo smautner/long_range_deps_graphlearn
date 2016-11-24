@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 
 def make_infernal_plot(saveas=0, labels=('G1', 'G2', 'G3', 'G4', 'G5'), means=[(20, 35), (20, 85)],
-                       stds=[(2, 3), (3, 3)]):
+                       stds=[(2, 3), (3, 3)], labelz=['','']):
     # N = len(labels)
     # ind = np.arange(N)
     # width = 0.35
@@ -38,8 +38,8 @@ def make_infernal_plot(saveas=0, labels=('G1', 'G2', 'G3', 'G4', 'G5'), means=[(
     # fillthing(means[1],stds[1],col='#8DDD82')
     fillthing(means[1], stds[1], col='#F94D4D')
 
-    ax.plot(labels, means[0], label='new CIP', color='b', linewidth=2.0)
-    ax.plot(labels, means[1], label='default CIP', color='r', linewidth=2.0)
+    ax.plot(labels, means[0], label=labelz[0], color='b', linewidth=2.0)
+    ax.plot(labels, means[1], label=labelz[1], color='r', linewidth=2.0)
     # add some text for labels, title and axes ticks
     labelfs = 16
     ax.set_ylabel('Infernal bit score', fontsize=labelfs)
@@ -131,7 +131,7 @@ if __name__ == "__main__":
             if mode == 'inf':
                 size, means, stds, void, means2, stds2 = eval(line)
                 # [10, 20, 50, 100, 200, 400],[56.725000000000001, 61.393103448275852, 56.91238095238095, 52.69766355140186, 47.822811059907835,48.007709750566889],[13.075456463481306, 12.052927274560741, 12.772826030571943, 14.369074946790544, 15.520753474342225,14.701883300962383],[10, 20, 50, 100, 200, 400],[11.473076923076924, 10.367272727272727, 14.535714285714288, 12.277238805970152, 13.774444444444445,14.713135985198891],[15.433486320336051, 14.398291039456005, 16.261699399107673, 13.963606495020159, 14.966687399223829,14.970472924155272]
-                make_infernal_plot(nth, size, [means, means2], [stds, stds2])
+                make_infernal_plot(nth, size, [means, means2], [stds, stds2],labelz=['Infernal cmemit','Extended grammar'])
             if mode == 'dis':
                 numgraph, distr, simi = eval(line)
                 print numgraph, distr, simi
