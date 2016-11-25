@@ -1,4 +1,4 @@
-\documentclass{esannV2}
+\documentclass[a4paper]{esannV2}
 \usepackage[dvips]{graphicx}
 \usepackage[latin1]{inputenc}
 \usepackage{amssymb,amsmath,array}
@@ -29,6 +29,7 @@
 \usepackage[english, status=draft]{fixme} % these 2 make fixme comments :) 
 \fxusetheme{color}  
 
+\usepackage{color}  % 25-11 added to highlight mautner changes
 \usepackage{natbib} 
 %bibstyle muss einer da sein, 
 % setimmt wie der kram an \cite aussieht.
@@ -81,7 +82,7 @@ Freiburg, 79085 - Germany \\
 
 \begin{abstract}
 Machine learning constructive approaches offer a way to answer
-'design' questions given some exemplar solutions.  In particular,
+`design' questions given some exemplar solutions.  In particular,
 graph constructive methods are of interest in chemo- and bio-informatics
 domains where the task is to synthesize novel molecules with a desired
 bioactivity. Unfortunately RNA polymers exhibit complex dependencies between
@@ -96,7 +97,7 @@ on a RNA synthesis task.
 
 \section{Introduction}
 
-Constructive machine learning addresses the problem of automatically 'design'
+Constructive machine learning addresses the problem of automatically `design'
 artifacts given a concept expressed as a representative set of examples. The
 task becomes particularly challenging in a discrete setting when the solution
 space is exponential and direct enumeration approaches become unfeasible, as
@@ -132,11 +133,11 @@ length of the sequence.
 
 A different way to view the issue of long range dependencies is that of the
 appropriate scale of representation. Certain application domains exhibit
-natural encodings, i.e. instances are encoded as graphs where nodes represent
+natural encodings, i.e.\ instances are encoded as graphs where nodes represent
 specific entities, such as nucleotides in the case of RNA sequences. However,
 it is known that a more effective functional description of RNA polymers can
-be obtained in terms of structural components such as {\em stems} (stretches
-of consecutive paired nucleotides) and {\em loops} (stretches of consecutive
+be obtained in terms of structural components such as {\em stems} \/(stretches
+of consecutive paired nucleotides) and {\em loops} \/(stretches of consecutive
 unpaired nucleotides). Under this view, dependencies that are local at the
 coarser scales correspond to longer range dependencies at the original scale.
 
@@ -162,7 +163,7 @@ requirements. The key element for an efficient MH design is building the
 proposal distribution in such a way that the generated elements will not be
 rejected too often. To do so Costa suggests to use a grammar and infer its
 rules from the available data using grammatical inference techniques upgraded
-to structured domains (i.e. domains where instances are naturally represented
+to structured domains (i.e.\ domains where instances are naturally represented
 as labeled graphs).
 
 More precisely, a {\em graph grammar} \citep{rozenberg1999handbook} is a
@@ -176,8 +177,8 @@ finally 4) use the embedding mechanism $E$ to attach $D$ to $H^-$.
 {\em distributional semantics}
 \citep{harris1954distributional,harris1968mathematical} and on the {\em
 substitutability principle} \citep{Clark:2007}. Two key notions are defined:
-{\em internal core graphs} and {\em interface graphs}. An internal core graph
-(or {\em core} for simplicity), denoted $C^v_R(G)$, is a neighborhood graph of
+{\em internal core graphs}\/ and {\em interface graphs}. An internal core graph
+(or {\em core}\/ for simplicity), denoted $C^v_R(G)$, is a neighborhood graph of
 $G$ of radius $R$ rooted in $v$. An interface graph, denoted $I^v_{R,T}(G)$ is
 the difference graph of two neighborhood graphs of $G$ with the same root in
 $v$ and radius $R$ and $R+T$. The difference graph is the graph induced by
@@ -190,15 +191,15 @@ $D$ are union graphs of an interface graph and a correspondent internal core
 graph with the additional constraint that the interface graphs in the daughter
 and mother graph must be identical (up to isomorphism); finally, the embedding
 mechanism $E$ is given by the isomorphic bijection between the interface
-graphs. In words, new elements are produced by {\em swapping inner cores} in
-identical contexts. In Fig. \ref{allcips} (left) a production step is applied
+graphs. In words, new elements are produced by {\em swapping inner cores}\/ in
+identical contexts. In Fig.~\ref{allcips} (left) a production step is applied
 to a molecular graph $G$. The core $C_{R}^v(G)$ (dark) is determined by
 vertices at maximal distance $R$ ($R=0$ in the figure) from a chosen root
 vertex $v$. The interface $I_{R,T}^v(G)$ with \emph{thickness} $T=2$ is in a
 lighter shade. Given a new core-interface pair (CIP) with matching interface,
 the substitution can take place to yield the replacement of a carbon with a
 nitrogen atom. Note that this type of production rules can be inferred
-efficiently (i.e. in linear complexity) from a representative set of graphs
+efficiently (i.e.\ in linear complexity) from a representative set of graphs
 (see \citep{costa16} for details).
 
 
@@ -206,13 +207,13 @@ efficiently (i.e. in linear complexity) from a representative set of graphs
 \subsection{Method extension}
 
 Two main issues arise when dealing with complex structures such as RNA
-polymers, we call them 1) the {\em resolution} and 2) the {\em viability}
+polymers, we call them 1) the {\em resolution}\/ and 2) the {\em viability}
 problem. Replacing only few nodes at
 each iteration can be inefficient when instances consist of several hundreds
 of nodes. It is known that for RNAs a more effective description is obtained
 considering larger structural components such as stems  and loops. As for the
 second issue, it is known that the function of RNA polymers depends on their
-global structure (i.e. the set of pairs of interacting nucleotides), which can
+global structure (i.e.\ the set of pairs of interacting nucleotides), which can
 significantly change when even a single nucleotide is altered. To deal with
 these issues we propose two enhancements to Costa's approach: 1) a
 grammar coarsening procedure and 2) a constraint integration procedure.
@@ -220,13 +221,13 @@ grammar coarsening procedure and 2) a constraint integration procedure.
 
 \textbf{Grammar coarsening.} The idea is to allow users to specify 
 a coarsening procedure in a simple way. We do so via the notion of {\em edge
-contraction}:
+contraction}\/:
 an operation which removes an edge from a graph while simultaneously merging
 the two vertices that it previously joined. In addition we allow the more
 general notion of {\em vertex contraction}, which removes the restriction that
 the contraction must occur over vertices sharing an incident edge. Both
 procedures are defined using a node attribute $cid \in \IN$ called 
-{\em contraction-identifier} and contracting all vertices that share the same $cid$. 
+{\em contraction-identifier}\/ and contracting all vertices that share the same $cid$. 
 We propose to use the contraction operation as a flexible way to
 transform a graph to its coarser version, $G \mapsto G'$. Cores and interfaces
 can now be defined exploiting the contracted graph. Starting from a CIP on the
@@ -237,7 +238,7 @@ $I_{R,B}^v(G',G)$ is defined as the Cartesian product of the graph induced by
 the nodes adjacent to the core nodes in $G$ at maximal distance $B$ (the
 thickness in the base graph) and the interface graph on the coarse graph. In
 words, we require that both the interface at base level and at coarse level
-match for a core swap to take place. In Fig. \ref{allcips}  we depict a RNA
+match for a core swap to take place. In Fig.~\ref{allcips}  we depict a RNA
 polymer graph at nucleotide level (center) and its coarse version (right)
 where the contraction was informed by the notion of structural components such
 as stems, hairpin loops and multiloops. Note that a core at coarse
@@ -287,8 +288,15 @@ that do not consist only of a single hairpin). The general aim is to
 synthesize functionally equivalent but novel sequences, a task with important
 biomedical applications.
 
+
+\color{blue}
+% here we describe how we obtain the secondary structure
+The secondary structure of a sequence can not be reliably computed
+using the sequence alone.
+\color{black} \color{red}
 When working with RNAs, the feasibility constraints are related to the
-structure determination. To improve accuracy we use a two step approach:
+structure determination. \color{black}
+To improve accuracy we use a two step approach:
 given a candidate sequence we 1) identify $k$ nearest neighbors among the
 available training instances, then 2) we align the $k+1$ sequences using the
 \emph{MUSCLE} (MUltiple Sequence Comparison by Log- Expectation) program
@@ -299,7 +307,7 @@ solutions.
 
 In order to evaluate if the constructed sequences are functionally equivalent
 to the original examples, we use an independent state-of-the-art computational
-approach as {\em oracle} \footnote{The correct, and expensive, procedure would
+approach as {\em oracle}\footnote{The correct, and expensive, procedure would
 instead be to synthesize the sequences and test their functionality in a
 biological experiment.}. To define the membership of a sequence to a given
 family, the RFam database uses the covariance model computed by the program
@@ -309,15 +317,20 @@ In Fig.~\ref{infeval} we report the average score achieved by the constructed
 sequences as the training set increases. The black horizontal line indicates
 the family specific threshold above which the Infernal model accepts a
 sequence as a valid instance of the family. In blue we report the results for
-the proposed extension and in red the results for the original method. We note
-that the coarsening strategy consistently improves the quality of the results. 
+the proposed extension and in red the results for the original method.
+\color{blue}The
+dashed line indicates the performance of the sequence generator of
+Infernal\footnote{Trained with RNAalifold structure given by muscle generated
+alignment of the training set. Quality parameter (ext) set to maximum reliable value 3.91.}.
+\color{black}
+We note that the coarsening strategy consistently improves the quality of the results. 
 
 In \cite{costa16} the \emph{the constructive learning problem for finite
 samples} is formally specified as the optimization of a parametric generator
 for two competing objectives: on the one hand one should obtain similar
 probability density estimators when these are trained on the original data or
 on the generated data; on the other hand the generated instances should be
-different from those already known in the training phase \footnote{The notion
+different from those already known in the training phase\footnote{The notion
 of similarity between probability density estimators is defined in terms of
 Kullback-Leibler divergence and the notion of similarity between instances of
 a structured domain is defined in terms of a set graph kernel, see
