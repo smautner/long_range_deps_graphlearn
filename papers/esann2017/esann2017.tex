@@ -318,10 +318,11 @@ sequences as the training set increases. The black horizontal dotted line indica
 the family specific threshold above which the Infernal model accepts a
 sequence as a valid instance of the family. In blue we report the results for
 the proposed extension and in red the results for the original method.
-\color{blue}The
-dashed line indicates the performance of the sequence generator of
-Infernal\footnote{Trained with RNAalifold structure given by muscle generated
-alignment of the training set. Quality parameter (ext) set to maximum reliable value 3.91.}.
+\color{blue}
+Dashed is the emit mode of Infernal. A covariance 
+model is generated on the training sequences and a consensus structure obtained 
+with muscle and RNAalifold. To increase the quality,
+the probabilities in the model are exponentiated. 
 \color{black}
 We note that the coarsening strategy consistently improves the quality of the results. 
 
@@ -345,13 +346,13 @@ different.
 
 \begin{figure}[ht]
       \centering
-  \begin{minipage}[b]{0.47\textwidth}
+  \begin{minipage}[b]{0.46\textwidth}
     \includegraphics[width=\textwidth]{images/infernal.png}
     \caption{Estimated equivalence by Infernal.}
       \label{infeval}
   \end{minipage}
   \hfill
-  \begin{minipage}[b]{0.52\textwidth}
+  \begin{minipage}[b]{0.51\textwidth}
     \includegraphics[width=\textwidth]{images/learningcurve.png}
     \caption{Functional vs structural similarity.}
      \label{learncurve}
