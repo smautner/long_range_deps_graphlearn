@@ -289,13 +289,13 @@ synthesize functionally equivalent but novel sequences, a task with important
 biomedical applications.
 
 
-\color{blue}
+%\color{blue}
 % here we describe how we obtain the secondary structure
 The secondary structure of a sequence can not be reliably computed
 using the sequence alone.
-\color{black} \color{red}
-When working with RNAs, the feasibility constraints are related to the
-structure determination. \color{black}
+%\color{black} \color{red}
+%When working with RNAs, the feasibility constraints are related to the
+%structure determination. \color{black}
 To improve accuracy we use a two step approach:
 given a candidate sequence we 1) identify $k$ nearest neighbors among the
 available training instances, then 2) we align the $k+1$ sequences using the
@@ -318,12 +318,15 @@ sequences as the training set increases. The black horizontal dotted line indica
 the family specific threshold above which the Infernal model accepts a
 sequence as a valid instance of the family. In blue we report the results for
 the proposed extension and in red the results for the original method.
-\color{blue}
-Dashed is the emit mode of Infernal. A covariance 
-model is generated on the training sequences and a consensus structure obtained 
-with muscle and RNAalifold. To increase the quality,
-the probabilities in the model are exponentiated. 
-\color{black}
+%\color{blue}
+Infernal can also learn covariance models and use these to generate new
+sequences. The dashed line represents the performance of this approach.
+To make the methods comparable, we trained the 
+covariance model with consensus structures obtained 
+by muscle and RNAalifold (and the training sequences).
+To increase the quality of the output we used the option
+to exponentiate the probabilities in the model.
+%\color{black}
 We note that the coarsening strategy consistently improves the quality of the results. 
 
 In \cite{costa16} the \emph{the constructive learning problem for finite
@@ -343,22 +346,20 @@ same probability density as the original ones, albeit being increasingly
 different.
 
 
-\begin{tiny}
 \begin{figure}[ht]
       \centering
-  \begin{minipage}[b]{0.46\textwidth}
+  \begin{minipage}[b]{0.47\textwidth}
     \includegraphics[width=\textwidth]{images/infernal.png}
-    \caption{Estimated equivalence by Infernal.}
+      \caption{\footnotesize{Estimated equivalence by Infernal.}}
       \label{infeval}
   \end{minipage}
-  \hfill
-  \begin{minipage}[b]{0.51\textwidth}
+  \hfill \begin{minipage}[b]{0.51\textwidth}
     \includegraphics[width=\textwidth]{images/learningcurve.png}
-    \caption{Functional vs structural similarity.}
+      \caption{\footnotesize{Functional vs structural similarity.}}
      \label{learncurve}
   \end{minipage}
 \end{figure}
-\end{tiny}
+
     
  
 \section{Conclusion}
