@@ -104,7 +104,9 @@ space is exponential and direct enumeration approaches become unfeasible, as
 it is the case in the domain of graphs with discrete labels. In \cite{costa16}
 the problem of generating elements of a structured domain was framed as the
 equivalent problem of sampling from a corresponding underlying probability
-distribution defined over a (learned) class of structures. Specifically they
+distribution defined over a (learned) class of structures. 
+\fxnote{Specifically $\Rightarrow$ their solution was ?} 
+Specifically they
 employ a context-sensitive grammar to accurately model complex dependencies
 between different parts of an instance. The authors acknowledge that an
 approach based exclusively on a grammar is not sufficient since the number of
@@ -224,8 +226,12 @@ a coarsening procedure in a simple way. We do so via the notion of {\em edge
 contraction}\/:
 an operation which removes an edge from a graph while simultaneously merging
 the two vertices that it previously joined. In addition we allow the more
-general notion of {\em vertex contraction}, which removes the restriction that
-the contraction must occur over vertices sharing an incident edge. Both
+general 
+\fxnote{"notion of"  is bloat } 
+notion of {\em vertex contraction}, which removes the restriction that
+the contraction must occur over vertices sharing an incident edge.
+\fxnote{explaining the cid  might be too much detail}
+Both
 procedures are defined using a node attribute $cid \in \IN$ called 
 {\em contraction-identifier}\/ and contracting all vertices that share the same $cid$. 
 We propose to use the contraction operation as a flexible way to
@@ -238,7 +244,9 @@ $I_{R,B}^v(G',G)$ is defined as the Cartesian product of the graph induced by
 the nodes adjacent to the core nodes in $G$ at maximal distance $B$ (the
 thickness in the base graph) and the interface graph on the coarse graph. In
 words, we require that both the interface at base level and at coarse level
-match for a core swap to take place. In Fig.~\ref{allcips}  we depict a RNA
+match for a core swap to take place.
+\fxnote{imo its "an rna"}
+In Fig.~\ref{allcips}  we depict a RNA
 polymer graph at nucleotide level (center) and its coarse version (right)
 where the contraction was informed by the notion of structural components such
 as stems, hairpin loops and multiloops. Note that a core at coarse
@@ -296,7 +304,9 @@ using the sequence alone.
 %\color{black} \color{red}
 %When working with RNAs, the feasibility constraints are related to the
 %structure determination. \color{black}
-To improve accuracy we use a two step approach:
+\fxnote{to improve accuracy $\rightarrow$ bloat}
+To improve accuracy
+we use a two step approach:
 given a candidate sequence we 1) identify $k$ nearest neighbors among the
 available training instances, then 2) we align the $k+1$ sequences using the
 \emph{MUSCLE} (MUltiple Sequence Comparison by Log- Expectation) program
@@ -307,6 +317,7 @@ solutions.
 
 In order to evaluate if the constructed sequences are functionally equivalent
 to the original examples, we use an independent state-of-the-art computational
+\fxnote{is it 100\% clear that rfam is the oracle? }
 approach as {\em oracle}\footnote{The correct, and expensive, procedure would
 instead be to synthesize the sequences and test their functionality in a
 biological experiment.}. To define the membership of a sequence to a given
@@ -314,7 +325,9 @@ family, the RFam database uses the covariance model computed by the program
 \emph{Infernal} (INFERence of RNA ALignment) \citep{infernal} induced over a
 hand curated set of representative sequences.
 In Fig.~\ref{infeval} we report the average score achieved by the constructed
-sequences as the training set increases. The black horizontal dotted line indicates
+sequences as the training set increases.
+\fxnote{training set \emph{size}?}
+The black dotted horizontal line indicates
 the family specific threshold above which the Infernal model accepts a
 sequence as a valid instance of the family. In blue we report the results for
 the proposed extension and in red the results for the original method.
@@ -324,15 +337,16 @@ sequences. The dashed line represents the performance of this approach.
 To make the methods comparable, we trained the 
 covariance model with consensus structures obtained 
 by muscle and RNAalifold (and the training sequences).
-To increase the quality of the output we used the option
+To increase the quality of the output we used the parameter
 to exponentiate the probabilities in the model.
 %\color{black}
 We note that the coarsening strategy consistently improves the quality of the results. 
 
-In \cite{costa16} the \emph{the constructive learning problem for finite
+In \cite{costa16}  \emph{the constructive learning problem for finite
 samples} is formally specified as the optimization of a parametric generator
 for two competing objectives: on the one hand one should obtain similar
 probability density estimators when these are trained on the original data or
+\fxnote{or $\rightarrow$ and ? i am not sure}
 on the generated data; on the other hand the generated instances should be
 different from those already known in the training phase\footnote{The notion
 of similarity between probability density estimators is defined in terms of
@@ -367,6 +381,7 @@ different.
 We have introduced a generic approach to tackle the problem of long range
 dependency modeling for a constructive machine learning approach.
 Preliminary results are encouraging and show that we can propose novel
+\fxnote{example sample $\rightarrow$ sample example ? }
 RNA sequences that are functionally equivalent to an original example sample.
 The coarsening procedure allows the injection of domain knowledge,
 significantly improving the quality of the results over the original non domain
