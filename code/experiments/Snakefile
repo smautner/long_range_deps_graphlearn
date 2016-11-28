@@ -1,7 +1,7 @@
 
 
 rule all:
-    shell: "echo 'targets: clean, test_distr, test_infernal'"
+    shell: "echo 'targets: clean, test_distr, test_infernal,test_infernal_2;all also w/o test '"
 
 
 rule write_distr:
@@ -16,6 +16,15 @@ rule write_inf:
     shell: 
         """echo "{{'radius_list': [0, 1, 2], 'thickness_list': [2], 'mincip_count': 2, 'min_interfacecount': 3}}">test_infernal_oldgrammar"""
         
+rule distr:
+    input:
+        "test_distribution"
+    output: 
+        "0_displot.png"
+    shell:
+        "cat test_distribution | python distribution.py  > tmp ; "
+        "cat tmp | ./draw.py distribution"
+
 rule test_distr:
     input:
         "test_distribution"
@@ -24,6 +33,20 @@ rule test_distr:
     shell:
         "cat test_distribution | python distribution.py --sizes=[20,30] --repeats=3 > tmp ; "
         "cat tmp | ./draw.py distribution"
+
+
+
+rule infernal:
+    input:
+        "test_distribution",
+        "test_infernal_oldgrammar"
+    output:
+        "0_infplot.png"
+    shell:
+        "cat test_infernal_oldgrammar | python infernal.py  oldgrammar > tmp2 ; "
+        "cat test_distribution | python infernal.py extgrammar > tmp3  ; "
+        "paste -d ',' tmp3 tmp2  > tmp4 ; "
+        "cat tmp4 | ./draw.py infernal"
 
 rule test_infernal:
     input:
@@ -37,15 +60,28 @@ rule test_infernal:
         "paste -d ',' tmp3 tmp2  > tmp4 ; "
         "cat tmp4 | ./draw.py infernal"
 
-rule testinf2:
+rule infernal_2:
+    input:
+        "test_distribution"
     output:
         "0_infplot.png"
     shell:
-        "paste -d ',' tmp test_inf_data  > tmp4 ; "
+        "cat test_distribution | python infernal.py  extgrammar > extgr ; "
+        'echo "{{}}" | python infernal.py  infernal > inf ; '
+        "paste -d ',' inf extgr  > tmp4 ; "
         "cat tmp4 | ./draw.py infernal"
-
+rule test_infernal_2:
+    input:
+        "test_distribution"
+    output:
+        "0_infplot.png"
+    shell:
+        "cat test_distribution | python infernal.py --sizes=[20,30] --repeats=1 extgrammar > extgr ; "
+        'echo "{{}}" | python infernal.py --repeats=1 --sizes=[20,30] infernal > inf ; '
+        "paste -d ',' inf extgr  > tmp4 ; "
+        "cat tmp4 | ./draw.py infernal"
 
 rule clean:
     shell:
-        "rm -rf test_distribution test_infernal_oldgrammar tmp tmp2 tmp3 tmp4 ;"
+        "rm -rf test_distribution test_infernal_oldgrammar tmp tmp2 tmp3 tmp4 inf extgr ;"
         "rm -rf 0_infplot.png 0_displot.png temp.fa"
