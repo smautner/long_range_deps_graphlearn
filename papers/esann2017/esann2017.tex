@@ -26,7 +26,8 @@
 
 \newcommand*{\IN}[0]{\ensuremath{\mathbb{N}}}
 
-\usepackage[english, status=draft]{fixme} % these 2 make fixme comments :) 
+%\usepackage[english, status=draft]{fixme} % these 2 make fixme comments :) 
+\usepackage[english]{fixme} % these 2 make fixme comments :) 
 \fxusetheme{color}  
 
 \usepackage{color}  % 25-11 added to highlight mautner changes
@@ -336,11 +337,11 @@ Infernal can also learn covariance models and use these to generate new
 sequences. The dashed line represents the performance of this approach.
 To make the methods comparable, we trained the 
 covariance model with consensus structures obtained 
-by muscle and RNAalifold (and the training sequences).
-To increase the quality of the output we used the parameter
-to exponentiate the probabilities in the model.
+by muscle and RNAalifold.
+%To increase the quality of the output we used the parameter
+%to exponentiate the probabilities in the model.
 %\color{black}
-We note that the coarsening strategy consistently improves the quality of the results. 
+We note that the proposed approach with the coarsening strategy consistently improves the quality of the results. 
 
 In \cite{costa16}  \emph{the constructive learning problem for finite
 samples} is formally specified as the optimization of a parametric generator
