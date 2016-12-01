@@ -61,9 +61,8 @@ if __name__ == "__main__":
         if k not in optlist:
             optlist[k]=v
 
-    for k in ['--sizes','--repeats','--njobs']:
+    for k in ['--sizes','--repeats','--njobs', '--debug']:
         optlist[k] = eval(optlist[k])
-
 
 
     # go over each line of input and start dropping picz
