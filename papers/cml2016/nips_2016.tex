@@ -7,7 +7,7 @@
 % to avoid loading the natbib package, add option nonatbib
 % \usepackage[nonatbib]{nips_2016}
 
-\usepackage{nips_2016}
+\usepackage[final]{nips_2016}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
 %\usepackage[final]{nips_2016}
@@ -247,7 +247,8 @@ the two vertices that it previously joined. In addition we allow the more
 general notion of {\em vertex contraction}, which removes the restriction that
 the contraction must occur over vertices sharing an incident edge. Both
 procedures are defined using a node attribute $cid \in \IN$ called {\em
-contraction-identifier} and contracting all vertices that share the same $cid$. We propose to use the contraction operation as a flexible way to
+contraction-identifier} and contracting all vertices that share the same $cid$.
+We propose to use the contraction operation as a flexible way to
 transform a graph to its coarser version, $G \mapsto G'$. Cores and interfaces
 can now be defined exploiting the contracted graph. Starting from a CIP on the
 coarse graph, we define the core as the sub graph induced by the vertices of
@@ -273,7 +274,9 @@ viewed as a global localization indicator.
       \caption{
       Core and interface subgraphs are marked in dark and light color
       respectively. Left: Molecular graph with indicated core substitution.
-      Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding with structural element resolution, with symbols: H)airpin, M)ultiloop, S)tem, D)angling end.}
+      Mid: RNA encoding with nucleotide level resolution.  Right:  RNA encoding
+      with structural element resolution, with symbols: H)airpin, M)ultiloop,
+      S)tem, D)angling end.}
       \label{allcips}
 \end{figure}
 
@@ -324,13 +327,17 @@ family, the RFam database uses the covariance model computed by the program
 \emph{Infernal} (INFERence of RNA ALignment) \citep{infernal} induced over a
 hand curated set of representative sequences.
 In Fig.~\ref{infeval} we report the average score achieved by the constructed
-sequences as the training set increases. The black horizontal line indicates
+sequences as the training set increases. The horizontal line indicates
 the family specific threshold above which the Infernal model accepts a
 sequence as a valid instance of the family. In blue we report the results for
-the proposed extension and in red the results for the original method. We note
+the proposed extension and in red the results for the original method. 
+To make it comparable to our method, we used MUSCLE and RNAalifold to
+train a new Infernal model and report the
+performance of its generated sequences (dashed).  
+We note
 that the coarsening strategy consistently improves the quality of the results. 
 
-In \cite{costa16} the \emph{the constructive learning problem for finite
+In \cite{costa16} \emph{the constructive learning problem for finite
 samples} is formally specified as the optimization of a parametric generator
 for two competing objectives: on the one hand one should obtain similar
 probability density estimators when these are trained on the original data or
