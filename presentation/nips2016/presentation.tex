@@ -1,0 +1,156 @@
+\documentclass{beamer}
+\usecolortheme{seahorse} % change this
+\usepackage{graphicx}
+\usepackage{inconsolata}
+\usepackage{anyfontsize}
+
+
+
+
+\title 
+{A constructive approach for graph concepts
+with long range dependencies}
+
+\author % NEEDS MOAR INFO ,, contact etc
+{Stefan Mautner }
+
+\date 
+{Bioinformatics, Freiburg University, 2017-12-09}
+
+
+
+\begin{document}
+\frame{\titlepage}
+
+
+
+% design goals
+\begin{frame}
+\frametitle{What are the design goals?}
+
+    We construct graphs; how do we define the task exactly?
+    ~\\
+    ~\\
+    ~\\
+    \emph{the constructive learning problem for finite samples} 
+    ~\\
+    \begin{itemize}
+        \item optimize for two goals:
+        \item similar probability density to train set (compare trained estimators)
+        \item generated instances should  differ from originals
+    \end{itemize}
+\end{frame}
+
+
+% so far we have the basic graphlearn
+\begin{frame}
+    \frametitle{Basic algorithm}
+    MCMC (Markov Chain Monte Carlo)
+    \begin{enumerate}
+        \item start with training graph
+        \item alter start graph
+        \item decide weater or not to accept proposed change $\rightarrow$ goto 2
+    \end{enumerate}
+    Graph Grammar to increase quality of proposals
+    \begin{itemize}
+        \item extract graph fragments (CIPS) from training set;
+            use them to alter graph as follows:
+    \end{itemize}
+    %IMAGE OF SOMETHING  
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.33\textwidth]{images/CIP_replacement.png}
+    \end{figure}
+    \small{A replacement can take place if CIPs are \emph{congruent}  }
+\end{frame}
+
+
+
+
+
+% problem with RNA 
+\begin{frame}
+    \frametitle{The Problem}
+    when graphs become larger..
+    \begin{itemize}
+        \item You want to operate on a higher level 
+        \item Local constraints as introduced by grammar may not be enough
+    \end{itemize}
+   \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.33\textwidth]{images/longrangedep.png}
+    \end{figure}
+    
+    \begin{itemize}
+        \item (green) use whole ``stem'' as basis for operations
+        \item (blue+green) example for a long range dependency. The spheres
+            might depend on the presence of one another.
+    \end{itemize}
+\end{frame}
+
+
+
+% solution
+\begin{frame}
+    \frametitle{Solution}
+   \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.50\textwidth]{images/nucip.png}
+    \end{figure}
+    \begin{itemize}
+        \item Find a way to abstract your graph (right)
+        \item Redefine Core as nodes from the base graph, induced by the 
+            abstract graph (dark green)
+        \item Redefine Interface-graph as nodes around the core,
+            congruency check for CIPs includes the abstract interface
+   \end{itemize}
+   CIPs have a flexible shape now and include information about its surroundings
+   from the abstract graph
+\end{frame}
+
+
+
+
+
+% BENCHMARK I 
+\begin{frame}
+    \frametitle{Evaluation I}
+    \begin{itemize}
+        \item We used this method to generate RNA sequences
+        \item Rfam/Infernal offers a domainspecific way to evaluate sequences
+        \item Also trained an Infernal model under similar conditions
+    \end{itemize}
+
+   \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.60\textwidth]{images/infernal_abstr.png}
+    \end{figure}
+\end{frame}
+
+% BENCHMARK II
+\begin{frame}
+    \frametitle{Evaluation II}
+    
+    \begin{itemize}
+        \item Similarity of the generated set vs the train set
+        \item Kullback Leibler divergence to meassure the difference in probability distribution
+    \end{itemize}
+   \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.6\textwidth]{images/learningcurve.png}
+    \end{figure}
+    \tiny{KL Divergence:  $D_{\mathrm{KL}}(P\|Q) = \sum_i P(i) \, \log\frac{P(i)}{Q(i)}$ }
+    % IMAGE OF other thing
+\end{frame}
+
+% OWARI DA 
+\begin{frame}
+    \frametitle{Conclustion}
+    %\begin{itemize}
+        Use the information of abstractions
+        to increase the power of your graph grammar!
+    %\end{itemize}
+\end{frame}
+
+
+\end{document}
