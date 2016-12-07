@@ -4,7 +4,7 @@
 \usepackage{inconsolata}
 \usepackage{anyfontsize}
 \usepackage{courier}
-
+\usepackage{color}
 
 
 \usepackage{natbib} 
@@ -17,11 +17,11 @@
 \bibliographystyle{plainnat}
 
 
-
+\newcommand{\red}[1]{\textcolor{red}{#1}}
 
 \title 
-{A constructive approach for graph concepts
-with long range dependencies}
+{A Constructive Approach for Graph Concepts \\
+with Long Range Dependencies}
 \author % NEEDS MOAR INFO ,, contact etc
 %{Stefan Mautner }
 {\underline{Stefan Mautner} \and Fabrizio Costa
@@ -47,14 +47,40 @@ with long range dependencies}
 
 % design goals
 \begin{frame}
-\frametitle{Design goals for graph construction}
+\frametitle{Constructive Machine Learning}
 
-    ~\\
-    \emph{The constructive learning problem for finite samples}\footnote{\cite{costa16}}
-    ~\\
-    ~\\
     \begin{itemize}
-        \item optimize for two goals:
+        \item Answer \red{design} questions using examples
+        \item We are interested in: \\generative approaches for \red{structured} domains
+        \item In chemo- and bio-informatics: \\synthesize molecules with a desired bioactivity
+    \end{itemize}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/mol.jpg}
+        \includegraphics[width=0.5\textwidth]{images/rna.png}
+    \end{figure}    
+\end{frame}
+
+\begin{frame}
+\frametitle{Constructive Machine Learning}
+
+    \begin{itemize}
+        \item Molecules can have complex dependencies between parts
+        \item RNA self interact: bounds that span the entire length
+        \item Modeling long range dependencies is \red{hard}
+        \item Our proposal:\\ long range $\mapsto$ short range in \red{coarse} representation
+    \end{itemize}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/rna.png}
+    \end{figure}    
+\end{frame}
+
+\begin{frame}
+\frametitle{The constructive learning problem for finite samples\footnote{Costa Artif. Intell. 2016}}
+    \begin{itemize}
+        \item Given a parametrized generator $M_\theta$ 
+        \item optimize trade off:
             \begin{enumerate}
         \item similar probability density to train set (compare trained estimators)
         \item generated instances should  differ from originals
@@ -62,8 +88,8 @@ with long range dependencies}
     \end{itemize}
     ~\\
     ~\\
-    \Large{${argmin}_{\theta}~~L(f_{G_0}(G),f_{G_{\theta}}(G))+
-    \lambda{{K(G_0,G_{\theta})}\over{\sqrt{K(G_0,G_0),K(G_{\theta},G_{\theta})}}} $}
+    $$KL(P,P_\theta) + \lambda  ~ Sim(X, X_\theta)$$
+    %$${argmin}_{\theta}~~L(f_{G_0}(G),f_{G_{\theta}}(G))+\lambda \frac{K(G_0,G_{\theta})}{\sqrt{K(G_0,G_0),K(G_{\theta},G_{\theta})}}}$$
 \end{frame}
 
 
