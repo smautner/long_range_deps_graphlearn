@@ -24,18 +24,19 @@
 with Long Range Dependencies}
 \author % NEEDS MOAR INFO ,, contact etc
 %{Stefan Mautner }
-{\underline{Stefan Mautner} \and Fabrizio Costa
+{Fabrizio Costa  \and \underline{Stefan Mautner}
     \small{ 
         \texttt{
+            \href{mailto:costa@informatik.uni-freiburg.de}
+            {costa@informatik.uni-freiburg.de}}
+            \texttt{
             \href{mailto:mautner@informatik.uni-freiburg.de}
             {mautner@informatik.uni-freiburg.de}}
-        \texttt{
-            \href{mailto:costa@informatik.uni-freiburg.de}
-            {costa@informatik.uni-freiburg.de}}}
+        }
 }
 
 \date 
-{Freiburg University, Chair of Bioinformatics, 2016-12-09}
+{Freiburg University \\2016-12-09}
 
 \titlegraphic{\includegraphics[width=2cm]{images/logo.jpg}
 }
@@ -50,9 +51,9 @@ with Long Range Dependencies}
 \frametitle{Constructive Machine Learning}
 
     \begin{itemize}
-        \item Answer \red{design} questions using examples
+        \item {\bf What:} Answer \red{design} questions using examples
         \item We are interested in: \\generative approaches for \red{structured} domains
-        \item In chemo- and bio-informatics: \\synthesize molecules with a desired bioactivity
+        \item Chemo- and bio-informatics: \\synthesize molecules with a desired bioactivity
     \end{itemize}
     \begin{figure}
         \centering
@@ -65,7 +66,7 @@ with Long Range Dependencies}
 \frametitle{Constructive Machine Learning}
 
     \begin{itemize}
-        \item Molecules can have complex dependencies between parts
+        \item Molecules can have complex dependencies between {\em parts}
         \item RNA self interact: bounds that span the entire length
         \item Modeling long range dependencies is \red{hard}
         \item Our proposal:\\ long range $\mapsto$ short range in \red{coarse} representation
@@ -79,95 +80,108 @@ with Long Range Dependencies}
 \begin{frame}
 \frametitle{The constructive learning problem for finite samples\footnote{Costa Artif. Intell. 2016}}
     \begin{itemize}
-        \item Given a parametrized generator $M_\theta$ ..TODO
-        \item optimize trade off:
+        \item Given a set of graphs $G$
+        \item use a parametrized generator $M_\theta$ to \red{construct} $G_\theta$
+        \item find optimal $\theta$ to \red{jointly} satisfy:
             \begin{enumerate}
-        \item similar probability density to train set (compare trained estimators)
-        \item generated instances should  differ from originals
+        \item probability density is the \red{same} if estimated over $G$ or $G_\theta$
+        \item generated graphs $G_\theta$ are \red{different} from originals $G$
             \end{enumerate}
+        \item Optimize:\\ \begin{center} $\arg \min_\theta L(P(G),P(G_\theta)) + \lambda  ~ Sim(G, G_\theta)$ \end{center}
+        \item where:
+        \begin{itemize}
+            \item $L$ is a loss over probability distributions \\(e.g. Kullback Leibler divergence)
+            \item $Sim$ is a set graph kernel
+        \end{itemize}
+    
     \end{itemize}
-    ~\\
-    ~\\
-    $$KL(P,P_\theta) + \lambda  ~ Sim(X, X_\theta)$$
     %$${argmin}_{\theta}~~L(f_{G_0}(G),f_{G_{\theta}}(G))+\lambda \frac{K(G_0,G_{\theta})}{\sqrt{K(G_0,G_0),K(G_{\theta},G_{\theta})}}}$$
 \end{frame}
 
 
 % so far we have the basic graphlearn
 \begin{frame}
-    \frametitle{Basic algorithm}
-    Metropolis--Hastings Algorithm (Markov Chain Simulation)
-    \begin{enumerate}
-        \item start with training graph
-        \item alter graph
-        \item decide whether or not to accept proposed change $\rightarrow$ goto 2
-    \end{enumerate}
-    \pause
-    Graph Grammar to increase quality of proposals
+    \frametitle{Parametrized Generator for Graphs}
     \begin{itemize}
-        \item extract graph fragments (neighborhood graphs we call
-            CIPs) from training set;
-            use them to alter graph as follows:
+        \item Instead of generating $\mapsto$ \red{sample} from a corresponding underlying probability distribution over graphs
+        \item We use a Metropolis Hastings (MH) Markov Chain Monte Carlo (MCMC) method
+        \begin{enumerate}
+            \item start from {\em seed} graph $x$
+            \item proposal distribution $g(x \mapsto x')$
+            \item accept with acceptance prob: \\
+            \begin{center}
+            $A(x \mapsto x')=\min(1, \frac{P(x')}{P(x)} \frac{g(x \mapsto x')}{g(x' \mapsto x)})$
+            \end{center}
+        \end{enumerate}
+        \item {\bf Q:} How to propose new graphs?
+        \item {\bf A:} use graph \red{grammar}
     \end{itemize}
-    %IMAGE OF SOMETHING  
-
-    \begin{columns}
-        \column{0.6\textwidth}
-    \begin{figure}[ht]
-        \centering
-        \includegraphics[width=0.66\textwidth]{images/CIP_replacement.png}
-    \end{figure}
-    \column{.4\textwidth}
-        CIP: Core-Interface Pair\\
-        yellow: interface\\
-        blue: core
-    \end{columns}
-    
-    \small{A replacement can take place if CIPs are \emph{congruent}  }
 \end{frame}
 
+\begin{frame}
+    \frametitle{Graph Grammar}
+    A graph grammar is a finite set of productions P=(M,D,E) 
+    \begin{itemize}
+        \item M=mother graph
+        \item D=daughter graph
+        \item E=embedding mechanism
+    \end{itemize}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.9\textwidth]{images/grammar.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Substitutable Graph Grammar}
+    \begin{itemize}
+        \item \red{cores} (neighborhood graphs) can be substituted  
+        \item if they have the same \red{interface} graph
+    \end{itemize}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.9\textwidth]{images/cip.pdf}
+    \end{figure}
+\end{frame}
 
 
 
 
 % problem with RNA 
 \begin{frame}
-    \frametitle{The Problem (explained on an RNA structure graph)}
+    \frametitle{Long range dependencies}
     When graphs become larger..
     \begin{itemize}
-        \item want to operate on a higher level 
-        \item current grammars local constraints might not be enough
+        \item $\exists$ dependencies between far apart nodes 
+        \item ...but we can afford only \red{small} interface graphs  \\
+        {\em exponential num interface graphs with their size} \\
+        {\em not enough samples to collect statistics}
     \end{itemize}
    \begin{figure}[h!]
         \centering
-        \includegraphics[width=0.33\textwidth]{images/longrangedep.png}
+        \includegraphics[width=0.45\textwidth]{images/longrangedep.png}
     \end{figure}
     
-    \begin{itemize}
-        \item (green) use whole ``stem'' as basis for operations
-        \item (blue+green) example for a long range dependency; the spheres
-            might depend on the presence of one another
-    \end{itemize}
 \end{frame}
 
 
 
 % solution
 \begin{frame}
-    \frametitle{The Solution}
+    \frametitle{Solution: graph coarsening}
+    \begin{itemize}
+        \item Allow user defined graph \red{coarsening}:\\
+        \red{collapse} selected nodes into a single node
+        \item {\em core} induced by coarse level (dark green)
+        \item {\em interface} is context of core at original level $\times$ context at coarse level
+   \end{itemize}
+    {\bf Note:} cores are now arbitrarily large\\
+    interfaces are small, but model large parts
    \begin{figure}[ht]
         \centering
         \includegraphics[width=0.50\textwidth]{images/nucip.png}
     \end{figure}
-    \begin{itemize}
-        \item find a way to abstract your graph (right)
-        \item redefine core as nodes from the base graph, induced by the 
-            abstract graph (dark green)
-        \item redefine Interface-graph as nodes around the core,
-            congruency check for CIPs includes the abstract interface
-   \end{itemize}
-   CIPs have a flexible shape now and include information about their surroundings
-   from the abstract graph
+   
 \end{frame}
 
 
@@ -217,11 +231,6 @@ with Long Range Dependencies}
         Use the information of abstractions
         to increase the power of your graph grammar!
     %\end{itemize}
-\end{frame}
-% OWARI DA 
-\begin{frame}
-    \frametitle{Further Reading}
-\bibliography{mybib}
 \end{frame}
 
 
