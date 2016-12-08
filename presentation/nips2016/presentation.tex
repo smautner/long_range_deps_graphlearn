@@ -16,6 +16,16 @@
 %\bibliographystyle{unsrt} 
 \bibliographystyle{plainnat}
 
+%gets rid of bottom navigation bars
+\setbeamertemplate{footline}[frame number]{}
+
+%gets rid of bottom navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+%gets rid of footer
+%will override 'frame number' instruction above
+%comment out to revert to previous/default definitions
+\setbeamertemplate{footline}{}
 
 \newcommand{\red}[1]{\textcolor{red}{#1}}
 
@@ -172,11 +182,11 @@ with Long Range Dependencies}
     \begin{itemize}
         \item Allow user defined graph \red{coarsening}:\\
         \red{collapse} selected nodes into a single node
-        \item {\em core} induced by coarse level (dark green)
-        \item {\em interface} is context of core at original level $\times$ context at coarse level
+        \item {\em core} is induced by coarse level (dark green)
+        \item {\em interface} (light green) is: \\context of core at original level $\times$ context at coarse level
    \end{itemize}
     {\bf Note:} cores are now arbitrarily large\\
-    interfaces are small, but model large parts
+    interfaces are small, but model large parts of the graph
    \begin{figure}[ht]
         \centering
         \includegraphics[width=0.50\textwidth]{images/nucip.png}
@@ -192,17 +202,16 @@ with Long Range Dependencies}
 \begin{frame}
     \frametitle{Evaluation I}
     \begin{itemize}
-        \item we used this method to generate RNA sequences
-        \item rfam/Infernal offers a domain specific  way to evaluate sequences
-        \item also trained an Infernal model under similar conditions 
-            and compared their performance
+        \item Generate RNA sequences with specific \red{function}
+        \item RFAM database classifies RNAs with known functions
+        \item Covariance model INFERNAL is state-of-the-art RNA classifier 
     \end{itemize}
 
    \begin{figure}[ht]
         \centering
-        \includegraphics[width=0.60\textwidth]{images/infernal_abstr.png}
+        \includegraphics[width=0.70\textwidth]{images/infernal_abstr.png}
     \end{figure}
-   \small{horizontal:  the human determined reliability threshold for this RNA family}
+   \small{\em scores above horizontal dotted line indicate reliable identification}
 \end{frame}
 
 % BENCHMARK II
@@ -210,26 +219,24 @@ with Long Range Dependencies}
     \frametitle{Evaluation II}
     
     \begin{itemize}
-        \item similarity of the generated set vs the train set
-        \item Kullback Leibler divergence to measure the difference in probability distribution
+        \item {\bf Q:} are generated instances different from originals?
     \end{itemize}
    \begin{figure}[ht]
         \centering
-        \includegraphics[width=0.6\textwidth]{images/learningcurve.png}
+        \includegraphics[width=0.85\textwidth]{images/learningcurve.png}
     \end{figure}
-     design goal: {${argmin}_{\theta}~~L(f_{G_0}(G),f_{G_{\theta}}(G))+
-    \lambda{{K(G_0,G_{\theta})}\over{\sqrt{K(G_0,G_0),K(G_{\theta},G_{\theta})}}} $}
-
-    \tiny{KL Divergence:  $D_{\mathrm{KL}}(P\|Q) = \sum_i P(i) \, \log\frac{P(i)}{Q(i)}$ }
-    % IMAGE OF other thing
 \end{frame}
 
 % OWARI DA 
 \begin{frame}
     \frametitle{Conclusion}
+    
+    \begin{itemize}
+        \item Coarsening increases expressiveness of graph grammar  
+        \item {\bf Future work:} \\learn task specific coarsening strategy directly from data   
+    \end{itemize}
+
     %\begin{itemize}
-        Use the information of abstractions
-        to increase the power of your graph grammar!
     %\end{itemize}
 \end{frame}
 
