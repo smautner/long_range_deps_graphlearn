@@ -115,17 +115,17 @@ with Long Range Dependencies}
     \frametitle{Parametrized Generator for Graphs}
     \begin{itemize}
         \item Instead of generating $\mapsto$ \red{sample} from a corresponding underlying probability distribution over graphs
-        \item We use a Metropolis Hastings (MH) Markov Chain Monte Carlo (MCMC) method
+        \item We use Metropolis Hastings (MH) \begin{tiny}Markov Chain Monte Carlo (MCMC)\end{tiny}
         \begin{enumerate}
             \item start from {\em seed} graph $x$
-            \item proposal distribution $g(x \mapsto x')$
-            \item accept with acceptance prob: \\
+            \item propose according to $g(x \mapsto x')$
+            \item accept according to: \\
             \begin{center}
             $A(x \mapsto x')=\min(1, \frac{P(x')}{P(x)} \frac{g(x \mapsto x')}{g(x' \mapsto x)})$
             \end{center}
         \end{enumerate}
-        \item {\bf Q:} How to propose new graphs?
-        \item {\bf A:} use graph \red{grammar}
+        \item {\bf Q:} how not to reject proposed graphs too often?
+        \item {\bf A:} induce graph \red{grammar} from data
     \end{itemize}
 \end{frame}
 
@@ -151,10 +151,21 @@ with Long Range Dependencies}
     \end{itemize}
     \begin{figure}[ht]
         \centering
-        \includegraphics[width=0.9\textwidth]{images/cip.pdf}
+        \includegraphics[width=0.9\textwidth]{images/cip1.pdf}
     \end{figure}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Substitutable Graph Grammar}
+    \begin{itemize}
+        \item \red{cores} (neighborhood graphs) can be substituted  
+        \item if they have the same \red{interface} graph
+    \end{itemize}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.9\textwidth]{images/cip2.pdf}
+    \end{figure}
+\end{frame}
 
 
 
