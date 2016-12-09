@@ -95,13 +95,14 @@ with Long Range Dependencies}
         \item find optimal $\theta$ to \red{jointly} satisfy:
             \begin{enumerate}
         \item probability density is the \red{same} if estimated over $G$ or $G_\theta$
-        \item generated graphs $G_\theta$ are \red{different} from originals $G$
+        \item $G_\theta$ are \red{different} from $G$
             \end{enumerate}
         \item Optimize:\\ \begin{center} $\arg \min_\theta L(P(G),P(G_\theta)) + \lambda  ~ Sim(G, G_\theta)$ \end{center}
         \item where:
         \begin{itemize}
-            \item $L$ is a loss over probability distributions \\(e.g. Kullback Leibler divergence)
-            \item $Sim$ is a set graph kernel
+            \item $L$ is a loss over probability distributions \\(e.g. symmetric Kullback Leibler divergence)
+            \item $Sim$ is a {\em set} graph kernel
+            \item $\lambda$ quantifies the desired trade off
         \end{itemize}
     
     \end{itemize}
