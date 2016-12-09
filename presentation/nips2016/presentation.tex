@@ -177,9 +177,9 @@ with Long Range Dependencies}
     When graphs become larger..
     \begin{itemize}
         \item $\exists$ dependencies between far apart nodes 
-        \item ...but we can afford only \red{small} interface graphs  \\
-        {\em exponential num interface graphs with their size} \\
-        {\em not enough samples to collect statistics}
+        \item ...but we can have only \red{small} interfaces  \\
+        {\em exponential \# possible interfaces as their size increases} \\
+        {\em $\Rightarrow$ not enough samples to collect statistics}
     \end{itemize}
    \begin{figure}[h!]
         \centering
@@ -194,7 +194,7 @@ with Long Range Dependencies}
 \begin{frame}
     \frametitle{Solution: graph coarsening}
     \begin{itemize}
-        \item Allow user defined graph \red{coarsening}:\\
+        \item Allow user defined graph \red{coarsening} procedures:\\
         \red{collapse} selected nodes into a single node \\
         \begin{small}{\em use domain specific notions, for RNAs: stems, hairpins, loops}\end{small}
         \item {\em core} is induced by coarse level (dark green)
@@ -218,8 +218,8 @@ with Long Range Dependencies}
 \begin{frame}
     \frametitle{Evaluation I}
     \begin{itemize}
-        \item Generate RNA sequences with specific \red{function}
-        \item RFAM database classifies RNAs with known functions
+        \item Generate RNA sequences with specific \red{function} \\
+        RFAM database classifies RNAs with known functions
         \item Covariance model INFERNAL is state-of-the-art RNA classifier 
     \end{itemize}
 
