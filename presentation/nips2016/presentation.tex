@@ -61,9 +61,11 @@ with Long Range Dependencies}
 \frametitle{Constructive Machine Learning}
 
     \begin{itemize}
-        \item {\bf What:} Answer \red{design} questions using examples
-        \item We are interested in: \\generative approaches for \red{structured} domains
-        \item Chemo- and bio-informatics: \\synthesize molecules with a desired bioactivity
+        \item {\bf What:} answer \red{design} questions using examples
+        \item We are interested in: \\
+        constructive approaches for \red{structured} domains
+        \item In chemo- and bio-informatics: \\
+        synthesize molecules with a desired bio-activity
     \end{itemize}
     \begin{figure}
         \centering
@@ -77,9 +79,9 @@ with Long Range Dependencies}
 
     \begin{itemize}
         \item Molecules can have complex dependencies between {\em parts}
-        \item RNA self interact: bounds that span the entire length
+        \item E.g. RNAs self interact: bounds spanning the entire length
         \item Modeling long range dependencies is \red{hard}
-        \item Our proposal:\\ long range $\mapsto$ short range in \red{coarse} representation
+        \item {\bf Proposal:}\\ long range $\mapsto$ short range in \red{coarse} representation
     \end{itemize}
     \begin{figure}[ht]
         \centering
@@ -91,18 +93,18 @@ with Long Range Dependencies}
 \frametitle{The constructive learning problem for finite samples\footnote{Costa Artif. Intell. 2016}}
     \begin{itemize}
         \item Given a set of graphs $G$
-        \item use a parametrized generator $M_\theta$ to \red{construct} $G_\theta$
+        \item use a parametrized generator $M_\theta$ to \red{construct} set $G_\theta$
         \item find optimal $\theta$ to \red{jointly} satisfy:
             \begin{enumerate}
         \item probability density is the \red{same} if estimated over $G$ or $G_\theta$
-        \item $G_\theta$ are \red{different} from $G$
+        \item $G_\theta$ \red{differs} from $G$
             \end{enumerate}
         \item Optimize:\\ \begin{center} $\arg \min_\theta L(P(G),P(G_\theta)) + \lambda  ~ Sim(G, G_\theta)$ \end{center}
         \item where:
         \begin{itemize}
             \item $L$ is a loss over probability distributions \\(e.g. symmetric Kullback Leibler divergence)
             \item $Sim$ is a {\em set} graph kernel
-            \item $\lambda$ quantifies the desired trade off
+            \item $\lambda$ is desired trade off
         \end{itemize}
     
     \end{itemize}
@@ -114,7 +116,7 @@ with Long Range Dependencies}
 \begin{frame}
     \frametitle{Parametrized Generator for Graphs}
     \begin{itemize}
-        \item Instead of generating $\mapsto$ \red{sample} from a corresponding underlying probability distribution over graphs
+        \item Instead of generating $\mapsto$ \red{sample} from a corresponding probability distribution over graphs
         \item We use Metropolis Hastings (MH) \begin{tiny}Markov Chain Monte Carlo (MCMC)\end{tiny}
         \begin{enumerate}
             \item start from {\em seed} graph $x$
@@ -125,7 +127,7 @@ with Long Range Dependencies}
             \end{center}
         \end{enumerate}
         \item {\bf Q:} how not to reject proposed graphs too often?
-        \item {\bf A:} induce graph \red{grammar} from data
+        \item {\bf A:} use graph \red{grammar} induced from data  for $g(x \mapsto x')$
     \end{itemize}
 \end{frame}
 
@@ -146,8 +148,8 @@ with Long Range Dependencies}
 \begin{frame}
     \frametitle{Substitutable Graph Grammar}
     \begin{itemize}
-        \item \red{cores} (neighborhood graphs) can be substituted  
-        \item if they have the same \red{interface} graph
+        \item \red{cores} (neighborhood graphs) can be substituted  ..
+        \item .. if they have the same \red{interface} graph
     \end{itemize}
     \begin{figure}[ht]
         \centering
@@ -158,8 +160,8 @@ with Long Range Dependencies}
 \begin{frame}
     \frametitle{Substitutable Graph Grammar}
     \begin{itemize}
-        \item \red{cores} (neighborhood graphs) can be substituted  
-        \item if they have the same \red{interface} graph
+        \item \red{cores} (neighborhood graphs) can be substituted  ..
+        \item .. if they have the same \red{interface} graph
     \end{itemize}
     \begin{figure}[ht]
         \centering
@@ -193,7 +195,8 @@ with Long Range Dependencies}
     \frametitle{Solution: graph coarsening}
     \begin{itemize}
         \item Allow user defined graph \red{coarsening}:\\
-        \red{collapse} selected nodes into a single node
+        \red{collapse} selected nodes into a single node \\
+        \begin{small}{\em use domain specific notions, for RNAs: stems, hairpins, loops}\end{small}
         \item {\em core} is induced by coarse level (dark green)
         \item {\em interface} (light green) is: \\context of core at original level $\times$ context at coarse level
    \end{itemize}
