@@ -1,5 +1,5 @@
 ##########3
-# first implementations.. pretty crap and unused now :) 
+# first implementations.. pretty crap and unused now :)
 ########
 
 debug=False
@@ -22,9 +22,9 @@ def levenshtein(s1, s2):
 
 
 def sim(s1,s2):
-    l = float( max(len(s1),len(s2))) 
+    l = float( max(len(s1),len(s2)))
     lp = l - float(levenshtein(s1,s2))
-    return lp/l 
+    return lp/l
 
 
 def simsum(a,b,del_diag=False):
@@ -44,11 +44,11 @@ import math
 def calcsimset(a,b):
 
     ab=simsum(a,b,False)
-    aa=simsum(a,a,True) 
+    aa=simsum(a,a,True)
     bb=simsum(b,b,True)
 
     avgab =  ab/(len(a)*len(b))
-    avgbb =  bb/(len(b)*len(b)-len(b)) 
+    avgbb =  bb/(len(b)*len(b)-len(b))
     avgaa =  aa/(len(a)*len(a)-len(a))
     arg=avgab/math.sqrt(avgaa*avgbb)
     return arg
@@ -69,7 +69,7 @@ if debug:
 import eden.path as ep
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-import math 
+import math
 def vectorize(a,b):
     v=ep.Vectorizer()
     a = v.transform(a)
@@ -91,7 +91,9 @@ def similarity_mean(a,b,keepdiag=True):
     return np.sum(simmatrix) / float(elements)
 
 def simset(a,b):
+    # DOTO
     return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,False)*similarity_mean(b,b,False))
+    # return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,True)*similarity_mean(b,b,True))
 
 
 '''
@@ -120,10 +122,53 @@ print 'asd',simset(s3,s3)
 from eden.util import fit_estimator as eden_fit_estimator
 from sklearn.calibration import CalibratedClassifierCV
 import numpy
+import numpy as np
 from scipy.sparse import vstack
 from sklearn.linear_model import SGDClassifier
+from sklearn.svm import OneClassSVM
 import random
-class OneClassEstimator:
+
+
+def binarize(X,posratio):
+    '''
+    lowest posratio -> 1 ;; rest 0
+    '''
+    argsrt = np.argsort(X)
+    if 0< posratio < 1:
+        cut = max(int(len(X)*(1-posratio)),1)
+    elif len(X) > posratio and isinstance(posratio,int):
+        cut = len(X) - posratio
+    else:
+        assert False # , f'{0<posratio<1= }  {len(X)>posratio= } {posratio=} {len(X)=}'
+
+    values = np.ones(len(X), dtype = np.int32)
+    values[argsrt[:cut]] = 0
+    return values
+
+class fit_proba_esti_DOTO:# we want to use this in the future ebcause its more clean
+    def fit(self, data, nu = .5):
+        ocs = OneClassSVM(nu=nu).fit(data)
+        y = ocs.decision_function(data)
+
+        y = binarize(y,.5) #!!!!!!!
+
+        self.classif =  SGDClassifier(loss='log').fit(data,y)
+        self.index = 0 if self.classif.classes_[0] == 1 else 1
+        return self
+
+    def predict_proba(self, data):
+        y = self.classif.predict_proba(data)
+        return y[:,self.index]
+
+class fit_proba_esti:
+    def fit(self, data, nu = .5):
+        self.esti = OneClassEstimator_retired2024(data,nu)
+        return self
+
+    def predict_proba(self, data):
+        return self.esti.predict(data)[:,0]
+
+class OneClassEstimator_retired2024:
     '''
     there might be a bug connected to nx.digraph..
     '''
@@ -161,7 +206,7 @@ class OneClassEstimator:
         by inversing the data_matrix set to get a negative set
         and then using edens fit_estimator
         '''
-        # make negative set 
+        # make negative set
         data_matrix_neg = data_matrix.multiply(-1)
         return eden_fit_estimator(self.classifier, positive_data_matrix=data_matrix,
                                   negative_data_matrix=data_matrix_neg,
@@ -216,20 +261,22 @@ from scipy import stats
 
 def compdistr(a,b,test=None):
     """k
-    a and b are eden vectors. 
+    a and b are eden vectors.
     we train a oneclasssvm on each.
     then we union the vectors.
     for each we get 2 scores, we sum the difference.
     """
-    e1= OneClassEstimator(n_jobs=1,nu=.3)
-    e1.fit(a)
-    e2 =OneClassEstimator(n_jobs=1,nu=.3)
-    e2.fit(b)
+    # e1= OneClassEstimator(n_jobs=1,nu=.3)
+    # e1.fit(a)
+    e1 = fit_proba_esti().fit(a,nu=.5)
+    # e2 =OneClassEstimator(n_jobs=1,nu=.3)
+    # e2.fit(b)
+    e2 = fit_proba_esti().fit(b,nu=.5)
     data=vstack((a,b))
     if test is not None:
         data=test
-    z1= e1.predict(data)[:,0]
-    z2= e2.predict(data)[:,0]
+    z1= e1.predict_proba(data)
+    z2= e2.predict_proba(data)
 
     return stats.entropy(z1,z2)+stats.entropy(z2,z1)
 
@@ -286,7 +333,7 @@ def get_similarity(alist,blist):
     similarity = simset(a,b)
     return similarity
 
-	
+
 
 if __name__=="__main__":
     print 'asd'
@@ -296,7 +343,7 @@ if __name__=="__main__":
     print get_dist_and_sim_crossval(a,b)
 
 
-	
+
 
 
 #### WRKING COMPDISTR

@@ -5,9 +5,11 @@
 # paste res1 res2 > draw.py infernal
 # res1 > draw distribution
 
-
+import matplotlib
+matplotlib.use('AGG')
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 
 def make_infernal_plot(saveas=0, labels=('G1', 'G2', 'G3', 'G4', 'G5'), means=[(20, 35), (20, 85)],
@@ -70,10 +72,10 @@ def make_dis_plot(saveas, numgraphs, distribution, similarity):
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
     for label in (ax1.get_xticklabels() + ax1.get_yticklabels()):
-        label.set_fontname('Arial')
+        # label.set_fontname('Arial')
         label.set_fontsize(fsa)
     for label in (ax2.get_xticklabels() + ax2.get_yticklabels()):
-        label.set_fontname('Arial')
+        # label.set_fontname('Arial')
         label.set_fontsize(fsa)
     numgraphs = np.array(numgraphs)
 
@@ -93,8 +95,8 @@ def make_dis_plot(saveas, numgraphs, distribution, similarity):
     # plt.xlim(percentages[0]-.05,percentages[-1]+.05)
     print numgraphs
     plt.xlim(min(numgraphs) - 2, max(numgraphs) + 2)
-    ax1.set_ylim(0.1, .8)
-    ax2.set_ylim(1, 1.05)
+    ax1.set_ylim(0, 1)
+    ax2.set_ylim(0, 1)
     ax1.set_xlim(20, 105)
     ax2.set_xlim(20, 105)
     plt.xticks(numgraphs, numgraphs)
@@ -112,7 +114,15 @@ def make_dis_plot(saveas, numgraphs, distribution, similarity):
 
 import sys
 
+def run():
+    numgraph =  [20, 50, 100, 200, 400]
+    distr=[[0.25545721593226361,0.000522490030742645,0.028502527247154782,0.050284436793470791,0.12003533257090437,0.35243988950184624,0.093199909425701583],[0.0043773373094962067,0.024590936307660054,0.01084206338719987,0.0017994298202424208,0.0048688732759201419,0.0050635384688497015,0.00016076222467320198],[0.00039921348927913092,0.00089444792182533962,0.0022715091525810165,0.00097458591203185198,0.016969225115156028,0.0032465116886065881,0.0020030658974116234],[5.1610560071823665e-05,0.005678508129071092,0.00019214440765663414,4.5874999054601635e-05,0.00010455603767192245,0.0023978066568669629,0.0056785190178299891],[0.00063615124933100262,9.7782400071463188e-06,3.0495939638172567e-05,0.00017389088174254801,1.213987689807584e-05,0.0010211143036889352,0.00049004822293609383]]
+    simi=[[0.89368195647572157,0.95448263387898369,0.95567463656141338,0.93408416962747653,0.93081546003093063,0.95488685043168364,0.95518695427485956],[0.98195457433876521,0.97705392644211408,0.97683284903317469,0.98408056995350346,0.98246265189501181,0.98163296634212505,0.97947557919767625],[0.98971139219482929,0.98541645250279986,0.98696360643624348,0.98890080279435277,0.98582165004771305,0.98715798773211916,0.98948882878201327],[0.9933786312922358,0.99278323741893237,0.99283697184835396,0.9916789742797848,0.99265274352623534,0.99251407139394809,0.99312405150635652],[0.99347677829781555,0.99444865104153124,0.99469145661591951,0.99372163858407636,0.99485476032036058,0.99480043701636556,0.9938539331627807]]
+    make_dis_plot(0,numgraph,distr,simi)
+
+
 if __name__ == "__main__":
+    # run() # DOTO i shouldnt draaw like this...
 
     # select the mode
     inf = 'infernal' in sys.argv[1:]
@@ -136,3 +146,5 @@ if __name__ == "__main__":
                 numgraph, distr, simi = eval(line)
                 print numgraph, distr, simi
                 make_dis_plot(nth, numgraph, distr, simi)
+
+

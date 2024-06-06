@@ -16,7 +16,7 @@ import processing
 logger = logging.getLogger(__name__)
 import utils.monitor as monitor
 
-version='old' 
+version='old'
 
 
 class Sampler(object):
@@ -156,7 +156,6 @@ class Sampler(object):
         """
         self.preprocessor.set_param(self.vectorizer)
         graphmanagers = self.preprocessor.fit_transform(input)
-
         self.postprocessor.fit(self.preprocessor)
         if self.estimatorobject.status != 'trained':
             self.estimatorobject.fit(graphmanagers,
@@ -562,7 +561,7 @@ class Sampler(object):
             res=graphman_new.transformed_vector.dot(graphman_old.transformed_vector.T).todense()
             prediction = res[0, 0]
             if prediction < self.accept_min_similarity:
-                
+
                 return False
 
         score_ratio = score_graph_new / score_graph_old
