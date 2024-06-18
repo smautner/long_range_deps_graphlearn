@@ -108,8 +108,8 @@ def fit_sample(sequences, arguments,NJOBS=1, random_state=random.random()):
 
     result = []
     sequences = sample_func()
-    print("xxxxxxxxxxxxxxxxxxxx")
-    print(sequences)
+    # print "xxxxxxxxxxxxxxxxxxxx"
+    #print sequences
     for graphlist in sequences:
         result += graphlist
     # note that this is a list [('',sequ),..]

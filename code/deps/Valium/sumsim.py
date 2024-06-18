@@ -151,7 +151,7 @@ class fit_proba_esti_DOTO:# we want to use this in the future ebcause its more c
         y = ocs.decision_function(data)
 
         y = binarize(y,.5) #!!!!!!!
-        print(y)
+        # print(y)
         classif =  SGDClassifier(loss='log').fit(data,y)
         self.classif = CalibratedClassifierCV(classif, cv=2, method='sigmoid')
         self.classif.fit(data, y)
