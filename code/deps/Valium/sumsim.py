@@ -70,6 +70,7 @@ import eden.path as ep
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import math
+
 def vectorize(a,b):
     v=ep.Vectorizer()
     a = v.transform(a)
@@ -92,8 +93,8 @@ def similarity_mean(a,b,keepdiag=True):
 
 def simset(a,b):
     # DOTO
-    return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,False)*similarity_mean(b,b,False))
-    # return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,True)*similarity_mean(b,b,True))
+    #return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,False)*similarity_mean(b,b,False))
+    return similarity_mean(a,b)/math.sqrt(similarity_mean(a,a,True)*similarity_mean(b,b,True))
 
 
 '''
@@ -133,7 +134,8 @@ def binarize(X,posratio):
     '''
     lowest posratio -> 1 ;; rest 0
     '''
-    argsrt = np.argsort(X)
+    argsrt = np.argsort(X.T)
+    argsrt = argsrt.reshape((-1,1))
     if 0< posratio < 1:
         cut = max(int(len(X)*(1-posratio)),1)
     elif len(X) > posratio and isinstance(posratio,int):
@@ -149,7 +151,6 @@ class fit_proba_esti_DOTO:# we want to use this in the future ebcause its more c
     def fit(self, data, nu = .5):
         ocs = OneClassSVM(nu=nu).fit(data)
         y = ocs.decision_function(data)
-
         y = binarize(y,.5) #!!!!!!!
         # print(y)
         classif =  SGDClassifier(loss='log').fit(data,y)
