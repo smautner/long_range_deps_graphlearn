@@ -289,30 +289,28 @@ from sklearn.cross_validation import KFold
 
 def get_dist_and_sim_crossval(alist,blist,kfold=3):
     a,b=vectorize(alist,blist)
-    distri = compdistr_crossval(a,b,kfold)
+    distri = np.median([compdistr_crossval(a,b,2) for e in range(31)])
     similarity = simset(a,b)
     #print distri, similarity
     return distri,similarity
 
 from scipy.sparse import vstack
+
+
 def compdistr_crossval(alist,blist,kfold):
     afold=KFold(alist.shape[0],n_folds=kfold,shuffle=True)
     bfold=KFold(blist.shape[0],n_folds=kfold,shuffle=True)
     afold=iter(afold)
     bfold=iter(bfold)
     res=[]
-    for x in range(kfold):
-        atrain,atest= afold.next()
-        btrain,btest= bfold.next()
-        a=alist[atrain]
-        b=blist[btrain]
+    atrain,atest= afold.next()
+    btrain,btest= bfold.next()
+    a=alist[atrain]
+    b=blist[btrain]
+    #print 'crossval', a.shape, b.shape, blist[btest].shape, np.vstack((alist[atest],blist[btest])).shape
+    test=vstack((alist[atest],blist[btest]))
+    return compdistr(a,b,test)
 
-        #print 'crossval', a.shape, b.shape, blist[btest].shape, np.vstack((alist[atest],blist[btest])).shape
-
-        test=vstack((alist[atest],blist[btest]))
-
-        res.append(compdistr(a,b,test))
-    return res[kfold/2]
 
 
 
