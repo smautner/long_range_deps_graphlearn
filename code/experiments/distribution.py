@@ -72,8 +72,9 @@ if __name__ == "__main__":
     optlist, args = getopt.getopt(sys.argv[1:], '', ['fasta=', 'sizes=', 'repeats=','njobs=','debug='])
     optlist=dict(optlist)
     # defaults={'--fasta':'RF01725.fa','--sizes':"[10,20,50,100,200,400]",
-    defaults={'--fasta':'RF01725.fa','--sizes':"[25,50,75,100]",
-              '--njobs':'4','--repeats': '7','--debug':'False'}
+    # defaults={'--fasta':'RF01725.fa','--sizes':"[25,50,75,100]",
+    defaults={'--fasta':'RF01725.fa','--sizes':"[25,50]",
+              '--njobs':'4','--repeats': '5','--debug':'False'}
 
     for k,v in defaults.items():
         if k not in optlist:

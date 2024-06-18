@@ -151,8 +151,11 @@ class fit_proba_esti_DOTO:# we want to use this in the future ebcause its more c
         y = ocs.decision_function(data)
 
         y = binarize(y,.5) #!!!!!!!
+        print(y)
+        classif =  SGDClassifier(loss='log').fit(data,y)
+        self.classif = CalibratedClassifierCV(classif, cv=2, method='sigmoid')
+        self.classif.fit(data, y)
 
-        self.classif =  SGDClassifier(loss='log').fit(data,y)
         self.index = 0 if self.classif.classes_[0] == 1 else 1
         return self
 
@@ -268,10 +271,10 @@ def compdistr(a,b,test=None):
     """
     # e1= OneClassEstimator(n_jobs=1,nu=.3)
     # e1.fit(a)
-    e1 = fit_proba_esti().fit(a,nu=.5)
+    e1 = fit_proba_esti_DOTO().fit(a,nu=.5)
     # e2 =OneClassEstimator(n_jobs=1,nu=.3)
     # e2.fit(b)
-    e2 = fit_proba_esti().fit(b,nu=.5)
+    e2 = fit_proba_esti_DOTO().fit(b,nu=.5)
     data=vstack((a,b))
     if test is not None:
         data=test

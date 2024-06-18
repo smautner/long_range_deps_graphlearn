@@ -86,7 +86,7 @@ def fit_sample(sequences, arguments,NJOBS=1, random_state=random.random()):
                                   )
     sampler.fit(sequences, grammar_n_jobs=NJOBS, grammar_batch_size=1)
     sequences = [b for a, b in sequences]
-    sequences = sampler.sample(sequences,
+    sample_func = lambda: sampler.sample(sequences,
                                n_samples=arguments['n_samples'],
                                batch_size=1,
                                n_steps=arguments['n_steps'],
@@ -103,7 +103,13 @@ def fit_sample(sequences, arguments,NJOBS=1, random_state=random.random()):
                                include_seed=False,
                                backtrack=2,
                                monitor=False)
+
+
+
     result = []
+    sequences = sample_func()
+    print("xxxxxxxxxxxxxxxxxxxx")
+    print(sequences)
     for graphlist in sequences:
         result += graphlist
     # note that this is a list [('',sequ),..]
