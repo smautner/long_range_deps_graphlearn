@@ -34,8 +34,6 @@ def get_datapoint(size,args):
 def evaluate_point(size_args):
     size,args = size_args
     gen , train  = get_trainthings(size,args)
-    print(gen)
-    print(train)
     res = sumsim.get_dist_and_sim_crossval(gen,train,kfold=3)
     # print 'evaluate_point:', res
     return res
@@ -80,10 +78,9 @@ if __name__ == "__main__":
     # PARSE THE ARGS:
     optlist, args = getopt.getopt(sys.argv[1:], '', ['fasta=', 'sizes=', 'repeats=','njobs=','debug='])
     optlist=dict(optlist)
-    # defaults={'--fasta':'RF01725.fa','--sizes':"[10,20,50,100,200,400]",
-    # defaults={'--fasta':'RF01725.fa','--sizes':"[25,50,75,100]",
-    defaults={'--fasta':'RF01725.fa','--sizes':"[50]",
-              '--njobs':'1','--repeats': '5','--debug':'False'}
+    #defaults={'--fasta':'RF01725.fa','--sizes':"[25]",
+    defaults={'--fasta':'RF01725.fa','--sizes':"[25,50,75,100,125,150]",
+              '--njobs':'1','--repeats': '7','--debug':'False'}
 
     for k,v in defaults.items():
         if k not in optlist:
@@ -101,7 +98,7 @@ if __name__ == "__main__":
             inputdict=eval(line)
             inputdict.update(optlist)
             r=  get_results(inputdict)
-            print( optlist['--sizes'],",",r[0],',',r[1])
+            print(optlist['--sizes'],r[0],r[1])
 
 
 
