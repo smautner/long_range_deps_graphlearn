@@ -97,8 +97,8 @@ def make_dis_plot(saveas, numgraphs, distribution, similarity):
     plt.xlim(min(numgraphs) - 2, max(numgraphs) + 2)
     ax1.set_ylim(0, 1)
     ax2.set_ylim(0, 1)
-    ax1.set_xlim(20, 105)
-    ax2.set_xlim(20, 105)
+    ax1.set_xlim(20, numgraphs[-1]+5)
+    ax2.set_xlim(20, numgraphs[-1]+5)
     plt.xticks(numgraphs, numgraphs)
 
     # plt.title(run_id + '\n', fontsize=18)

@@ -108,9 +108,10 @@ def fit_sample(sequences, arguments,NJOBS=1, random_state=random.random()):
 
     result = []
 
-
-    while len(result) < len(sequences):
+    fail =0
+    while len(result) < len(sequences) and fail < 5:
         # print 'samp start:'
+        fail+=1
         for seq in sample_func():
             result += seq
             if len(result) >= len(sequences):
